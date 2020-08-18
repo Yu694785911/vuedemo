@@ -1,0 +1,20 @@
+1，标签跳转
+
+    <router-link to='two.html'><button>点我到第二个页面</button></router-link>
+
+2，点击事件跳转
+
+   html :
+
+      <button @click="hreftwo" class="test-one">点我到第二个页面</button>
+   js :
+
+      methods:{ //跳转页面
+
+                    hreftwo(){
+
+                              this.$router.push({ path:'/two.html'  })
+
+                                }
+
+                       }
