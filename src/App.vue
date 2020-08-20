@@ -19,7 +19,7 @@ import PhbTabBar from "components/contents/PhbTabbar/PhbTabbar.vue";
 import JxTabBar from "components/contents/JxTabbar/JxTabBar.vue";
 import XqTabBar from "components/contents/XqTabBar/XqTabBar.vue";
 import { requestIp } from "network/request";
-import { autoLand } from "network/login";
+// import { autoLand } from "network/login";
 
 export default {
   name: "App",
@@ -79,25 +79,19 @@ export default {
     });
 
     console.log(localStorage.autocode);
-    if (localStorage.autocode) {
-      autoLand({ autocode: localStorage.autocode }).then(res => {
-        if (res.code != 200) return;
-        localStorage.setItem("autocode", res.data.user.autocode);
-        this.$store.state.userInfo.defaddr = res.data.defaddr;
+    // if (localStorage.autocode) {
+    //   autoLand({ autocode: localStorage.autocode }).then(res => {
+    //     if (res.code != 200) return;
+    //     localStorage.setItem("autocode", res.data.user.autocode);
+    //     this.$store.state.userInfo.defaddr = res.data.defaddr;
 
-        for (let j in res.data.user) {
-          this.$store.state.userInfo[j] = res.data.user[j];
-        }
-      });
-    }
+    //     for (let j in res.data.user) {
+    //       this.$store.state.userInfo[j] = res.data.user[j];
+    //     }
+    //   });
+    // }
   },
   computed: {
-    // isTabBar(){
-    //   return this.$store.state.TabBar.isTabBar
-    // },
-    // isjxTabBar(){
-    //   return this.$store.state.TabBar.isjxTabBar
-    // }
     userInfo() {
       return this.$store.state.userInfo;
     },

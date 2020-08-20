@@ -1,4 +1,4 @@
-import { requestPost } from "./request"
+import { requestPost,request } from "./request"
 
 // params get请求使用params  或者 query
 // post请求使用 data上传数据
@@ -38,5 +38,26 @@ export function autoLand(data) {
     return requestPost({
         url: "/vuedemo/autoland",
         data
+    })
+}
+
+export function regPhone(params) {
+    return request({
+        url: "vuedemo/land_have_telphone",
+        params
+    })
+}
+
+// 国际区号
+export function get_mobile_prefix() {
+    return request({
+        url: "vuedemo/get_mobile_prefix"
+    })
+}
+
+export function land_have_telphone(params) {
+    return request({
+        url: "vuedemo/land_have_telphone",
+        params
     })
 }

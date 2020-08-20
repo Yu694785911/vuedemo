@@ -215,7 +215,7 @@ export default {
   data() {
     return {
       activeName: "first",
-      paySuccess: null,
+      paySuccess: [],
       payfail: null,
       all: []
     };
@@ -228,13 +228,9 @@ export default {
   created() {
     console.log(this.$store.state.userInfo.id);
     getOrder({ user_id: this.$store.state.userInfo.id }).then(res => {
-      console.log(res.data);
       for (var i = 0; i < res.data.length; i++) {
-        console.log(res.data[i].id);
         getOrderByOrderId(res.data[i].id).then(res => {
-          console.log(res.data[0]);
           this.all.push(res.data[0]);
-          console.log(this.all);
         });
       }
     });
@@ -242,10 +238,9 @@ export default {
     getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(res => {
       console.log(res.data);
       for (var i = 0; i < res.data.length; i++) {
-        console.log(res.data[i].id);
+        // console.log(res.data[i].id);
         getOrderByOrderId(res.data[i].id).then(res => {
-          console.log(res.data);
-          this.paySuccess = res.data;
+          this.paySuccess.push(res.data[0]);
         });
       }
     });
@@ -254,7 +249,6 @@ export default {
       console.log(res.data);
       for (var i = 0; i < res.data.length; i++) {
         getOrderByOrderId(res.data[i].id).then(res => {
-          console.log(res.data);
           this.payfail = res.data;
         });
       }
@@ -273,11 +267,22 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    deleteOrder(e) {
-      console.log(e.target);
-      // deleteOrder().then(res=>{
 
-      // })
+
+    deleteOrder() {
+      alert("a")
+      // getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(
+      //   res => {
+      //     console.log(res.data);
+      //     for (var i = 0; i < res.data.length; i++) {
+      //       console.log(res.data[i].id);
+
+      //       deleteOrder(res.data[i].id).then(res => {
+      //         console.log(res);
+      //       });
+      //     }
+      //   }
+      // );
     }
   },
   filters: {
@@ -317,6 +322,9 @@ export default {
   }
   #tab-first {
     padding-left: 30px !important;
+  }
+  .el-tabs__item {
+    padding: 0 25px !important;
   }
 }
 dl {

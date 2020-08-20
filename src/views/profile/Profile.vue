@@ -181,6 +181,8 @@ import Scroll from "components/contents/scroll/Scroll";
 export default {
   name: "Cart",
   created() {
+    this.$store.state.userInfo=null;
+    console.log(this.$store.state.userInfo)
     if (this.$store.state.userInfo != null) {
       this.$router.push("/profile");
     } else if ( this.$store.state.userInfo == null) {

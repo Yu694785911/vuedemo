@@ -24,10 +24,11 @@ const Login = () => import("views/login/login")
 const ConfirmOrder = () => import("views/order/ConfirmOrder")
 const Order = () => import("views/order/Order")
 const Payment = () => import("views/order/Payment")
-const phoneRegister = () => import("views/login/phoneRegister");
+const phoneRegister = () => import("views/register/phoneRegister");
 const Address = () => import("views/address/Address");
 const myOrder = () => import("views/order/myOrder");
 const paySuccess = () => import("views/order/paySuccess");
+
 
 const routes = [
   {
@@ -137,8 +138,26 @@ const routes = [
     mata: {
       title: "手机号注册"
     },
-    component: phoneRegister
+    component: phoneRegister,
   },
+
+  {
+    path: '/registered/:user',
+    name: "registered",
+    meta: {
+      title: "已注册"
+    },
+    component: () => import("views/register/child/Registered")
+  },
+  {
+    path: '/shortMsg/:data',
+    name: "shortMsg",
+    meta: {
+      title: "获取短信"
+    },
+    component: () => import("views/register/child/short_Message")
+  },
+ 
   {//地址
     path: '/address',
     mata: {
@@ -152,7 +171,7 @@ const routes = [
     },
     component: myOrder
   },
-  {//支付成功
+  {//支付成功  
     path: '/paySuccess',
     mata: {
       title: "支付成功"
