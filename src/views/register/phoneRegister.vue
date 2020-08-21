@@ -2,7 +2,7 @@
   <div class="phonelogin">
     <div class="messagezhuce">
       <nav-bar class="home-nav-bar">
-        <div slot="left" @click="$router.go(-1)">&lt;</div>
+        <div slot="left" @click="back">&lt;</div>
         <div slot="center">
           <h3 style="margin:0;font-weight:normal">京东注册</h3>
         </div>
@@ -12,7 +12,7 @@
         <div class="Inputcon">
           <p class="input-ph">
             <label for class="area-box" :v-model="region" @click="changeRegion">
-              <span class="area-phone">+86</span>
+              <span class="area-phone">+{{area_code}}</span>
               <i class="sanjiao"></i>
             </label>
             <input type="text" placeholder="请输入手机号" v-model="phone" clearable />
@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    <div class="country">
+    <!-- <div class="country">
       <nav-bar class="home-nav-bar">
         <div slot="left" @click="$router.go(-1)">&lt;</div>
         <div slot="center">
@@ -58,9 +58,9 @@
           <span class="code">+{{item.area_code}}</span>
         </li>
       </ul>
-    </div>
+    </div> -->
 
-    <div class="zhezhao">
+    <div v-if="show" class="zhezhao">
       <div class="zhezhaokk">
         <div class="header">注册协议及隐私政策</div>
         <div class="content">
@@ -89,7 +89,7 @@
         </div>
 
         <button class="disagreen" disabled>不同意</button>
-        <button class="agreen" @click="agreen">同意</button>
+        <button class="agreen" @click="checkDialog('ok')">同意</button>
       </div>
     </div>
   </div>
@@ -107,14 +107,21 @@ export default {
       region: "",
       phone_area_code: null,
       regTel: true,
-      area_code: "86",
+      // area_code: "86",
       warning: false
     };
   },
   components: {
     NavBar
   },
-  computed: {},
+  computed: {
+    area_code(){
+       return this.$store.state.area_code
+    },
+    show(){
+      return this.$store.state.registeDialogShow
+    }
+  },
   created() {
     get_mobile_prefix().then(res => {
       this.phone_area_code = res.data;
@@ -135,6 +142,9 @@ export default {
   deactivated() {},
   mounted() {},
   methods: {
+    back(){
+      this.$router.go(-1)
+    },
     next() {
       var data = { telphone: this.phone };
       regPhone(data).then(res => {
@@ -166,34 +176,50 @@ export default {
     warningOk(val) {
       if (val == "ok") {
         let data = {};
-        data.areaCode = this.areaCode;
-        data.phone = this.phone;
+        data.areaCode = this.area_code;
+        data.telphone = this.phone;
         // 如果不是500，手机号是未被注册的，跳转短信页面，
+        console.log(data);
         this.$router.push("/shortMsg/" + JSON.stringify(data));
       }
       this.warning = false;
     },
+    checkDialog(val){
+      if(val=='ok'){
+        this.$store.state.registeDialogShow=false;
+        return
+      }
+      this.$router.go(-1);
+    },
     changeRegion() {
-      document.querySelector(".messagezhuce").style.display = "none";
-      document.querySelector(".country").style.display = "block";
+      // document.querySelector(".messagezhuce").style.display = "none";
+      // document.querySelector(".country").style.display = "block";
+      this.$router.push('/country')
     },
-    selectCity(a) {
-      console.log(a);
-      document.querySelector(".messagezhuce").style.display = "block";
-      document.querySelector(".country").style.display = "none";
-      console.log(document.querySelector(".area-phone").innerHTML);
-      document.querySelector(".area-phone").innerHTML = "+" + a;
-    },
-    agreen() {
-      document.querySelector(".zhezhao").style.display = "none";
-    }
+    // selectCity(val) {
+    //   // 区号 val
+    //   console.log(val);
+    //   this.$store.state.area_code=val;
+    //   console.log(this.$store.state.area_code)
+    //   document.querySelector(".messagezhuce").style.display = "block";
+    //   document.querySelector(".country").style.display = "none";
+    //   document.querySelector(".area-phone").innerHTML = "+" + val;
+    // },
+    
+  },
+  beforeRouteLeave(to,from,next){
+    // 离开页面 变为true 下次打开页面协议显示
+    this.$store.state.registeDialogShow=true;
+    console.log(from.path);
+    // 记录一下离开页面时的路由地址
+    this.$store.state.areacodeHistory=from.path;
+    next();
   },
   filters: {
-    // regPhone(){
-    //   console.log(this.phone);
-    //   var pattern=/0?(13|14|15|17|18|19)[0-9]{9}$/;
-    //   return pattern.text(this.phone);
-    // }
+    regPhone(){
+      var pattern=/^0?(13|14|15|17|18|19)[0-9]{9}$/;
+      return pattern.text(this.phone);
+    }
   }
 };
 </script>

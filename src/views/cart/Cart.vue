@@ -83,10 +83,18 @@ export default {
     };
   },
   created() {
-   
     //如果用户存在。则网络请求shopCart数据
     if (this.$store.state.userInfo.id) {
       this.getShopCart();
+    }
+    if (!this.$store.state.userInfo) {
+      this.$store.dispatch("autocode");
+    }
+    console.log(this.$store.state.userInfo);
+    console.log(this.shopCartLength);
+    // 如果用户存在，请求shopCart数据
+    if(this.$store.state.userInfo && this.shopCartLength==0){
+      this.$store.dispatch("getShopCart",this.$store.state.userInfo.id);
     }
   },
   components: {
@@ -96,18 +104,12 @@ export default {
     CartGoods
   },
   beforeRouteLeave(to, from, next) {
-    // let shopCart={...this.$store.state.shopCart};
-    // let shopCartHistory={...this.$store.state.shopCartHistory};
-
-    // for(let i in shopCart){
-    //   for(let j=0;j<shopCart[i];j++){
-    //     if(shopCart[i][j].ischeck !=shopCartHistory[i][j].ischeck || shopCart[i][j].num!=shopCartHistory[i][j].num || shopCart[i][j].norm!=shopCartHistory[i][j].norm){
-    //       // 请求修改购物车接口，把数据传递上去，修改购物车数据
-    //     }
-    //   }
-
-    // }
-    this.upDateShopCart();
+   // 如果取得页面时login页面，则记录页面
+    if (to.path == "/login") {
+      this.$store.state.loginHistory = from.path;
+    }
+    
+    // if(this.$store.state.userInfo) this.upDateShopCart();
     next();
   },
   methods: {
@@ -264,7 +266,7 @@ export default {
       return this.$refs.cart_goods;
     }
   },
-  mounted(){}
+  mounted() {}
 };
 </script>
 <style lang='less' scoped>

@@ -25,6 +25,14 @@
         </div>
       </nav-bar>
 
+
+
+      <div v-if="!$store.state.userInfo" @click="$store.commit('ROUTERTO','/login')">登录</div>
+
+       <div v-else @click="signOut">退出</div>
+
+
+
       <!-- 内容 -->
       <div class="content-first">
         <div class="user-message">
@@ -37,11 +45,11 @@
 
           <div class="user-right">
             <div class="ur-top">
-              <span>{{userInfo.name}}</span>
+              <span v-if="userInfo">{{userInfo.name}}</span>
               <span></span>
               <span></span>
             </div>
-            <div class="ur-m">用户名:{{userInfo.name}}</div>
+            <div class="ur-m"  v-if="userInfo">用户名:{{userInfo.name}}</div>
           </div>
 
           <div class="user-bottom">
@@ -178,22 +186,27 @@
 // import $ from "jquery";
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
+import { ROUTERTO } from "store/mutation-types";
 export default {
-  name: "Cart",
+  name: "Profile",
+  data(){
+    return {};
+  },
   created() {
-    this.$store.state.userInfo=null;
-    console.log(this.$store.state.userInfo)
+    // this.$store.state.userInfo=null;
+   if(!this.$store.state.userInfo){
+     this.$store.commit('AUTO_CODE')
+   }
+    
+  console.log(this.$store.state.userInfo);
+
     if (this.$store.state.userInfo != null) {
       this.$router.push("/profile");
     } else if ( this.$store.state.userInfo == null) {
       this.$router.push("/login");
     }
 
-    console.log(this.$store.state.userInfo);
-    console.log(localStorage.getItem('autocode'));
-  },
-  data() {
-    return {};
+
   },
   components: {
     NavBar,
@@ -205,13 +218,33 @@ export default {
     },
     tomyOrder(){
       this.$router.push("/myorder")
+    },
+    routerTo(path){
+      this.$store.commit(ROUTERTO,path);
+    },
+    signOut(){
+      this.$store.state.userInfo=null;
+      this.$store.state.shopCart=null;
+      this.$store.state.shopCartLength=0;
+      let path=window.location.origin+'/jd';
+      localStorage.setItem(path,'')
+      if(this.$store.state.userInfo==null){
+        this.$router.push('/home')
+      }
     }
   },
   computed:{
     userInfo(){
       return this.$store.state.userInfo;
     }
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+      // 如果取得页面时login页面，则记录页面
+    if(to.path=='/login'){
+      this.$store.state.loginHistory=from.path;
+    }
+    next();
+  },
 };
 </script>
 <style lang='less' scoped>

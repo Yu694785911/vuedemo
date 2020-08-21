@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.state.userInfo;
+      return this.$store.state.userInfo!=null?this.$store.state.userInfo:null;
     },
     user() {
       return (

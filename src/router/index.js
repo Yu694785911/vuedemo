@@ -32,7 +32,7 @@ const paySuccess = () => import("views/order/paySuccess");
 
 const routes = [
   {
-    path: '/',
+    path: '',
     redirect: '/home'
   },
   {
@@ -157,7 +157,22 @@ const routes = [
     },
     component: () => import("views/register/child/short_Message")
   },
- 
+  {
+    path: '/setpwd/:data',
+    name: "setpwd",
+    meta: {
+      title: "设置密码"
+    },
+    component: () => import("views/register/child/SetPwd")
+  },
+  {
+    path: '/country',
+    name: "country",
+    meta: {
+      title: "国际区号"
+    },
+    component: () => import("views/register/child/country")
+  },
   {//地址
     path: '/address',
     mata: {

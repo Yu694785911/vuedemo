@@ -12,11 +12,17 @@ margin-left: 8px;display:block;"
         <i class="jd"></i>
         <i class="fangdajing"></i>
         <div class="search-box">
-          <input type="text" placeholder="雅马哈电钢琴" v-on:focus="toKeyword"/>
+          <input type="text" placeholder="雅马哈电钢琴" v-on:focus="routerTo('/keyword')"/>
         </div> 
         <!-- <input v-model="input" placeholder="请输入内容" class="souIpt"  /> -->
       </div>
-      <div slot="right">登录</div>
+      <div slot="right">
+        <!-- 登录前 -->
+        <span v-if="!$store.state.userInfo" @click="routerTo('/login')">登录</span>
+
+        <!-- 登录后 -->
+        <span v-else class="el-icon-s-custom" @click="routerTo('/profile')"></span>
+        </div>
     </nav-bar>
     <hr />
 
@@ -76,8 +82,10 @@ import { getHomeBanner, getFeature } from "network/home";
 
 // 取商品数据
 import { getGoods } from "network/goods";
+import { ROUTERTO,SET_USERINFO} from "store/mutation-types";
 
 import { debounce } from "common/utils.js";
+import { autoLand } from "network/login";
 export default {
   name: "Home",
   data() {
@@ -128,18 +136,19 @@ export default {
     this.getGoodsMax("recommend");
     this.getGoodsMax("news");
     this.getShopCart("getShopCart",this.$store.state.userInfo);
+
+    if(!this.$store.state.userInfo){
+      this.auto_code();
+    }
   },
   activated() {
-    console.log("组件激活状态");
     this.$refs.HomeScrollCom.scroll.scrollTo(0, this.saveY, 0);
     this.$refs.HomeScrollCom.scroll.refresh();
 
     // this.refresh.HomeScrollCom.refresh();
   },
   deactivated() {
-    console.log("未激活");
     this.saveY = this.$refs.HomeScrollCom.scroll.y;
-    console.log(this.saveY);
   },
   computed: {
     showGoodsList() {
@@ -209,23 +218,40 @@ export default {
       }
     },
     toCategory() {
-      this.$router.push("/category");
+      this.$store.commit(ROUTERTO,"/category");
+      // this.$router.push("/category");
     },
-    toKeyword() {
-      console.log(this.$router.push);
-      this.$router.push({ path: "/keyword" });
+    routerTo(path){
+      this.$store.commit(ROUTERTO,path);
     },
     changeDirection() {
       this.parentDirection = !this.parentDirection;
     },
-    // goodsImageLoad(){
-    //   alert("aaa")
-    // }
     getShopCart(data){
       if(data!=""&& data!=null && data!=undefined){
         this.$store.dispatch("getShopCart",data)
       }
+    },
+    // 默认进入页面的时候
+    auto_code(){
+      let path=window.location.origin+'/jd';
+      let autocode=window.localStorage.getItem(path);
+      autoLand({
+        autocode:autocode
+      }).then(res=>{
+        console.log(res);
+        if(res.code!=200) return;
+        this.$store.commit(SET_USERINFO,res)
+        this.getShopCart(res.data.user.id);
+      })
     }
+  },
+    beforeRouteLeave(to, from, next) {
+      // 如果取得页面时login页面，则记录页面
+    if(to.path=='/login'){
+      this.$store.state.loginHistory=from.path;
+    }
+    next();
   },
   mounted() {
     this.$parent.isTabBar = true;

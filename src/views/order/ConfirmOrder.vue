@@ -19,7 +19,7 @@
         </div>
 
         <ul v-else @click="toAddress">
-          <li class="co_name">{{userInfo.Addressname}}{{userInfo.Addressphone}}</li>
+          <li class="co_name">{{userInfo.Addressname}}{{userInfo.Addressphone | changeTel(userInfo.Addressphone)}}</li>
           <li>{{userInfo.Addressxx}}</li>
         </ul>
       </div>
@@ -213,6 +213,9 @@ export default {
   filters: {
     changePrice(val, str = "$") {
       return str + Number(val).toFixed(2);
+    },
+    changeTel(val){
+        return val.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2');
     }
   },
   mounted() {}

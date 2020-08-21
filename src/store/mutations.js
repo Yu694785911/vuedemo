@@ -4,6 +4,7 @@ import router from '../router'
 import {POST_SHOPCART} from "./mutation-types"
 // 获取shopcart网络请求
 import {postShopCart} from 'network/shopCart'
+import {autoLand} from 'network/login'
 //取所有的常量
 import * as types from "./mutation-types"
 // import { stat } from 'fs'
@@ -66,5 +67,39 @@ export default {
       state.shopCartHistory={...state.shopCart};
       console.log(state.shopCartHistory,'shopCartHistory')
     })
+  },
+
+  // 用于国际区号页面  回退页面事件
+  [types.AREA_CODE_BACK](state,payload){
+    if(payload=='0'){//用于国际区号页面  返回到注册页面
+      // 参数==0的时候 国际编号 回到初始值
+      state.area_code='86'
+    }
+    if(payload>0){//用于国际区号页面  选择地区后 返回到注册页面
+      state.area_code=payload;
+      state.registeDialogShow=false
+    }
+
+    router.go(-1);
+  },
+
+  //用于路由跳转
+  [types.ROUTERTO](state,payload){
+    state;
+    router.push(payload)
+  },
+
+  [types.AUTO_CODE](){
+    let path=window.location.origin+'/jd';
+    let autocode=window.localStorage.getItem(path);
+    console.log(autocode);
+    return autoLand({autocode})
+  },
+
+  [types.SET_USERINFO](state,payload){
+    let path=window.location.origin+'/jd';
+    state.userInfo=payload.data.user;
+    state.userInfo.defaddr=payload.data.defaddr;
+    window.localStorage.setItem(path,payload.data.user.autocode);
   }
 }

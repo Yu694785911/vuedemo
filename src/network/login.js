@@ -55,9 +55,17 @@ export function get_mobile_prefix() {
     })
 }
 
-export function land_have_telphone(params) {
-    return request({
+export function land_have_telphone(data) {
+    return requestPost({
         url: "vuedemo/land_have_telphone",
+        data
+    })
+}
+
+// 获取手机验证码
+export function getCodeImg(params) {
+    return request({
+        url: "vuedemo/get_code_img",
         params
     })
 }

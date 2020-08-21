@@ -3,7 +3,7 @@
     <!-- 短信登录 -->
     <div class="messagezhuce">
       <nav-bar class="home-nav-bar">
-        <div slot="left" @click="$router.go(-1)">&lt;</div>
+        <div slot="left" @click="$router.push($store.state.loginHistory)">&lt;</div>
         <div slot="center">
           <h3 style="margin:0;font-weight:normal">京东登录注册</h3>
         </div>
@@ -13,7 +13,7 @@
         <div class="Inputcon">
           <p class="input-ph">
             <label for class="area-box">
-              <span class="area-phone">+86</span>
+              <span class="area-phone">{{"+"+area_code}}</span>
               <i class="sanjiao"></i>
             </label>
             <input type="text" name id placeholder="请输入手机号" v-model="phone" />
@@ -40,16 +40,23 @@
     <div v-show="!toggleBtn">
       <div class="Inputcon">
         <p class="input-ph">
-          <input type="text" name id placeholder="用户名/邮箱/手机号" style="padding:0;float:left" />
+          <input
+            type="text"
+            name
+            id
+            placeholder="用户名/邮箱/手机号"
+            v-model="phone"
+            style="padding:0;float:left"
+          />
         </p>
         <p class="input-code">
-          <input type="text" name id placeholder="请输入密码" />
+          <input type="text" v-model="pwd" placeholder="请输入密码" show-password/>
           <button class="area-phone">忘记密码</button>
         </p>
       </div>
 
       <el-row>
-        <el-button type="danger" round disabled class="dangerBtn">登录</el-button>
+        <el-button type="danger" round class="dangerBtn" @click="userLogin">登录</el-button>
         <el-button round class="oneBtn">一键登录</el-button>
       </el-row>
 
@@ -77,7 +84,7 @@
 
 <script>
 import NavBar from "components/common/navbar/NavBar.vue";
-import { Land, autoLand,register } from "network/login";
+import { Land, autoLand, register } from "network/login";
 export default {
   name: "profile",
   data() {
@@ -87,24 +94,26 @@ export default {
       input3: "",
       select: "",
       toggleBtn: true,
-      phone: "",
-      pwd: "",
+      phone: "13412345678",
+      pwd: "1234567",
       autocode: ""
     };
+  },
+  computed: {
+    area_code() {
+      return this.$store.state.area_code;
+    }
   },
   components: {
     NavBar
   },
-  created() {
-    this.$root.$children[0].isTabBar = false;
-
-  },
+ 
   methods: {
     phoneRegister() {
       this.$router.push("/phone_register");
     },
     userLogin() {
-      this.$router.push("/profile")
+      this.$router.push("/profile");
       if (this.phone === "" || this.pwd === "") {
         alert("账号或密码不能为空");
       } else {
@@ -118,18 +127,24 @@ export default {
         register({
           username: this.phone,
           password: this.pwd
-        }).then(res=>{
+        }).then(res => {
           console.log(res);
-        })
+        });
         Land(aaa).then(res => {
           console.log(res);
-          console.log(res.data.user.autocode);
-          
 
-          console.log(res.data.user.name);
-          console.log(res.data.user.tel);
+          // 渲染用户
+          this.$store.state.userInfo = res.data.user;
+          // 渲染用户默认配送地址
+          this.$store.state.defaddr = res.data.defaddr;
+          // 跳转指定页面
           
-             
+          this.setLocalStorageAutoCode(res.data.user.auto_code);
+          //  this.$router.push('/home')
+
+          
+            this.$router.push(this.$store.state.loginHistory);
+
           // 自动登陆码
           autoLand({autocode:res.data.user.autocode}).then(res => {
             if(res.code!=200) return;
@@ -137,7 +152,6 @@ export default {
             console.log(res.data.user.autocode);
             localStorage.setItem('autocode', res.data.user.autocode);
             console.log(localStorage.getItem('autocode'));
-            
 
             this.$store.state.userInfo.defaddr=res.data.defaddr;
 
@@ -146,13 +160,18 @@ export default {
             }
 
             console.log(this.$store.state.userInfo);
-
+            
             this.$router.push('/profile')
           });
-
-         
         });
       }
+    },
+    // 创建本地存储存自动登录码的方法
+    setLocalStorageAutoCode(val) {
+      console.log(window.location.origin);
+      let key=window.location.origin+'/jd';
+
+      localStorage.setItem(key,val)
     },
     aaa() {
       this.toggleBtn = !this.toggleBtn;
@@ -161,8 +180,14 @@ export default {
       this.$router.go(-1);
     }
   },
+   created() {
+    this.$root.$children[0].isTabBar = false;
+  },
   beforeRouteLeave(to, from, next) {
     this.$root.$children[0].isTabBar = true;
+    if (to.path == "/country") {
+      this.$store.state.areacodeHistory = from.path;
+    }
     next();
   }
 };
