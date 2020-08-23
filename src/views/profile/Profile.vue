@@ -200,9 +200,9 @@ export default {
     
   console.log(this.$store.state.userInfo);
 
-    if (this.$store.state.userInfo != null) {
+    if (this.$store.state.userInfo.id != null) {
       this.$router.push("/profile");
-    } else if ( this.$store.state.userInfo == null) {
+    } else if ( this.$store.state.userInfo.id == null) {
       this.$router.push("/login");
     }
 

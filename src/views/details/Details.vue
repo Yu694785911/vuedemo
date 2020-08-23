@@ -81,8 +81,7 @@
 
               <el-button type="text" @click="dialogVisible = true">...</el-button>
 
-              <el-dialog title="提示" :visible.sync="dialogVisible" :before-close="handleClose"
-              >
+              <el-dialog title="提示" :visible.sync="dialogVisible" :before-close="handleClose">
                 <span>这是一段信息</span>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="dialogVisible = false">取 消</el-button>
@@ -319,7 +318,7 @@ export default {
         //   res.data.relationGoods
         // );
         this.goodsImg = res.data.goodsData.img_detalis_list;
-        console.log(this.goodsImg)
+        console.log(this.goodsImg);
       });
       // getGoods(data).then(res => {
       //   console.log(res.data);
@@ -359,293 +358,295 @@ export default {
   overflow: hidden;
 }
 
-.details-nav-bar {
-  background: transparent;
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  z-index: 100;
-}
+.details {
+  .details-nav-bar {
+    background: transparent;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 100;
+  }
 
-.left i {
-  background: url("../../images/leftsj.png") no-repeat 50%;
-  background-size: 20px 20px;
-  margin: 0;
-  height: 20px;
-  padding: 3px 15px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-}
+  .left i {
+    background: url("../../images/leftsj.png") no-repeat 50%;
+    background-size: 20px 20px;
+    margin: 0;
+    height: 20px;
+    padding: 3px 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
 
-.right .rightsd {
-  background: url("../../images/rightsd.png") no-repeat 50%;
-  background-size: 20px 20px;
-  padding: 3px 15px;
-  width: 20px;
-  height: 20px;
-  border-radius: 20px;
-  background-color: rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 0, 0, 0.1);
-}
-.tab-bar-center {
-  display: flex;
-  /* display: none; */
-}
-.tab-bar-center div {
-  font-size: 14px;
-}
-.tab-bar-center-item {
-  flex: 1;
-}
-.Dprice-m {
-  padding: 12px 18px;
-  background: #fff;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-.Dprice_box {
-  height: 35px;
-  position: relative;
-  margin-top: 12px;
-  margin-bottom: 0;
-  line-height: 20px;
-  font-size: 12px;
-}
-.Dprice_box .dprice {
-  line-height: 30px;
-  color: #f2270c;
-  display: inline-block;
-  font-size: 30px;
-  font-weight: bold;
-  float: left;
-}
-.Dprice_box .free {
-  width: 100px;
-  float: right;
-}
-.Dprice_box .free span {
-  width: 50px;
-  display: block;
-  float: left;
-  font-size: 12px;
-}
-.Dprice_box .free span img {
-  position: absolute;
-  top: 0;
-  width: 18px;
-  height: 18px;
-  margin-left: -10px;
-}
-.Dprice_box .free span:nth-child(2) {
-  float: right;
-}
-.shopMessage {
-  margin-top: 15px;
-}
-.shopMessage .shopname {
-  font-weight: 700;
-  line-height: 21px;
-  color: #262626;
-  font-size: 16px;
-  text-align: left;
-}
-.shopMessage .desc {
-  padding: 18px 0 0;
-  line-height: 1.3;
-  position: relative;
-  font-size: 12px;
-  max-height: 46px;
-  overflow: hidden;
-  color: #666;
-  text-align: left;
-}
-
-.Discount {
-  margin-top: 12px;
-  padding: 0 18px;
-  border-radius: 12px;
-  background-color: #fff;
-  overflow: hidden;
-
-  .Discount-box {
+  .right .rightsd {
+    background: url("../../images/rightsd.png") no-repeat 50%;
+    background-size: 20px 20px;
+    padding: 3px 15px;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  .tab-bar-center {
+    display: flex;
+    /* display: none; */
+  }
+  .tab-bar-center div {
+    font-size: 14px;
+  }
+  .tab-bar-center-item {
+    flex: 1;
+  }
+  .Dprice-m {
+    padding: 12px 18px;
+    background: #fff;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  .Dprice_box {
+    height: 35px;
     position: relative;
-    padding: 18px 20px 5px 38px;
-    font-size: 0;
-    color: #333;
-    word-break: break-word;
+    margin-top: 12px;
+    margin-bottom: 0;
+    line-height: 20px;
+    font-size: 12px;
+  }
+  .Dprice_box .dprice {
+    line-height: 30px;
+    color: #f2270c;
+    display: inline-block;
+    font-size: 30px;
+    font-weight: bold;
+    float: left;
+  }
+  .Dprice_box .free {
+    width: 100px;
+    float: right;
+  }
+  .Dprice_box .free span {
+    width: 50px;
+    display: block;
+    float: left;
+    font-size: 12px;
+  }
+  .Dprice_box .free span img {
+    position: absolute;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    margin-left: -10px;
+  }
+  .Dprice_box .free span:nth-child(2) {
+    float: right;
+  }
+  .shopMessage {
+    margin-top: 15px;
+  }
+  .shopMessage .shopname {
+    font-weight: 700;
+    line-height: 21px;
+    color: #262626;
+    font-size: 16px;
+    text-align: left;
+  }
+  .shopMessage .desc {
+    padding: 18px 0 0;
+    line-height: 1.3;
+    position: relative;
+    font-size: 12px;
+    max-height: 46px;
     overflow: hidden;
-    font-size: 13px;
-    line-height: 18px;
-    height: 200px;
-
-    .title {
-      position: absolute;
-      left: 0;
-      top: 18px;
-      color: #262626;
-      font-weight: 700;
-    }
-    .content {
-      div {
-        margin-bottom: 12px;
-      }
-    }
-    .D-mj {
-      height: 18px;
-      line-height: 0;
-      text-align: left;
-      word-break: break-word;
-      .mj-fir {
-        position: relative;
-        display: inline-block;
-        margin-right: 5px;
-        padding: 0 9px 0 12px;
-        border-top: 1px solid #f2270c;
-        border-bottom: 1px solid #f2270c;
-        height: 16px;
-        line-height: 16px;
-        color: #f2270c;
-        font-size: 10px;
-        &::before {
-          left: 0;
-          width: 7px;
-          content: "";
-          position: absolute;
-          top: -1px;
-          height: 18px;
-          background-image: url("../../images/mj.png");
-          background-size: 15px 18px;
-          background-repeat: no-repeat;
-        }
-        &::after {
-          right: 0;
-          width: 4px;
-          background-position: -11px 0;
-          content: "";
-          position: absolute;
-          top: -1px;
-          height: 18px;
-          background-image: url("../../images/mj.png");
-          background-size: 15px 18px;
-          background-repeat: no-repeat;
-        }
-      }
-      .xyh {
-        color: #fff;
-        margin: 0 8.5px 0 9px;
-        padding: 0 5.5px 0 3px;
-        background-color: #f2270c;
-        &::before {
-          content: "";
-          position: absolute;
-          top: -1px;
-          left: -9px;
-          height: 18px;
-          background-image: url("../../images/xyh.png");
-          background-size: 15px 18px;
-          background-repeat: no-repeat;
-          width: 9px;
-        }
-        &::after {
-          content: "";
-          position: absolute;
-          top: -1px;
-          right: -3.5px;
-          height: 18px;
-          background-image: url("../../images/xyh.png");
-          background-size: 15px 18px;
-          background-repeat: no-repeat;
-          width: 4.5px;
-          background-position: -11px 0;
-        }
-      }
-    }
-    .kuadian {
-      float: left;
-    }
-    .kuadian-k {
-      margin-right: 5px;
-      padding-top: 1px;
-      text-align: left;
-      float: left;
-      em {
-        position: relative;
-        padding: 0 3px;
-        height: 13px;
-        line-height: 13px;
-        font-size: 9px;
-        color: #e4393c;
-        background: #fff;
-        border: 1px solid red;
-        font-style: normal;
-        &::before {
-          border-color: #e4393c;
-          border-radius: 2px;
-        }
-      }
-    }
-    .kuadian-d {
-      float: left;
-    }
+    color: #666;
+    text-align: left;
   }
-}
 
-.Address {
-  margin-top: 12px;
-  padding: 0 18px;
-  border-radius: 12px;
-  background-color: #fff;
-  overflow: hidden;
-  height: 200px;
-}
-.shop-M {
-  margin-top: 12px;
-  padding: 0 18px;
-  border-radius: 12px;
-  background-color: #fff;
-  overflow: hidden;
-  img {
-    width: 100%;
-  }
-  .SH-line {
-    border-top: 1px solid #ddd;
-    text-align: center;
-    height: 6px;
-    margin: 16px 0 10px;
-    h3 {
-      display: inline-block;
-      font-size: 12px;
-      height: 12px;
-      line-height: 12px;
+  .Discount {
+    margin-top: 12px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background-color: #fff;
+    overflow: hidden;
+
+    .Discount-box {
       position: relative;
-      top: -20px;
-      font-weight: 400;
-      padding: 0 20px;
-      background: #fff;
-      color: #666;
-    }
-  }
-  .SH-text {
-    p {
-      font-size: 12px;
-      color: #666;
+      padding: 18px 20px 5px 38px;
+      font-size: 0;
+      color: #333;
+      word-break: break-word;
+      overflow: hidden;
+      font-size: 13px;
       line-height: 18px;
-      b {
-        font-weight: bold;
+      height: 200px;
+
+      .title {
+        position: absolute;
+        left: 0;
+        top: 18px;
+        color: #262626;
+        font-weight: 700;
+      }
+      .content {
+        div {
+          margin-bottom: 12px;
+        }
+      }
+      .D-mj {
+        height: 18px;
+        line-height: 0;
+        text-align: left;
+        word-break: break-word;
+        .mj-fir {
+          position: relative;
+          display: inline-block;
+          margin-right: 5px;
+          padding: 0 9px 0 12px;
+          border-top: 1px solid #f2270c;
+          border-bottom: 1px solid #f2270c;
+          height: 16px;
+          line-height: 16px;
+          color: #f2270c;
+          font-size: 10px;
+          &::before {
+            left: 0;
+            width: 7px;
+            content: "";
+            position: absolute;
+            top: -1px;
+            height: 18px;
+            background-image: url("../../images/mj.png");
+            background-size: 15px 18px;
+            background-repeat: no-repeat;
+          }
+          &::after {
+            right: 0;
+            width: 4px;
+            background-position: -11px 0;
+            content: "";
+            position: absolute;
+            top: -1px;
+            height: 18px;
+            background-image: url("../../images/mj.png");
+            background-size: 15px 18px;
+            background-repeat: no-repeat;
+          }
+        }
+        .xyh {
+          color: #fff;
+          margin: 0 8.5px 0 9px;
+          padding: 0 5.5px 0 3px;
+          background-color: #f2270c;
+          &::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: -9px;
+            height: 18px;
+            background-image: url("../../images/xyh.png");
+            background-size: 15px 18px;
+            background-repeat: no-repeat;
+            width: 9px;
+          }
+          &::after {
+            content: "";
+            position: absolute;
+            top: -1px;
+            right: -3.5px;
+            height: 18px;
+            background-image: url("../../images/xyh.png");
+            background-size: 15px 18px;
+            background-repeat: no-repeat;
+            width: 4.5px;
+            background-position: -11px 0;
+          }
+        }
+      }
+      .kuadian {
+        float: left;
+      }
+      .kuadian-k {
+        margin-right: 5px;
+        padding-top: 1px;
+        text-align: left;
+        float: left;
+        em {
+          position: relative;
+          padding: 0 3px;
+          height: 13px;
+          line-height: 13px;
+          font-size: 9px;
+          color: #e4393c;
+          background: #fff;
+          border: 1px solid red;
+          font-style: normal;
+          &::before {
+            border-color: #e4393c;
+            border-radius: 2px;
+          }
+        }
+      }
+      .kuadian-d {
+        float: left;
       }
     }
   }
-}
-.el-tabs__active-bar {
-  transform: translateX(136px);
-}
-.el-tabs__item {
-  padding: 0 40px;
-}
-.el-dialog{
-  width:100%;
-  margin-top:69vh;
+
+  .Address {
+    margin-top: 12px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background-color: #fff;
+    overflow: hidden;
+    height: 200px;
+  }
+  .shop-M {
+    margin-top: 12px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background-color: #fff;
+    overflow: hidden;
+    img {
+      width: 100%;
+    }
+    .SH-line {
+      border-top: 1px solid #ddd;
+      text-align: center;
+      height: 6px;
+      margin: 16px 0 10px;
+      h3 {
+        display: inline-block;
+        font-size: 12px;
+        height: 12px;
+        line-height: 12px;
+        position: relative;
+        top: -20px;
+        font-weight: 400;
+        padding: 0 20px;
+        background: #fff;
+        color: #666;
+      }
+    }
+    .SH-text {
+      p {
+        font-size: 12px;
+        color: #666;
+        line-height: 18px;
+        b {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  .el-tabs__active-bar {
+    transform: translateX(136px);
+  }
+  .el-tabs__item {
+    padding: 0 40px;
+  }
+  .el-dialog {
+    width: 100%;
+    margin-top: 69vh;
+  }
 }
 </style>

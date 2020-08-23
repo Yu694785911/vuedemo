@@ -164,6 +164,7 @@ export default {
             this.$router.push('/profile')
           });
         });
+        this.$store.state.userInfo.id=3
       }
     },
     // 创建本地存储存自动登录码的方法

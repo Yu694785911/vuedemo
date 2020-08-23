@@ -135,9 +135,9 @@
             <dt class="shop_name">
               <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
               {{i.shop_name}}
-              <span>
+              <span >
                 已签收|
-                <img src="../../images/del.png" @click="deleteOrder()" />
+                <img src="../../images/del.png" v-for="m in aada" :key="m" @click="deleteOrder(m.id)" />
               </span>
             </dt>
             <dd class="cart-goods">
@@ -167,47 +167,16 @@
             </dd>
           </dl>
         </el-tab-pane>
-        <!-- <el-tab-pane label="已完成" name="fiveth">﹀</el-tab-pane> -->
       </el-tabs>
       <div>
-        <!-- <dl class="dlData" v-for="(i,j) in myOrdershop" :key="j">
-          <dt class="shop_name">
-            <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
-            {{i.shop_name}}
-          </dt>
-          <dd class="cart-goods">
-            <img :src="$store.state.urlPath+'/goods/'+i.img_cover" alt="图片" />
-
-            <div>
-              <p class="title">
-                {{i.goods_name}}
-                <br />
-              </p>
-
-              <p class="norm" v-on:click.stop="checkNorm(i)">
-                <span>共{{i.num}}件商品</span>
-                <span>
-                  应付金额
-                  <i>{{i.num*i.money_now |changePrice("￥")}}</i>
-                </span>
-                <br />
-              </p>
-
-              <p class="money_now">
-                <em>剩余支付时间：11.00</em>
-                <el-button type="danger" round>去支付</el-button>
-                <br />
-              </p>
-            </div>
-          </dd>
-        </dl>-->
+       
       </div>
     </scroll>
   </div>
 </template>
 
 <script>
-import { getOrder, getOrderByOrderId } from "network/order";
+import { getOrder, getOrderByOrderId,deleteOrder } from "network/order";
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
 export default {
@@ -217,7 +186,8 @@ export default {
       activeName: "first",
       paySuccess: [],
       payfail: null,
-      all: []
+      all: [],
+      aada:''
     };
   },
   components: {
@@ -226,6 +196,7 @@ export default {
   },
   computed: {},
   created() {
+    // this.$store.state.userInfo.id=3;
     console.log(this.$store.state.userInfo.id);
     getOrder({ user_id: this.$store.state.userInfo.id }).then(res => {
       for (var i = 0; i < res.data.length; i++) {
@@ -237,6 +208,7 @@ export default {
 
     getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(res => {
       console.log(res.data);
+      this.aada=res.data
       for (var i = 0; i < res.data.length; i++) {
         // console.log(res.data[i].id);
         getOrderByOrderId(res.data[i].id).then(res => {
@@ -269,20 +241,12 @@ export default {
     },
 
 
-    deleteOrder() {
-      alert("a")
-      // getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(
-      //   res => {
-      //     console.log(res.data);
-      //     for (var i = 0; i < res.data.length; i++) {
-      //       console.log(res.data[i].id);
-
-      //       deleteOrder(res.data[i].id).then(res => {
-      //         console.log(res);
-      //       });
-      //     }
-      //   }
-      // );
+    deleteOrder(id) {
+      alert("a");
+      console.log(id);
+       deleteOrder({order_id:id}).then(res => {
+              console.log(res);
+        });
     }
   },
   filters: {

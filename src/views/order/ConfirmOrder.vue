@@ -1,6 +1,6 @@
 <template>
   <div class="confirmorder" style="background:#f2f2f2">
-    <scroll id="OrderScroll" >
+    <scroll id="OrderScroll">
       <nav-bar class="OrderNavBar" ref="OrderNavBar">
         <div slot="left" class="left" v-on:click="$router.go(-1)">
           <i class="el-icon-arrow-left"></i>
@@ -12,15 +12,14 @@
 
       <!-- 地址页 -->
       <div class="Order-address">
-        <div
-          v-if="userInfo.Addressname==null && userInfo.Addressphone==null && userInfo.Addressxx==null"
-        >
+        <div v-if="userInfo==null">
           <button class="addAddress" @click="toAddress">请添加地址</button>
         </div>
 
         <ul v-else @click="toAddress">
-          <li class="co_name">{{userInfo.Addressname}}{{userInfo.Addressphone | changeTel(userInfo.Addressphone)}}</li>
-          <li>{{userInfo.Addressxx}}</li>
+          <li class="co_name">
+            {{defaddr.takeover_name}}{{defaddr.takeover_tel | changeTel(userInfo.Addressphone)}}</li>
+          <li>{{defaddr.takeover_addr}}</li>
         </ul>
       </div>
 
@@ -149,7 +148,10 @@ export default {
   },
   methods: {
     toAddress() {
-      this.$router.push("/address");
+      this.$router.push("/newaddress");
+      console.log(document.querySelector(".addAddress"));
+      document.querySelector(".order-con").style.display = "none";
+      document.querySelector(".newAddress").style.display = "block";
     },
     open() {
       // const zaixianPay=require("../../images/warning.png");
@@ -203,19 +205,23 @@ export default {
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
+    },
+    defaddr(){
+      return this.$store.state.userInfo.defaddr;
     }
   },
   created() {
     // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
     // JSON.parse() 方法把字符串数据转换为原来的类型
     this.shop = JSON.parse(this.$route.params.shop);
+    console.log(this.$store.state.userInfo.defaddr);
   },
   filters: {
     changePrice(val, str = "$") {
       return str + Number(val).toFixed(2);
     },
-    changeTel(val){
-        return val.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2');
+    changeTel(val) {
+      return val.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
     }
   },
   mounted() {}
@@ -520,6 +526,9 @@ export default {
       background: url("../../images/logo.png") no-repeat;
       background-size: 100%;
     }
+  }
+  .newAddress {
+    display: none;
   }
 }
 .el-message-box {

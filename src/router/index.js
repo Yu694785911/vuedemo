@@ -173,8 +173,16 @@ const routes = [
     },
     component: () => import("views/register/child/country")
   },
+  {
+    path: '/newaddress',
+    name: "newaddress",
+    meta: {
+      title: "新增地址"
+    },
+    component: () => import("views/address/newAddress")
+  },
   {//地址
-    path: '/address',
+    path: '/address/:id',
     mata: {
       title: "地址页"
     },
