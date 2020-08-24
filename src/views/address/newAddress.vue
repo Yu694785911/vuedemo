@@ -10,15 +10,14 @@
     </nav-bar>
     <div class="newAdd">
       <ul v-for="(i,j) in getaddress" :key="j">
-        <img src="../../images/dui.png" alt v-if="i.default==1"/>
-        <img src="../../images/no.png" alt v-if="i.default==0"/>
+        <input type="radio" name="a" style="float:left;margn-top:10%;" @click="changedef(i.id)" :checked="i.default==1">
         <li class="name">
           <strong>{{i.takeover_name}}</strong>
           <strong>{{i.takeover_tel | changeTel(i.takeover_tel)}}</strong>
         </li>
         <br />
         <li>{{i.takeover_addr}}</li>
-        <li class="edit" @click="Edit">编辑</li>
+        <li class="edit" @click="Edit(i.id)">编辑</li>
       </ul>
 
       <el-button type="danger" round @click="newAddress">新增收货地址</el-button>
@@ -28,7 +27,7 @@
 
 <script>
 import NavBar from "components/common/navbar/NavBar";
-import { getuserAddress, updateuserAddress } from "network/address";
+import { getuserAddress,updateuserAddressdef } from "network/address";
 
 export default {
   name: "newaddress",
@@ -56,25 +55,34 @@ export default {
       this.$router.go(-1);
     },
     newAddress() {
-      this.$router.push("/address/1");
+      this.$router.push("/address/0/0");
     },
-    Edit() {
+    changedef(defid){
+      updateuserAddressdef({address_id:defid,user_id:this.$store.state.userInfo.id}).then(res => {
+        console.log(res);
+      });
+
+    },
+    Edit(addid) {
       console.log(this.$store.state.userInfo.id);
       getuserAddress({ user_id: this.$store.state.userInfo.id }).then(res => {
-        console.log(res.data[0]);
-        var message=res.data[0];
-        let data={
-          address_id:message.id,
-          takeover_tel:message.takeover_tel,
-          takeover_name:message.takeover_name,
-          takeover_addr:message.takeover_addr
+        console.log(res);
+        // var message=res.data[0];
+        // console.log(a);
+        // let data={
+        //   user_id:this.$store.state.userInfo.id,
+        //   address_id:message.id,
+        //   takeover_tel:message.takeover_tel,
+        //   takeover_name:message.takeover_name,
+        //   takeover_addr:message.takeover_addr,
+        //   default:1
 
-        }
-        updateuserAddress(data).then(res => {
-          console.log(res);
-        });
+        // }
+        // updateuserAddress(data).then(res => {
+        //   console.log(res);
+        // });
       });
-      this.$router.push("/address/0");
+      this.$router.push("/address/1/"+addid);
     }
   },
   filters: {

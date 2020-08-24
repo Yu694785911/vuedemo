@@ -41,6 +41,7 @@ export function autoLand(data) {
     })
 }
 
+// 验证手机号
 export function regPhone(params) {
     return request({
         url: "vuedemo/land_have_telphone",

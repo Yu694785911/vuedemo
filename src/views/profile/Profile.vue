@@ -217,7 +217,22 @@ export default {
       this.$router.push(path);
     },
     tomyOrder(){
-      this.$router.push("/myorder")
+      // if(this.$store.state.userInfo.id){
+      //   this.$router.push("/myorder")
+      // }else{
+      //   this.$router.push("/login")
+      // }
+    
+    console.log(this.$store.state.userInfo)
+      
+    if (this.$store.state.userInfo != null) {
+      this.$router.push("/myorder");
+    } else if ( this.$store.state.userInfo == null) {
+      this.$router.push("/login");
+    }
+
+
+      
     },
     routerTo(path){
       this.$store.commit(ROUTERTO,path);

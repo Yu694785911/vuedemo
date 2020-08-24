@@ -18,8 +18,8 @@
 
         <ul v-else @click="toAddress">
           <li class="co_name">
-            {{defaddr.takeover_name}}{{defaddr.takeover_tel | changeTel(userInfo.Addressphone)}}</li>
-          <li>{{defaddr.takeover_addr}}</li>
+            大漂亮1321232211</li>
+          <li>北京北京北京</li>
         </ul>
       </div>
 
@@ -149,9 +149,9 @@ export default {
   methods: {
     toAddress() {
       this.$router.push("/newaddress");
-      console.log(document.querySelector(".addAddress"));
-      document.querySelector(".order-con").style.display = "none";
-      document.querySelector(".newAddress").style.display = "block";
+      // console.log(document.querySelector(".addAddress"));
+      // document.querySelector(".order-con").style.display = "none";
+      // document.querySelector(".newAddress").style.display = "block";
     },
     open() {
       // const zaixianPay=require("../../images/warning.png");
@@ -214,7 +214,7 @@ export default {
     // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
     // JSON.parse() 方法把字符串数据转换为原来的类型
     this.shop = JSON.parse(this.$route.params.shop);
-    console.log(this.$store.state.userInfo.defaddr);
+  console.log( this.$store.state.userInfo)
   },
   filters: {
     changePrice(val, str = "$") {

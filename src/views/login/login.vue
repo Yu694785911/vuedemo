@@ -85,6 +85,7 @@
 <script>
 import NavBar from "components/common/navbar/NavBar.vue";
 import { Land, autoLand, register } from "network/login";
+import { POST_SHOPCART,SET_USERINFO} from "store/mutation-types";
 export default {
   name: "profile",
   data() {
@@ -134,16 +135,18 @@ export default {
           console.log(res);
 
           // 渲染用户
-          this.$store.state.userInfo = res.data.user;
+          // this.$store.state.userInfo = res.data.user;
           // 渲染用户默认配送地址
-          this.$store.state.defaddr = res.data.defaddr;
+          // this.$store.state.defaddr = res.data.defaddr;
           // 跳转指定页面
-          
+          this.$store.commit(SET_USERINFO,res)
           this.setLocalStorageAutoCode(res.data.user.auto_code);
           //  this.$router.push('/home')
 
-          
-            this.$router.push(this.$store.state.loginHistory);
+          // 获取购物车数据
+          this.$store.commit(POST_SHOPCART,res.data.user.id);
+          // 跳转页面
+          this.$router.push(this.$store.state.loginHistory);
 
           // 自动登陆码
           autoLand({autocode:res.data.user.autocode}).then(res => {

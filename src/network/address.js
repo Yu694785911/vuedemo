@@ -5,15 +5,14 @@ import { request } from "./request"
 
 
 // 获取省
-export function getProvinces(params) {
+export function getProvinces() {
     return request({
         url: "/vuedemo/get_provinces",
-        params
     })
 }
 
 // 获取市
-export function getCity(params) {
+export function getCities(params) {
     return request({
         url: "/vuedemo/get_cities",
         params
