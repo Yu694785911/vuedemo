@@ -182,7 +182,7 @@ const routes = [
     component: () => import("views/address/newAddress")
   },
   {//地址 //0新增  >0修改
-    path: '/address/:code/:addid',
+    path: '/address/:code',
     mata: {
       title: "地址页"
     },

@@ -9,14 +9,17 @@
       </div>
     </nav-bar>
     <div class="newAdd">
-      <ul v-for="(i,j) in getaddress" :key="j">
-        <input type="radio" name="a" style="float:left;margn-top:10%;" @click="changedef(i.id)" :checked="i.default==1">
+      <ul v-for="(i,j) in getaddress" :key="j" >
+        <div @click="updataDef(i)">
+          <input type="radio" name="a" style="float:left;margn-top:10%;" @click="changedef(i.id)" :checked="i.default==1">
         <li class="name">
           <strong>{{i.takeover_name}}</strong>
           <strong>{{i.takeover_tel | changeTel(i.takeover_tel)}}</strong>
         </li>
         <br />
         <li>{{i.takeover_addr}}</li>
+        </div>
+        
         <li class="edit" @click="Edit(i.id)">编辑</li>
       </ul>
 
@@ -55,7 +58,7 @@ export default {
       this.$router.go(-1);
     },
     newAddress() {
-      this.$router.push("/address/0/0");
+      this.$router.push("/address/0");
     },
     changedef(defid){
       updateuserAddressdef({address_id:defid,user_id:this.$store.state.userInfo.id}).then(res => {
@@ -63,26 +66,19 @@ export default {
       });
 
     },
+    updataDef(val){
+      this.$store.state.shoppingAddress=val;
+      this.$router.go(-1);
+    },
     Edit(addid) {
       console.log(this.$store.state.userInfo.id);
       getuserAddress({ user_id: this.$store.state.userInfo.id }).then(res => {
         console.log(res);
-        // var message=res.data[0];
-        // console.log(a);
-        // let data={
-        //   user_id:this.$store.state.userInfo.id,
-        //   address_id:message.id,
-        //   takeover_tel:message.takeover_tel,
-        //   takeover_name:message.takeover_name,
-        //   takeover_addr:message.takeover_addr,
-        //   default:1
-
-        // }
-        // updateuserAddress(data).then(res => {
-        //   console.log(res);
-        // });
       });
-      this.$router.push("/address/1/"+addid);
+      console.log(addid);
+      this.$store.state.addid=addid;
+      console.log(this.$store.state.addid)
+      this.$router.push("/address/1");
     }
   },
   filters: {

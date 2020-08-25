@@ -12,14 +12,14 @@
 
       <!-- 地址页 -->
       <div class="Order-address">
-        <div v-if="userInfo==null">
+        <div v-if="$store.state.shoppingAddress==null">
           <button class="addAddress" @click="toAddress">请添加地址</button>
         </div>
 
         <ul v-else @click="toAddress">
           <li class="co_name">
-            大漂亮1321232211</li>
-          <li>北京北京北京</li>
+            {{shoppingAddress.takeover_name}}{{shoppingAddress.takeover_tel|changeTel(shoppingAddress.takeover_tel)}}</li>
+          <li>{{shoppingAddress.takeover_addr}}</li>
         </ul>
       </div>
 
@@ -146,6 +146,10 @@ export default {
       }
     };
   },
+   beforeRoter(from,next){
+    this.$store.state.configOrderHistory=from.path
+    next();
+  },
   methods: {
     toAddress() {
       this.$router.push("/newaddress");
@@ -190,8 +194,11 @@ export default {
               this.$router.push("/profile");
               return;
             }
-            this.$store.state.shopcart = {};
-            this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
+            // this.$store.state.shopcart = {};
+            // this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
+
+            // 提交订单成功后，把默认的配送地址取回来，放到购物车页面
+            this.$store.state.shoppingAddress=this.$store.state.userInfo.defaddr;
             this.$router.push("/payment/" + res.data.order_id);
           });
         }
@@ -208,13 +215,16 @@ export default {
     },
     defaddr(){
       return this.$store.state.userInfo.defaddr;
+    },
+    shoppingAddress(){
+      return this.$store.state.shoppingAddress;
     }
   },
   created() {
     // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
     // JSON.parse() 方法把字符串数据转换为原来的类型
     this.shop = JSON.parse(this.$route.params.shop);
-  console.log( this.$store.state.userInfo)
+  console.log(this.$store.state.shoppingAddress)
   },
   filters: {
     changePrice(val, str = "$") {
@@ -224,7 +234,7 @@ export default {
       return val.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
     }
   },
-  mounted() {}
+ 
 };
 </script>
 <style lang='less'>

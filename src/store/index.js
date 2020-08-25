@@ -56,6 +56,9 @@ const state = {
   area_code: "86",
   areacodeHistory:'/home',//记录一下离开页面时的路由地址，默认地址为/home
   loginHistory:'/home',
+  shoppingAddress:null,
+  configOrderHistory:null,//记录离开页面的时候的路由地址
+  addid:null,
 }
 const x = new Vuex.Store({
   state,      //状态管理数据

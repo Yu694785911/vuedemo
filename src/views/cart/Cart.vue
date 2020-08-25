@@ -39,7 +39,7 @@
           <div class="ADD">
             <div class="ADD-bar">
               <div class="ADD-bar-first">
-                <div class="ADD-bar-first-text">{{$store.state.ShippingAddress}}</div>
+                <div class="ADD-bar-first-text">{{address}}</div>
               </div>
               <span class="ADD-btn">编辑商品</span>
             </div>
@@ -257,7 +257,8 @@ export default {
       return this.$store.state.urlPath;
     },
     address() {
-      return this.$store.state.ShoppingAddress;
+      // 取出地址中的指定默认配送地址
+     return this.$store.state.shoppingAddress.takeover_addr.split(",").join(' ');
     },
     shopCart() {
       return this.$store.state.shopCart;

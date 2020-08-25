@@ -105,6 +105,7 @@ export default {
     }
     
     state.userInfo.defaddr=payload.data.defaddr;
+    state.shoppingAddress=payload.data.defaddr;
     window.localStorage.setItem(path,payload.data.user.autocode);
   }
 }
