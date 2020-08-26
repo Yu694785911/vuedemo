@@ -34,7 +34,7 @@
         <el-tab-pane label="全部" name="first">
           <dl class="dlData" v-for="(i,j) in all" :key="j">
             <dt class="shop_name">
-              <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
+              <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
             </dt>
             <dd class="cart-goods">
@@ -67,7 +67,7 @@
         <el-tab-pane label="代付款" name="second">
           <dl class="dlData" v-for="(i,j) in payfail" :key="j">
             <dt class="shop_name">
-              <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
+              <img src="../../images/dianpu.png" alt class="shopImg"  />
               {{i.shop_name}}
             </dt>
             <dd class="cart-goods">
@@ -100,7 +100,7 @@
         <el-tab-pane label="待收货" name="third">
           <dl class="dlData" v-for="(i,j) in paySuccess" :key="j">
             <dt class="shop_name">
-              <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
+              <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
             </dt>
             <dd class="cart-goods">
@@ -123,7 +123,7 @@
 
                 <p class="money_now">
                   <em>剩余支付时间：11.00</em>
-                  <el-button type="danger" round>再次购买</el-button>
+                  <el-button type="danger" round @click="confimshou">确认收货</el-button>
                   <br />
                 </p>
               </div>
@@ -133,11 +133,11 @@
         <el-tab-pane label="已完成" name="fourth">
           <dl class="dlData" v-for="(i,j) in paySuccess" :key="j">
             <dt class="shop_name">
-              <img src="../../images/dianpu.png" alt style="width:20px;height:20px;" />
+              <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
-              <span >
+              <span>
                 已签收|
-                <img src="../../images/del.png" v-for="m in aada" :key="m" @click="deleteOrder(m.id)" />
+                <img src="../../images/del.png" @click="deleteOrder()" />
               </span>
             </dt>
             <dd class="cart-goods">
@@ -160,7 +160,7 @@
 
                 <p class="money_now">
                   <em>剩余支付时间：11.00</em>
-                  <el-button type="danger" round>再次购买</el-button>
+                  <el-button type="danger" round @click="buymore(i.goods_id)">再次购买</el-button>
                   <br />
                 </p>
               </div>
@@ -168,15 +168,13 @@
           </dl>
         </el-tab-pane>
       </el-tabs>
-      <div>
-       
-      </div>
+      <div></div>
     </scroll>
   </div>
 </template>
 
 <script>
-import { getOrder, getOrderByOrderId,deleteOrder } from "network/order";
+import { getOrder, getOrderByOrderId, deleteOrder } from "network/order";
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
 export default {
@@ -187,7 +185,6 @@ export default {
       paySuccess: [],
       payfail: null,
       all: [],
-      aada:''
     };
   },
   components: {
@@ -196,8 +193,6 @@ export default {
   },
   computed: {},
   created() {
-    // this.$store.state.userInfo.id=3;
-    console.log(this.$store.state.userInfo.id);
     getOrder({ user_id: this.$store.state.userInfo.id }).then(res => {
       for (var i = 0; i < res.data.length; i++) {
         getOrderByOrderId(res.data[i].id).then(res => {
@@ -207,10 +202,7 @@ export default {
     });
 
     getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(res => {
-      console.log(res.data);
-      this.aada=res.data
       for (var i = 0; i < res.data.length; i++) {
-        // console.log(res.data[i].id);
         getOrderByOrderId(res.data[i].id).then(res => {
           this.paySuccess.push(res.data[0]);
         });
@@ -218,7 +210,6 @@ export default {
     });
 
     getOrder({ user_id: this.$store.state.userInfo.id, state: 1 }).then(res => {
-      console.log(res.data);
       for (var i = 0; i < res.data.length; i++) {
         getOrderByOrderId(res.data[i].id).then(res => {
           this.payfail = res.data;
@@ -239,14 +230,22 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-
-
-    deleteOrder(id) {
-      alert("a");
-      console.log(id);
-       deleteOrder({order_id:id}).then(res => {
-              console.log(res);
-        });
+    buymore(id){
+      this.$router.push('/details/'+id)
+    },
+    confimshou(){
+      // 修改
+    },
+    deleteOrder() {
+      console.log("a");
+      getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(
+        res => {
+          console.log(res.data);
+        }
+      );
+      deleteOrder().then(res => {
+        console.log(res);
+      });
     }
   },
   filters: {
@@ -309,6 +308,14 @@ dt {
       height: 15px;
       margin-left: 3px;
     }
+  }
+  img.shopImg {
+    width: 20px;
+    height: 20px;
+    display: block;
+    float: left;
+    margin-top: 5px;
+    margin-right: 5px;
   }
 }
 dd {

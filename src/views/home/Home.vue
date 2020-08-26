@@ -3,7 +3,7 @@
     <nav-bar class="home-nav-bar">
       <div slot="left">
         <a
-          :href="'http://localhost:8080/#/category'"
+          :href="'http://localhost:8080/category'"
           style="border-top: 10px double #fff;width: 23px;padding-top: 5px;border-bottom: 3px solid #fff;margin-top: 13px;
 margin-left: 8px;display:block;"
         ></a>
