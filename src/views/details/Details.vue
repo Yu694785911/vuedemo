@@ -114,7 +114,11 @@
         </div>
       </div>
 
-      <div class="Address">地址</div>
+      <div class="Address">
+        地址
+        <h4>{{addr}}</h4>
+        <p>{{getDistributionTime}}</p>
+      </div>
 
       <div class="Address">评价</div>
 
@@ -244,7 +248,9 @@ export default {
       },
       detailsGoods: {},
       titleArr: ["商品", "评价", "详情", "推荐"],
-      goodsImg: null
+      goodsImg: null,
+      shopCeatgory: "自营",
+      aa: true //本地还是异地  true-本地   false-异地
     };
   },
   components: {
@@ -253,7 +259,66 @@ export default {
     NavBar,
     DetailsTabBar
   },
-  computed: {},
+  computed: {
+    addr() {
+      let address = this.$store.state.shoppingAddress.takeover_addr;
+      address = address.split(",");
+      address.pop();
+      let temp = [];
+      for (let i of address) {
+        if (temp.indexOf(i) == -1) {
+          temp.push(i);
+        }
+      }
+
+      if (temp.length == 3) temp.pop();
+      return temp.join(" ");
+    },
+    getDistributionTime() {
+      let nowTime = new Date();
+      let h = nowTime.getHours();
+      let temp = "";
+      // let nowMonth = nowTime.getMonth();
+      // let nowDate = nowTime.getDate();
+      // console.log(nowMonth + 1);
+
+      if (this.shopCeatgory == "自营") {
+        if (this.aa) {
+          if (h >= 0 && h < 11) {
+            temp = `在11:00前下单，预计今天送达`;
+          }
+          if (h > 11 && h < 23) {
+            temp = `在23:00前下单，预计明天(${this.setDate(nowTime,1)})送达`;
+          }
+          if (h >= 23) {
+            temp = `在明天(11:00)下单，预计明天(${this.setDate(nowTime,1)})17:00送达`;
+          }
+        } else {//异地配送+2
+          //个体
+          if (h >= 0 && h < 11) {
+            temp = `在11:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,2)})送达`;
+          }
+          if (h > 11 && h < 23) {
+            temp = `在23:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
+          }
+          if (h >= 23) {
+            temp = `在明天(11:00)下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})17:00前送达`;
+          }
+        }
+      } else {
+        if (h >= 0 && h < 11) {
+          temp = `在11:00前下单，预计送达`;
+        }
+        if (h > 11 && h < 23) {
+          temp = `在23:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
+        }
+        if (h >= 23) {
+          temp = `在明天(11:00)下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
+        }
+      }
+      return temp;
+    }
+  },
   created() {
     console.log("details被创建");
     this.getdata.exact.id = this.$route.params.id;
@@ -277,6 +342,9 @@ export default {
         $(".details-nav-bar").css("background-color", "transparent");
       }
     });
+
+    this.setDate();
+    this.setWeek();
   },
   activated() {
     console.log("details处于活跃");
@@ -334,6 +402,39 @@ export default {
     },
     tabbarToggle(a, b) {
       $("html,body").animate({ scrollTop: 800 * b }, 500);
+    },
+    // 从新获取日期
+    setDate(nowTime=new Date(),day=3){
+      let temp=new Date(nowTime.getTime()+day*24*60*60*1000);
+      temp=`${temp.getMonth()+1}月${temp.getDate()}日`;
+      console.log(temp);
+      return temp;
+    },
+
+    // 重新获取星期几
+    setWeek(nowTime=new Date(),day=15){
+      let nowWeek=nowTime.getDay();
+      let temp=""
+      if((nowWeek+day)>7){
+        temp=`下周${num(nowWeek+day-7)}`
+      }else{
+        temp=`本周${num(nowWeek+day)}`
+      }
+
+      function num(val){
+        let a=""
+        switch(val%7){
+          case 1:a="一";break;
+          case 2:a="二";break;
+          case 3:a="三";break;
+          case 4:a="四";break;
+          case 5:a="五";break;
+          case 6:a="六";break;
+          case 7:a="七";break;
+        }
+        return a;
+      }
+      return temp;
     }
   },
   filters: {

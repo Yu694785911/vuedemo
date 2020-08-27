@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="keyword">
     <nav-bar class="home-nav-bar">
       <div slot="left" class="left" @click="$router.go(-1)">&lt;</div>
       <div slot="center">
@@ -12,7 +12,7 @@
 
     <div class="keybox">
       <ul>
-        <li v-for="item in searchData" :key="item" @click="searchDetail(item.id)">
+        <li v-for="item in keywordData" :key="item" @click="searchDetail(item.id)">
           <span>{{item.name}}</span>
         </li>
       </ul>
@@ -92,7 +92,7 @@ import { get_jd_category_three } from "network/category";
 import { getGoods } from "network/order";
 
 export default {
-  name: "search",
+  name: "keyword",
   data() {
     return {
       aww: true,
@@ -100,7 +100,7 @@ export default {
       keywordName: [],
       jd_category_three: [],
       searchName: [],
-      searchData: []
+      keywordData: []
     };
   },
   components: {
@@ -145,7 +145,9 @@ export default {
       this.searchName.forEach(i => {
         if (newVal == (i.name).substr(0, 1)) {
           document.querySelector(".keybox").style.display = "block";
-          this.searchData.push(i);
+          this.keywordData.push(i);
+          this.$store.state.searchData=this.keywordData;
+          console.log(this.$store.state.searchData)
         }
       });
       console.log(newVal);
@@ -162,7 +164,7 @@ export default {
 };
 </script>
 <style lang="less">
-.search {
+.keyword {
   .left {
     width: 50px;
   }
