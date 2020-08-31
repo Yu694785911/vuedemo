@@ -42,6 +42,7 @@
       <router-link tag="button" to="/cart">
         <span>加入购物车</span>
       </router-link>
+      
       <router-link tag="button" to="payload" class="payload">
         <span>立即购买</span>
       </router-link>

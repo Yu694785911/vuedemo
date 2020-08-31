@@ -404,6 +404,7 @@ export default {
         createuserAdd(data).then(res => {
           if (res.code != 200) return;
           this.$store.state.shoppingAddress = data;
+          localStorage.setItem("address",data);
           console.log(this.$store.state.shoppingAddress);
 
           if (!this.$store.state.configOrderHistory) this.$router.push("/cart");
@@ -418,6 +419,8 @@ export default {
           if (res.code != 200) return;
           console.log(res);
           this.$store.state.shoppingAddress = data;
+          console.log(this.$store.state.shoppingAddress.takeover_addr);
+          localStorage.setItem("address",data.takeover_addr);
 
           if (!this.$store.state.configOrderHistory) this.$router.push("/cart");
           this.$router.push(this.$store.state.configOrderHistory);

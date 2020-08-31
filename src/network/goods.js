@@ -54,3 +54,10 @@ export function getGoodsId(id){
 //     this.shopInfo=shopInfo;
 //   }
 // }
+
+export function getGoodsSevaluate(params){
+  return request({
+      url:"/vuedemo/get_goods_sevaluate",
+      params
+  })
+}

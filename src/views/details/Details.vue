@@ -1,5 +1,5 @@
 <template>
-  <div class="details" style="background:#f2f2f2">
+  <div class="details" style="background:#f2f2f2" v-loading="loading">
     <nav-bar class="details-nav-bar">
       <div slot="left" @click="back" class="left">
         <i></i>
@@ -33,7 +33,8 @@
       <details-rotation :cgoodsImg="goodsImg"></details-rotation>
       <div class="Dprice-m">
         <div class="Dprice_box">
-          <div class="dprice">{{detailsGoods.money_now|changePrice("$")}}</div>
+          <div class="dprice">{{detailsGoods.newPrice|changePrice("$")}}</div>
+          <div class="oprice">{{detailsGoods.oldPrice|changePrice("$")}}</div>
           <div class="free">
             <span style>
               <a href>
@@ -50,7 +51,11 @@
           </div>
         </div>
         <div class="shopMessage">
-          <div class="shopname">{{detailsGoods.name}}</div>
+          <span
+            v-if="detailsGoods.category=='个体'"
+            style="background-color:red;color:#fff"
+          >{{detailsGoods.category}}</span>
+          <div class="shopname">{{detailsGoods.title}}</div>
           <div class="desc">
             放心去喜欢，天然实木画框，手工装裱，安装方便，售后无忧！更多装饰画请点击！
             <a>查看！</a>
@@ -67,26 +72,12 @@
               <span class="mj-fir">满30减6</span>
               <span class="mj-fir">满30减6</span>
               <span class="mj-fir xyh">新用户专享</span>
-              <!-- <el-button @click="drawer = true" style="margin-left: 26px;padding:0">...</el-button> -->
 
-              <!-- <el-drawer
-                title="我是标题"
-                :visible.sync="drawer"
-                :direction="direction"
-                :before-close="handleClose"
-              >
-                <span>我来啦!</span>
-              </el-drawer>
-              </div>-->
+              <el-button type="text" @click="dialogVisible = true" style="margin-left: 40px;">...</el-button>
 
-              <el-button type="text" @click="dialogVisible = true">...</el-button>
-
-              <el-dialog title="提示" :visible.sync="dialogVisible" :before-close="handleClose">
-                <span>这是一段信息</span>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-                </span>
+              <el-dialog title="优惠" :visible.sync="dialogVisible" :before-close="handleClose">
+                <span>促销</span>
+                <span>赠下方的热销商品（条件：购买1件及以上，赠完即止）</span>
               </el-dialog>
             </div>
 
@@ -115,16 +106,152 @@
       </div>
 
       <div class="Address">
-        地址
-        <h4>{{addr}}</h4>
-        <p>{{getDistributionTime}}</p>
+        <div class="Address_box">
+          <span>已选</span>
+          <p class="fuwu">本商品支持保障服务,点击可选服务</p>
+          <el-button
+            type="text"
+            @click="open('Selected')"
+            style="display:block;padding:0;padding-left:20%"
+          >...</el-button>
+
+          <el-dialog title="已选" :visible.sync="Selected" :before-close="handleClose">
+            <div v-for="(item,index) in selectNorm" :key="index">
+              <div v-for="(i,j) in item" :key="j">
+                <div>{{j}}</div>
+                <div
+                  v-for="(m,n) in i"
+                  :key="n"
+                  style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
+                >{{m.name}}</div>
+              </div>
+            </div>
+          </el-dialog>
+        </div>
+
+        <div class="Address_box" style="float: left;">
+          <span>送至</span>
+          <div class="toRight">
+            <p class="dizhi">{{addre}}</p>
+            <p class="xianhuo">
+              <span v-if="true">现货</span>
+            </p>
+            <p class="jztime">{{getDistributionTime}}</p>
+            <el-button
+              type="text"
+              @click="open('To') "
+              style="    padding: 0px;margin-top: -37%;float: right;margin-right: 2%;"
+            >...</el-button>
+
+            <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose">
+              <ul style="text-align:left;line-height:20px;font-size:14px;">
+                <!-- 使用过滤器把地址拼接 -->
+                <li
+                  style="padding:10px 0"
+                  v-for="(item,index) in allAddress"
+                  :key="index"
+                >{{item.takeover_addr|changeAddr}}</li>
+              </ul>
+            </el-dialog>
+          </div>
+        </div>
+
+        <div class="Address_box" style="float: left;">
+          <span>运费</span>
+
+          <div class="freight">
+            <p class="free">在线支付免运费</p>
+            <el-button
+              type="text"
+              @click="open('freight') "
+              style="padding: 0;margin-left: 47%;margin-top: 5%;"
+            >...</el-button>
+
+            <el-dialog title="运费" :visible.sync="freight" :before-close="handleClose"></el-dialog>
+            <ul>
+              <li>商家发货售后</li>
+              <li>不支持七天无理由退货</li>
+              <br />
+              <li>闪电退款</li>
+              <li>极速审核</li>
+              <li>可选京东快递</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <div class="Address">评价</div>
+      <div class="evaluate" v-for="item in goodsEvaluates" :key="item">
+        <div class="ev_head">
+          <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
+          <p class="count">1.8万+</p>
+          <p class="haoping">好评度{{item.Highpraise}}</p>
+        </div>
+        <div class="ev_key">
+          <ul>
+            <li>全部</li>
+            <li v-for="i in item.keyword" :key="i">{{i}}</li>
+          </ul>
+        </div>
+        <div class="ev-con">
+          <div class="ev-tou">
+            <img :src="Evpath+item.headImg" alt="">
+            <span>{{item.username}}</span>
+            <p>{{item.evaluationTime}}</p>
+          </div>
+          <div class="ev_detail">
+            <p style="width:100%;padding-left:10%">{{item.evaluationDetails}}</p>
+            <span style="margin-right:5px;padding-left:10%">{{item.evaluationNorm}}:</span>
+            <span>{{item.evaluationShop}}</span>
+            
+          </div>
+        </div>
+        <button v-if="evaluate.length>2" class="more">查看更多评价</button>
+      </div>
 
-      <div class="Address">店铺</div>
+      <div class="Shop">
+        <div class="shop_info">
+          <span class="shop_head"><img v-for="m in goodsEvaluates" :key="m" :src='Evpath+m.headImg'>头像</span>
+          <p class="shopName">{{shopInfo.shopName}}</p>
+          <p class="shop">店铺星级</p>
+        </div>
+        <div class="shop_center">
+          <div class="shop_cl">
+            <p class="num">{{shopInfo.Collection}}</p>
+            <p class="fensi">粉丝人数</p>
+          </div>
+          <div class="shop_cl">
+            <p class="num">{{shopInfo.cGoods}}</p>
+            <p class="fensi">粉丝人数</p>
+          </div>
+          <div class="shop_cr">
+            <ul>
+              <li>
+                评价
+                <span class="green">8.65|低</span>
+              </li>
+              <li>
+                物流
+                <span class="green">8.79|低</span>
+              </li>
+              <li>
+                售后
+                <span class="red">8.94|中</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <button @click="collectionStore" :class="{active:collectionActive}" class="gz">
+          <i></i>关注店铺
+        </button>
+        <button class="jr">
+          <i></i>进入店铺
+        </button>
+      </div>
 
-      <div class="Address">推荐</div>
+      <div class="recommend">
+        推荐
+        <h1>11212</h1>
+      </div>
 
       <div class="shop-M">
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -216,11 +343,16 @@
 import $ from "jquery";
 import Scroll from "components/contents/scroll/Scroll";
 import DetailsRotation from "./childComp/DetailsRotation";
+
 import NavBar from "components/common/navbar/NavBar";
 import DetailsTabBar from "./childComp/DetailsTabBar";
 // 引入商品数据请求
 import { getGoodsId } from "network/goods";
-// import { slide } from "network/slide";
+import { GoodsInfo, ShopInfo, SelectNorm } from "common/utils";
+
+import { getuserAddress } from "network/address";
+import { getGoodsSevaluate } from "network/goods";
+
 export default {
   name: "Details",
   data() {
@@ -236,6 +368,7 @@ export default {
         desc: ""
       },
       path: "http://106.12.85.17:8090/public/image",
+      Evpath: "http://106.12.85.17:8090/public/image/evaluate/",//评价地址
       activeName: "second",
       dialogVisible: false,
       direction: "btt",
@@ -248,9 +381,22 @@ export default {
       },
       detailsGoods: {},
       titleArr: ["商品", "评价", "详情", "推荐"],
-      goodsImg: null,
+      goodsImg: [],
       shopCeatgory: "自营",
-      aa: true //本地还是异地  true-本地   false-异地
+      aa: true, //本地还是异地  true-本地   false-异地
+      shopInfo: null,
+      loading: false,
+      selectNorm: {}, //规格数据
+      // collectionActive:false,//查找用户是否存在改值
+      evaluate: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      Selected: false,
+      freight: false,
+      To: false,
+      addre: "",
+      free_freight: 0, //是否免运费 0 不免  1免
+      shopCategory: "", //个体还是自营
+      // allAddress: null
+      goodsEvaluates: null //评价
     };
   },
   components: {
@@ -259,68 +405,15 @@ export default {
     NavBar,
     DetailsTabBar
   },
-  computed: {
-    addr() {
-      let address = this.$store.state.shoppingAddress.takeover_addr;
-      address = address.split(",");
-      address.pop();
-      let temp = [];
-      for (let i of address) {
-        if (temp.indexOf(i) == -1) {
-          temp.push(i);
-        }
-      }
-
-      if (temp.length == 3) temp.pop();
-      return temp.join(" ");
-    },
-    getDistributionTime() {
-      let nowTime = new Date();
-      let h = nowTime.getHours();
-      let temp = "";
-      // let nowMonth = nowTime.getMonth();
-      // let nowDate = nowTime.getDate();
-      // console.log(nowMonth + 1);
-
-      if (this.shopCeatgory == "自营") {
-        if (this.aa) {
-          if (h >= 0 && h < 11) {
-            temp = `在11:00前下单，预计今天送达`;
-          }
-          if (h > 11 && h < 23) {
-            temp = `在23:00前下单，预计明天(${this.setDate(nowTime,1)})送达`;
-          }
-          if (h >= 23) {
-            temp = `在明天(11:00)下单，预计明天(${this.setDate(nowTime,1)})17:00送达`;
-          }
-        } else {//异地配送+2
-          //个体
-          if (h >= 0 && h < 11) {
-            temp = `在11:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,2)})送达`;
-          }
-          if (h > 11 && h < 23) {
-            temp = `在23:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
-          }
-          if (h >= 23) {
-            temp = `在明天(11:00)下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})17:00前送达`;
-          }
-        }
-      } else {
-        if (h >= 0 && h < 11) {
-          temp = `在11:00前下单，预计送达`;
-        }
-        if (h > 11 && h < 23) {
-          temp = `在23:00前下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
-        }
-        if (h >= 23) {
-          temp = `在明天(11:00)下单，预计${this.setWeek(nowTime,3)}(${this.setDate(nowTime,3)})送达`;
-        }
-      }
-      return temp;
-    }
-  },
   created() {
-    console.log("details被创建");
+    console.log(this.$route.params.id);
+
+    this.addre =
+      window.localStorage.getItem("jdItem") == null
+        ? "河北"
+        : window.localStorage.getItem("jdItem");
+
+    console.log(localStorage.getItem("address"));
     this.getdata.exact.id = this.$route.params.id;
     this.getGoods(this.getdata.exact.id);
 
@@ -345,7 +438,131 @@ export default {
 
     this.setDate();
     this.setWeek();
+    this.getGoodsSevaluate();
   },
+  computed: {
+    allAddress() {
+      return this.$store.state.allAddress;
+    },
+    addr() {
+      // if(this.$store.state.ShoppingAddress){
+      //   return this.setAddr();
+      // }else{
+      //   return "河北省邢台"
+      // }
+      var localStorageAdd = localStorage.getItem("address");
+
+      // let address = this.$store.state.shoppingAddress.takeover_addr;
+      // console.log(address);
+      // address = address.split(",");
+      // address.pop();
+      // let temp = [];
+      // for (let i of address) {
+      //   if (temp.indexOf(i) == -1) {
+      //     temp.push(i);
+      //   }
+      // }
+
+      // if (temp.length == 3) temp.pop();
+      // return temp.join(" ");
+
+      localStorageAdd = localStorageAdd.split(",");
+      localStorageAdd.pop();
+      let temp = [];
+      for (let i of localStorageAdd) {
+        if (temp.indexOf(i) == -1) {
+          temp.push(i);
+        }
+      }
+
+      if (temp.length == 3) temp.pop();
+      return temp.join(" ");
+    },
+    getDistributionTime() {
+      let nowTime = new Date();
+      let h = nowTime.getHours();
+      let temp = "";
+      // let nowMonth = nowTime.getMonth();
+      // let nowDate = nowTime.getDate();
+      // console.log(nowMonth + 1);
+
+      if (this.shopCeatgory == "自营") {
+        if (this.aa) {
+          if (h >= 0 && h < 11) {
+            temp = `在11:00前下单，预计今天送达`;
+          }
+          if (h > 11 && h < 23) {
+            temp = `在23:00前下单，预计明天(${this.setDate(nowTime, 1)})送达`;
+          }
+          if (h >= 23) {
+            temp = `在明天(11:00)下单，预计明天(${this.setDate(
+              nowTime,
+              1
+            )})17:00送达`;
+          }
+        } else {
+          //异地配送+2
+          //个体
+          if (h >= 0 && h < 11) {
+            temp = `在11:00前下单，预计${this.setWeek(
+              nowTime,
+              3
+            )}(${this.setDate(nowTime, 2)})送达`;
+          }
+          if (h > 11 && h < 23) {
+            temp = `在23:00前下单，预计${this.setWeek(
+              nowTime,
+              3
+            )}(${this.setDate(nowTime, 3)})送达`;
+          }
+          if (h >= 23) {
+            temp = `在明天(11:00)下单，预计${this.setWeek(
+              nowTime,
+              3
+            )}(${this.setDate(nowTime, 3)})17:00前送达`;
+          }
+        }
+      } else {
+        if (h >= 0 && h < 11) {
+          temp = `在11:00前下单，预计送达`;
+        }
+        if (h > 11 && h < 23) {
+          temp = `在23:00前下单，预计${this.setWeek(nowTime, 3)}(${this.setDate(
+            nowTime,
+            3
+          )})送达`;
+        }
+        if (h >= 23) {
+          temp = `在明天(11:00)下单，预计${this.setWeek(
+            nowTime,
+            3
+          )}(${this.setDate(nowTime, 3)})送达`;
+        }
+      }
+      return temp;
+    },
+
+    evaluateTime() {
+      //评价时间
+      let time = new Date();
+      return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
+    },
+    collectionActive() {
+      // let arr=this.$store.state.userInfo.['收藏的店铺key']；
+      // let arr=[1,22,3,4];
+
+      // Object.keys(对象)  返回一个数组，数组的值是对象的key的集合
+
+      console.log(Object.keys(this.shopInfo).length);
+      if (Object.keys(this.shopInfo).length > 0) {
+        return [1, 2, 34, 6].indexOf(this.shopInfo.shopsId) != -1
+          ? false
+          : true;
+      }
+      return false;
+    }
+  },
+
   activated() {
     console.log("details处于活跃");
   },
@@ -377,16 +594,30 @@ export default {
       console.log(tab, event);
     },
     getGoods(data) {
+      this.loading = true;
       getGoodsId(data).then(res => {
         if (res.code != 200) return;
-        this.detailsGoods = res.data.goodsData;
-        // this.goods = new Goods(
-        //   res.data.goodsData,
-        //   res.data.norms,
-        //   res.data.relationGoods
-        // );
+        // this.detailsGoods = res.data.goodsData;
         this.goodsImg = res.data.goodsData.img_detalis_list;
         console.log(this.goodsImg);
+
+        this.detailsGoods = new GoodsInfo(
+          res.data.goodsData,
+          res.data.shopData
+        );
+        this.shopInfo = new ShopInfo(res.data.shopData);
+
+        // 取规格数据
+        this.selectNorm = new SelectNorm(
+          res.data.norms,
+          res.data.relationGoods
+        );
+
+        console.log(this.selectNorm);
+        this.shopCategory = res.data.shopData.category;
+
+        this.free_freight = res.data.goodsData.free_freight == 0 ? false : true;
+        this.loading = false;
       });
       // getGoods(data).then(res => {
       //   console.log(res.data);
@@ -404,50 +635,114 @@ export default {
       $("html,body").animate({ scrollTop: 800 * b }, 500);
     },
     // 从新获取日期
-    setDate(nowTime=new Date(),day=3){
-      let temp=new Date(nowTime.getTime()+day*24*60*60*1000);
-      temp=`${temp.getMonth()+1}月${temp.getDate()}日`;
+    setDate(nowTime = new Date(), day = 3) {
+      let temp = new Date(nowTime.getTime() + day * 24 * 60 * 60 * 1000);
+      temp = `${temp.getMonth() + 1}月${temp.getDate()}日`;
       console.log(temp);
       return temp;
     },
 
     // 重新获取星期几
-    setWeek(nowTime=new Date(),day=15){
-      let nowWeek=nowTime.getDay();
-      let temp=""
-      if((nowWeek+day)>7){
-        temp=`下周${num(nowWeek+day-7)}`
-      }else{
-        temp=`本周${num(nowWeek+day)}`
+    setWeek(nowTime = new Date(), day = 15) {
+      let nowWeek = nowTime.getDay();
+      let temp = "";
+      if (nowWeek + day > 7) {
+        temp = `下周${num(nowWeek + day - 7)}`;
+      } else {
+        temp = `本周${num(nowWeek + day)}`;
       }
 
-      function num(val){
-        let a=""
-        switch(val%7){
-          case 1:a="一";break;
-          case 2:a="二";break;
-          case 3:a="三";break;
-          case 4:a="四";break;
-          case 5:a="五";break;
-          case 6:a="六";break;
-          case 7:a="七";break;
+      function num(val) {
+        let a = "";
+        switch (val % 7) {
+          case 1:
+            a = "一";
+            break;
+          case 2:
+            a = "二";
+            break;
+          case 3:
+            a = "三";
+            break;
+          case 4:
+            a = "四";
+            break;
+          case 5:
+            a = "五";
+            break;
+          case 6:
+            a = "六";
+            break;
+          case 7:
+            a = "七";
+            break;
         }
         return a;
       }
       return temp;
+    },
+    open(val) {
+      if (val == "Selected") {
+        this.Selected = true;
+      }
+
+      if (val == "To") {
+        this.To = true;
+        if (this.allAddress == null) {
+          getuserAddress({ user_id: this.$store.state.userInfo.id }).then(
+            res => {
+              console.log(res);
+              this.$store.state.allAddress = res.data;
+            }
+          );
+        }
+      }
+
+      if (val == "freight") {
+        this.freight = true;
+      }
+    },
+    collectionStore() {
+      if (this.$store.state.userInfo) {
+        this.collectionActive = !this.collectionActive;
+        if (this.collectionActive) {
+          // 收藏
+        } else {
+          // 取消收藏
+        }
+      } else {
+        // 跳转登录页面
+        // 登录后在执行当前的方法
+      }
+    },
+    getGoodsSevaluate() {
+      getGoodsSevaluate({ goods_id: this.$route.params.id }).then(res => {
+        console.log(res.data);
+        this.goodsEvaluates = res.data;
+      });
     }
   },
   filters: {
     changePrice(val, str) {
       if (arguments[1]) {
         //第二个参数有值
-        console.log("存在");
         return str + Number(val).toFixed(2);
       } else {
         //没值
-        console.log("不存在");
         return Number(val).toFixed(2);
       }
+    },
+    // changeEvaluate(val){
+    //   console.log(val);
+    //   return val;
+    // }
+    changeAddr(val) {
+      let addr = val.split(",").join(" ");
+      return addr;
+    },
+    changeTime(val) {
+      let time = val.getFullYear();
+      return time;
     }
   }
 };
@@ -514,13 +809,20 @@ export default {
     line-height: 20px;
     font-size: 12px;
   }
-  .Dprice_box .dprice {
-    line-height: 30px;
-    color: #f2270c;
-    display: inline-block;
-    font-size: 30px;
-    font-weight: bold;
-    float: left;
+  .Dprice_box {
+    .dprice {
+      line-height: 30px;
+      color: #f2270c;
+      display: inline-block;
+      font-size: 30px;
+      font-weight: bold;
+      float: left;
+    }
+    .oprice {
+      text-decoration: line-through;
+      font-size: 16px;
+      margin-right: 40%;
+    }
   }
   .Dprice_box .free {
     width: 100px;
@@ -544,6 +846,12 @@ export default {
   }
   .shopMessage {
     margin-top: 15px;
+    span {
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 7px;
+      font-size: 12px;
+    }
   }
   .shopMessage .shopname {
     font-weight: 700;
@@ -569,7 +877,12 @@ export default {
     border-radius: 12px;
     background-color: #fff;
     overflow: hidden;
-
+    .el-dialog {
+      position: fixed;
+      bottom: -50px;
+      left: 0;
+      right: 0;
+    }
     .Discount-box {
       position: relative;
       padding: 18px 20px 5px 38px;
@@ -588,16 +901,12 @@ export default {
         color: #262626;
         font-weight: 700;
       }
-      .content {
-        div {
-          margin-bottom: 12px;
-        }
-      }
       .D-mj {
         height: 18px;
         line-height: 0;
         text-align: left;
         word-break: break-word;
+        margin-bottom: 12px;
         .mj-fir {
           position: relative;
           display: inline-block;
@@ -691,15 +1000,310 @@ export default {
         float: left;
       }
     }
+    .el-dialog__header {
+      text-align: center;
+    }
   }
 
-  .Address {
+  .Address,
+  .evaluate,
+  .Shop,
+  .recommend {
     margin-top: 12px;
     padding: 0 18px;
     border-radius: 12px;
     background-color: #fff;
     overflow: hidden;
-    height: 200px;
+    // height: 200px;
+  }
+  .Address {
+    .el-dialog {
+      position: fixed;
+      bottom: -8%;
+      left: 0;
+      right: 0;
+    }
+    div.Address_box:first-child {
+      margin-top: 5%;
+    }
+    div.Address_box:last-child {
+      margin: 2%;
+    }
+    div.Address_box {
+      width: 100%;
+      margin-bottom: 5%;
+      span {
+        width: 20%;
+        float: left;
+        line-height: 50px;
+        font-size: 12px;
+        font-weight: bolder;
+      }
+      p.fuwu {
+        font-size: 12px;
+        color: #8c8c8c;
+        float: left;
+        margin-top: 6%;
+      }
+      div.toRight {
+        float: right;
+        width: 80%;
+        p.dizhi {
+          float: left;
+          font-size: 13px;
+          color: #262626;
+          margin-top: 7%;
+        }
+        p.xianhuo {
+          span {
+            width: 20%;
+            float: left;
+            line-height: 50px;
+            font-size: 12px;
+            color: red;
+            margin-left: -15%;
+          }
+        }
+        p.jztime {
+          float: left;
+          font-size: 12px;
+          color: #999;
+          margin-top: 7%;
+          margin-left: -5%;
+        }
+      }
+      div.freight {
+        .free {
+          font-size: 12px;
+          float: left;
+          line-height: 26px;
+        }
+        ul {
+          color: #262626;
+          font-size: 12px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-align: left;
+          padding-left: 20px;
+          li {
+            padding: 3px 12px 3px 0;
+            display: inline-block;
+            line-height: 1;
+            color: #8c8c8c;
+          }
+        }
+      }
+    }
+  }
+  .Shop {
+    button {
+      position: relative;
+      margin: 0 13px 0 0;
+      height: 30px;
+      line-height: 24px;
+      font-size: 12px;
+      background-color: #fff;
+      border: none;
+      border-radius: 15px;
+      border: 1px solid grey;
+      width: 40%;
+      margin-bottom: 20px;
+    }
+    button.gz {
+      i {
+        width: 14px;
+        height: 14px;
+        background: no-repeat 50%;
+        background-size: 100%;
+        position: relative;
+        top: -2px;
+        margin-right: 5px;
+        vertical-align: middle;
+        display: inline-block;
+        background-image: url("../../images/guanzhu.png");
+      }
+    }
+    button.jr {
+      i {
+        width: 14px;
+        height: 14px;
+        background: no-repeat 50%;
+        background-size: 100%;
+        position: relative;
+        top: -2px;
+        margin-right: 5px;
+        vertical-align: middle;
+        display: inline-block;
+        background-image: url("../../images/jinru.png");
+      }
+    }
+    button.active {
+      border-color: red;
+      color: red;
+    }
+    .shop_info {
+      margin-bottom: 10px;
+      margin-top: 10px;
+      span.shop_head {
+        background: pink;
+        flex-shrink: 0;
+        float: left;
+        width: 40px;
+        height: 40px;
+        display: block;
+        margin-right: 10px;
+      }
+      p.shopName,
+      p.shop {
+        text-align: left;
+        font-size: 12px;
+        color: #666;
+      }
+    }
+    .shop_center {
+      margin: 18px 0px;
+      display: flex;
+      .shop_cl {
+        flex: 1;
+        padding: 2px 0;
+        text-align: center;
+        p.num {
+          font-size: 14px;
+          margin-bottom: 3px;
+        }
+        p.fensi {
+          font-size: 10px;
+          color: #999;
+          margin-top: 3px;
+        }
+      }
+      .shop_cr {
+        width: 22%;
+        ul {
+          margin-top: 12px;
+
+          li {
+            float: left;
+            font-size: 10px;
+            span.green {
+              color: green;
+              margin-left: 5px;
+            }
+            span.red {
+              color: red;
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .evaluate {
+    position: relative;
+
+    .ev_head {
+      position: relative;
+      height: 45px;
+      line-height: 45px;
+      color: #262626;
+      padding-left: 8px;
+      margin-top: 3px;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 15px;
+        background-image: linear-gradient(180deg, #f5503a, #fad1cb);
+      }
+      .count {
+        font-size: 12px;
+        position: absolute;
+        height: 45px;
+        top: -11px;
+        left: 45px;
+        line-height: 45px;
+      }
+      .haoping {
+        font-size: 12px;
+        position: absolute;
+        height: 45px;
+        line-height: 45px;
+        top: -14px;
+        color: #8c8c8c;
+        right: 15px;
+      }
+    }
+    .ev_key {
+      ul {
+        li {
+          float: left;
+          background: #fcedeb;
+          color: #000;
+          font-size: 14px;
+          padding: 5px 20px;
+          border-radius: 50px;
+          margin: 10px 10px;
+        }
+      }
+    }
+    .ev-con {
+      float: left;
+      width: 100%;
+      margin-bottom:40px;
+      .ev-tou {
+        img {
+          width: 20px;
+          height: 20px;
+          display: block;
+        }
+        span {
+          margin-left: 25px;
+          display: inline-block;
+          color: #262626;
+          max-width: 8.2em;
+          vertical-align: middle;
+          font-size: 14px;
+          margin-top:-18px;
+        }
+        p {
+          float: right;
+          font-size: 12px;
+          color: #999;
+          margin-top: -4%;
+        }
+      }
+      .ev_detail {
+        p {
+          font-size: 13px;
+          text-align: left;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+        }
+      }
+    
+      span{
+        float: left;
+        color:grey;
+        font-size: 8px;
+      }
+      
+    }
+    .more {
+      border: 1px solid;
+      background: #fff;
+      border-radius: 50px;
+      padding: 5px 10px;
+      font-size: 12px;
+      position: absolute;
+      bottom: 10px;
+      left: 38%;
+    }
   }
   .shop-M {
     margin-top: 12px;

@@ -59,7 +59,8 @@ const state = {
   shoppingAddress:null,
   configOrderHistory:null,//记录离开页面的时候的路由地址
   addid:null,
-  searchData:null
+  searchData:null,
+  allAddress:null
 }
 const x = new Vuex.Store({
   state,      //状态管理数据

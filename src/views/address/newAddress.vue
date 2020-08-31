@@ -9,7 +9,7 @@
       </div>
     </nav-bar>
     <div class="newAdd">
-      <ul v-for="(i,j) in getaddress" :key="j" >
+      <ul v-for="(i,j) in allAddress" :key="j" >
         <div @click="updataDef(i)">
           <input type="radio" name="a" style="float:left;margn-top:10%;" @click="changedef(i.id)" :checked="i.default==1">
         <li class="name">
@@ -36,18 +36,20 @@ export default {
   name: "newaddress",
   data() {
     return {
-      getaddress: ""
     };
   },
   components: {
     NavBar
   },
-  computed: {},
+  computed: {
+    allAddress(){
+      return this.$store.state.allAddress==null?[]:this.$store.state.allAddress;
+    }
+  },
   created() {
-    console.log(this.$store.state.userInfo.id);
     getuserAddress({ user_id:this.$store.state.userInfo.id }).then(res => {
       console.log(res.data);
-      this.getaddress = res.data;
+      this.$store.state.allAddress = res.data;
     });
   },
   activated() {},

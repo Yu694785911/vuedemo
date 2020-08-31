@@ -39,7 +39,8 @@
           <div class="ADD">
             <div class="ADD-bar">
               <div class="ADD-bar-first">
-                <div class="ADD-bar-first-text">{{address}}</div>
+                <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr!=null">{{address}}</div>
+                <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr==null">河北河北河北</div>
               </div>
               <span class="ADD-btn">编辑商品</span>
             </div>
@@ -83,6 +84,7 @@ export default {
     };
   },
   created() {
+    console.log(this.$store.state.shoppingAddress.takeover_addr);
     //如果用户存在。则网络请求shopCart数据
     if (this.$store.state.userInfo.id) {
       this.getShopCart();
