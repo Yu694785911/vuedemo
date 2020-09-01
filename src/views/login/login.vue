@@ -163,19 +163,24 @@ export default {
             }
 
             console.log(this.$store.state.userInfo);
-            
+            this.$store.state.userInfo.id=3;
             this.$router.push('/profile')
           });
         });
-        this.$store.state.userInfo.id=3
       }
     },
     // 创建本地存储存自动登录码的方法
     setLocalStorageAutoCode(val) {
       console.log(window.location.origin);
       let key=window.location.origin+'/jd';
-
-      localStorage.setItem(key,val)
+      let data=window.localStorage.getItem(key);
+      if(data!=null){
+        data=JSON.parse(data)
+      }else{
+        data={};
+      }
+      data.autoCode=val;
+      localStorage.setItem(key,JSON.stringify(data));
     },
     aaa() {
       this.toggleBtn = !this.toggleBtn;

@@ -17,35 +17,41 @@
             </div>
         </tab-bar-item>
     </tab-bar>-->
-    <div class="DetailsTb"  >
+    <div class="DetailsTb">
+      <div class="DTB">
+        <img slot="item-icon" src="../../../images/kefu.png" />
+        <div slot="item-text">客服</div>
+      </div>
 
-    
-    <div class="DTB">
-      <img slot="item-icon" src="../../../images/kefu.png" />
-      <div slot="item-text">客服</div>
-    </div>
+      <div class="DTB">
+        <img slot="item-icon" src="../../../images/dianpu.png" />
+        <div slot="item-text">店铺</div>
+      </div>
 
-    <div class="DTB">
-      <img slot="item-icon" src="../../../images/dianpu.png" />
-      <div slot="item-text">店铺</div>
-    </div>
-
-    <div  class="DTB" path='/cart' @click="itemClick">
-      <img slot="item-icon" src="../../../images/gouwuche.png" />
-      <div slot="item-text" class="cart">
-        购物车
-        <i>{{$store.state.shopCartLength}}</i>
+      <div class="DTB" path="/cart" @click="itemClick">
+        <img slot="item-icon" src="../../../images/gouwuche.png" />
+        <div slot="item-text" class="cart">
+          购物车
+          <i>{{shopCartLength}}</i>
+        </div>
       </div>
     </div>
-    </div>
     <div class="btnAll">
-      <router-link tag="button" to="/cart">
+      <!-- <router-link tag="button" to="/cart">
         <span>加入购物车</span>
-      </router-link>
-      
-      <router-link tag="button" to="payload" class="payload">
+      </router-link>-->
+
+      <button v-on:click="shopcart">
+        <span>加入购物车</span>
+      </button>
+
+      <!-- <router-link tag="button" to="payload" class="payload" >
         <span>立即购买</span>
-      </router-link>
+      </router-link>-->
+
+      <button class="payload" v-on:click="$emit('to-add-order')">
+        <span>立即购买</span>
+      </button>
     </div>
   </div>
 </template>
@@ -63,48 +69,58 @@ export default {
     // TabBar,
     // TabBarItem
   },
-    computed:{
+  computed: {
     // 通过计算属性来让tabbar效果改变
     // isActive(){
     //     return this.$route.path.indexOf(this.path)!==-1
     //   },
-      // activeStyle(){
-      //   return this.isActive?{color:this.cstyle.activeTxt,background:this.cstyle.activeBG}:{color:this.cstyle.color,background:this.cstyle.bgcolor}
-      // }
-      // this.$router.path
-      // 计算路由地址是否和当前的tabbar相同
-      
-    
-  },
-  methods:{
-    itemClick(){
-      console.log(this.path);
-        // this.isActive=!this.isActive
-        //路由跳转
-        this.$router.push({path:"/cart"})
+    // activeStyle(){
+    //   return this.isActive?{color:this.cstyle.activeTxt,background:this.cstyle.activeBG}:{color:this.cstyle.color,background:this.cstyle.bgcolor}
+    // }
+    // this.$router.path
+    // 计算路由地址是否和当前的tabbar相同
+
+    shopCartLength() {
+      return this.$store.state.shopCartLength;
     }
   },
-  created(){
-    if((this.userInfo!=""||this.userInfo!=null||this.userInfo!=undefined)&&this.shopCartLength==0){
-      this.$store.dispatch("getShopCart",this.$store.state.userInfo);
+  methods: {
+    itemClick() {
+      console.log(this.path);
+      // this.isActive=!this.isActive
+      //路由跳转
+      this.$router.push({ path: "/cart" });
+    },
+    shopcart() {
+      this.$parent.addShop();
+    }
+  },
+  created() {
+    if (
+      (this.userInfo != "" ||
+        this.userInfo != null ||
+        this.userInfo != undefined) &&
+      this.shopCartLength == 0
+    ) {
+      this.$store.dispatch("getShopCart", this.$store.state.userInfo);
     }
   }
 };
 </script>
 <style lang='less' scoped>
-.DTB{
+.DTB {
   // flex: 1;
-  width:30%;
+  width: 30%;
   float: left;
   text-align: center;
   height: 49px;
   font-size: 14px;
-  i{
-    font-style:normal;
+  i {
+    font-style: normal;
     position: absolute;
-    top:0;
-    left:33%;
-    color:red;
+    top: 0;
+    left: 33%;
+    color: red;
   }
 }
 .DTB img {
@@ -114,14 +130,14 @@ export default {
   margin-bottom: 2px;
   vertical-align: middle;
 }
-.DetailsTb{
+.DetailsTb {
   // display: flex;
   // position: fixed;
   // bottom: 0;
   // left: 0;
   // right: 0;
   // background-color:white;
-  width:40%;
+  width: 40%;
 }
 
 #DetailsTabBar {

@@ -3,7 +3,7 @@ import router from '../router'
 // 解构赋值一个常量
 import {POST_SHOPCART} from "./mutation-types"
 // 获取shopcart网络请求
-import {postShopCart} from 'network/shopCart'
+import {postShopCart,addShopCart} from 'network/shopCart'
 import {autoLand} from 'network/login'
 //取所有的常量
 import * as types from "./mutation-types"
@@ -89,23 +89,61 @@ export default {
     router.push(payload)
   },
 
-  [types.AUTO_CODE](){
+  // [types.AUTO_CODE](){
+  //   let path=window.location.origin+'/jd';
+  //   let autocode=window.localStorage.getItem(path);
+  //   console.log(autocode);
+  //   return autoLand({autocode})
+  // },
+
+  [types.AUTO_CODE](payload){
     let path=window.location.origin+'/jd';
-    let autocode=window.localStorage.getItem(path);
-    console.log(autocode);
-    return autoLand({autocode})
+    let data=window.localStorage.getItem(path);
+    console.log(data);
+    if(data!=undefined&&data!=null&&data!=""){
+      let autocode=JSON.parse(data).autoCode
+      if(autocode){
+        autoLand({autocode}).then(res=>{
+          console.log(res);
+          payload.resolve(res);
+        })
+      }
+    }
   },
+
+
+
 
   [types.SET_USERINFO](state,payload){
     state.userInfo={}
-    let path=window.location.origin+'/jd';
     for(let i in payload.data.user){
-      console.log(i);
       state.userInfo[i]=payload.data.user[i];
     }
     
     state.userInfo.defaddr=payload.data.defaddr;
     state.shoppingAddress=payload.data.defaddr;
-    window.localStorage.setItem(path,payload.data.user.autocode);
+    let data = window.localStorage.getItem(window.location.origin+'/jd');
+    data = (data != null && data != "") ? JSON.parse(data) : {}
+    data.autoCode = payload.data.user.autocode;
+    window.localStorage.setItem(state.localData, JSON.stringify(data))
+    //如果本地存储购物车有数据，则把购物车的数据和当前用户购物车合并，并删除本地存储的购物车
+
+    if (data.shopCart != undefined && data.shopCart.length > 0) {
+      Promise.all([...data.shopCart.map(item => {
+        item.user_id = state.userInfo.id
+        return new Promise((resolve, reject) => {
+          addShopCart(item).then(res => {
+            if(res.code != 200) reject("添加异常")
+            resolve(res)
+          })
+        })
+      })]).then(success => {
+        console.log(success);
+        delete data['shopCart']
+        window.localStorage.setItem(state.localData, JSON.stringify(data))
+      },err=>{
+        console.log(err);
+      })
+    }
   }
 }

@@ -12,8 +12,8 @@ margin-left: 8px;display:block;"
         <i class="jd"></i>
         <i class="fangdajing"></i>
         <div class="search-box">
-          <input type="text" placeholder="雅马哈电钢琴" v-on:focus="routerTo('/keyword')"/>
-        </div> 
+          <input type="text" placeholder="雅马哈电钢琴" v-on:focus="routerTo('/keyword')" />
+        </div>
         <!-- <input v-model="input" placeholder="请输入内容" class="souIpt"  /> -->
       </div>
       <div slot="right">
@@ -22,7 +22,7 @@ margin-left: 8px;display:block;"
 
         <!-- 登录后 -->
         <span v-else class="el-icon-s-custom" @click="routerTo('/profile')"></span>
-        </div>
+      </div>
     </nav-bar>
     <hr />
 
@@ -37,7 +37,7 @@ margin-left: 8px;display:block;"
       <!-- 轮播图 -->
       <home-rotation :cbanners="banners"></home-rotation>
       <hr />
-      <img src="../../images/home-b.png.webp" alt="" style="width:100%">
+      <img src="../../images/home-b.png.webp" alt style="width:100%" />
       <!-- 功能视图 -->
       <home-feature :cfeature="feature"></home-feature>
       <hr />
@@ -82,7 +82,7 @@ import { getHomeBanner, getFeature } from "network/home";
 
 // 取商品数据
 import { getGoods } from "network/goods";
-import { ROUTERTO,SET_USERINFO} from "store/mutation-types";
+import { ROUTERTO, SET_USERINFO } from "store/mutation-types";
 
 import { debounce } from "common/utils.js";
 import { autoLand } from "network/login";
@@ -135,9 +135,9 @@ export default {
     // this.filterFeatrue(100)
     this.getGoodsMax("recommend");
     this.getGoodsMax("news");
-    this.getShopCart("getShopCart",this.$store.state.userInfo);
+    this.getShopCart("getShopCart", this.$store.state.userInfo);
 
-    if(!this.$store.state.userInfo){
+    if (!this.$store.state.userInfo) {
       this.auto_code();
     }
   },
@@ -153,7 +153,22 @@ export default {
   computed: {
     showGoodsList() {
       return this.goods[this.tabCurrentType].list;
-    }
+    },
+    // addr(){
+    //    let path = window.location.origin + "/jd";
+    //   let data = window.localStorage.getItem(path);
+    //   if (data != null) {
+    //       data=JSON.parse(data);
+    //       if(data.orderAddr!=null){
+    //         data=data.orderAddr
+    //       }else{
+    //         data="北京市昌平区"
+    //       }
+    //   }else{
+    //     data="北京市 昌平区"
+    //   }
+    //   return data;
+    // }
   },
   methods: {
     //去banner的数据
@@ -218,38 +233,41 @@ export default {
       }
     },
     toCategory() {
-      this.$store.commit(ROUTERTO,"/category");
+      this.$store.commit(ROUTERTO, "/category");
       // this.$router.push("/category");
     },
-    routerTo(path){
-      this.$store.commit(ROUTERTO,path);
+    routerTo(path) {
+      this.$store.commit(ROUTERTO, path);
     },
     changeDirection() {
       this.parentDirection = !this.parentDirection;
     },
-    getShopCart(data){
-      if(data!=""&& data!=null && data!=undefined){
-        this.$store.dispatch("getShopCart",data)
+    getShopCart(data) {
+      if (data != "" && data != null && data != undefined) {
+        this.$store.dispatch("getShopCart", data);
       }
     },
     // 默认进入页面的时候
-    auto_code(){
-      let path=window.location.origin+'/jd';
-      let autocode=window.localStorage.getItem(path);
-      autoLand({
-        autocode:autocode
-      }).then(res=>{
-        console.log(res);
-        if(res.code!=200) return;
-        this.$store.commit(SET_USERINFO,res)
-        this.getShopCart(res.data.user.id);
-      })
+    auto_code() {
+      let path = window.location.origin + "/jd";
+      let data = window.localStorage.getItem(path);
+      // if (data != null) {
+        let autocode = JSON.parse(data).autocode;
+        autoLand({
+          autocode: autocode
+        }).then(res => {
+          console.log(res);
+          if (res.code != 200) return;
+          this.$store.commit(SET_USERINFO, res);//每次都更改登陆码
+          this.getShopCart(res.data.user.id);
+        });
+      // }
     }
   },
-    beforeRouteLeave(to, from, next) {
-      // 如果取得页面时login页面，则记录页面
-    if(to.path=='/login'){
-      this.$store.state.loginHistory=from.path;
+  beforeRouteLeave(to, from, next) {
+    // 如果取得页面时login页面，则记录页面
+    if (to.path == "/login") {
+      this.$store.state.loginHistory = from.path;
     }
     next();
   },

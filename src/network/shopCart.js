@@ -15,3 +15,18 @@ export function UpdataShopCart(data){
         data
     })
 }
+
+export function addShopCart(data){
+    return requestPost({
+        url:"/vuedemo/set_shopcart",
+        data
+    })
+}
+
+
+export function BuyGooods(data){
+    return requestPost({
+        url:"/vuedemo/buy_goods",
+        data
+    })
+}

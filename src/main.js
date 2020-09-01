@@ -5,13 +5,17 @@ import store from './store'
 import element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import $ from 'jquery'
-import Vuesession from 'vue-session'
+import Vuesession from 'vue-session';
+import VueDirectiveImagePreviewer from 'vue-directive-image-previewer';
+import 'vue-directive-image-previewer/dist/assets/style.css'
+
 
 // 配置cookie
 // import cookies from 'vue-cookies'
 
 Vue.use(element);
 Vue.use(Vuesession);
+Vue.use(VueDirectiveImagePreviewer);
 window.$=$;
 
 Vue.prototype.$bus=new Vue()

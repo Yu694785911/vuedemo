@@ -31,16 +31,17 @@
       </div>
       <div>
         <!-- 正常判断购物车数据 ShopCart 为空。。 -->
-        <div class="cart_empty" v-if="!$store.state.shopCartLength">
+        <div class="cart_empty" v-if="shopCart==null||shopCart.length==0">
           <img :src="$store.state.urlPath+'/routine/cart_empty.png'" alt />
-          <p>您的购物车还没有任何数据，请添加商品</p>
+          <p>您的购物车还没有任何数据，请添加商品 </p>
         </div>
         <div v-else class="shop-cart-details">
           <div class="ADD">
             <div class="ADD-bar">
               <div class="ADD-bar-first">
-                <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr!=null">{{address}}</div>
-                <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr==null">河北河北河北</div>
+                <div class="ADD-bar-first-text">{{address}}</div>
+               
+                <!-- <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr==null">河北河北河北</div> -->
               </div>
               <span class="ADD-btn">编辑商品</span>
             </div>
@@ -57,7 +58,15 @@
           >{{item}}</cart-goods>
         </div>
       </div>
-      <!-- <div class="shopBox">aaaa</div> -->
+      <div
+        v-if="!$store.state.userInfo && localShopCart.length>0"
+        style="background-color:#fff;margin-top:10px;"
+      >
+        <div v-for="(item,i) in localShopCart" :key="i">
+          {{item}}
+          <hr />
+        </div>
+      </div>
     </scroll>
     <cart-tab-bar ref="tabBar" @checkall="check_shop_all" @confirm="toConfirmOrder"></cart-tab-bar>
   </div>
@@ -73,6 +82,7 @@ import CartTabBar from "./childComp/CartTabBar";
 import CartGoods from "./childComp/CartGoods";
 
 import { UpdataShopCart } from "network/shopCart";
+import { SET_USERINFO } from "store/mutation-types";
 
 export default {
   name: "Cart",
@@ -80,20 +90,28 @@ export default {
     return {
       num: 1,
       payMentData: [],
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      localShopCart: [], //本地存储的购物车
     };
   },
   created() {
-    console.log(this.$store.state.shoppingAddress.takeover_addr);
+    console.log(this.$store.state.userInfo)
+   
     //如果用户存在。则网络请求shopCart数据
     if (this.$store.state.userInfo.id) {
       this.getShopCart();
     }
     if (!this.$store.state.userInfo) {
-      this.$store.dispatch("autocode");
+      this.$store.dispatch("autocode",{
+        resolve:res=>{
+            if(res.code!=200) return;
+            this.$store.commit(SET_USERINFO,res);
+            this.$store.dispatch("getShopCart",res.data.user.id);
+          }
+      });
     }
-    console.log(this.$store.state.userInfo);
-    console.log(this.shopCartLength);
+    // 获取本地存储中购物车的数据
+    this.getLocalShopCart();
     // 如果用户存在，请求shopCart数据
     if(this.$store.state.userInfo && this.shopCartLength==0){
       this.$store.dispatch("getShopCart",this.$store.state.userInfo.id);
@@ -249,6 +267,12 @@ export default {
       }
       console.log(data);
       // this.$router.push("/comfirm-order/"+data)
+    },
+    getLocalShopCart(){
+      let data=window.localStorage.getItem(this.localPath);
+      data=data!=null?JSON.parse(data):[];
+      this.localShopCart=data.shopCart?data.shopCart:[]
+      console.log(this.localShopCart);
     }
   },
   computed: {
@@ -260,7 +284,22 @@ export default {
     },
     address() {
       // 取出地址中的指定默认配送地址
-     return this.$store.state.shoppingAddress.takeover_addr.split(",").join(' ');
+
+      let addr="";
+      if(this.$store.state.userInfo.id){
+        addr=this.$store.state.shoppingAddress.takeover_addr;
+      }else{
+        let path=window.location.origin+'/jd';
+        let data=window.localStorage.getItem(path);
+        if(data!=null){
+          addr=data.orderAddr?data.orderAddr:"河北省,邢台市"
+        }else{
+          addr="河北省,邢台市"
+        }
+        console.log(addr);
+        
+      }
+      return addr.split(",").join(" ");
     },
     shopCart() {
       return this.$store.state.shopCart;

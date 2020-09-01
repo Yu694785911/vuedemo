@@ -126,6 +126,9 @@
                 >{{m.name}}</div>
               </div>
             </div>
+
+            <input type="text" :value="orderSel.num" />
+            <button @click="order_Num">+</button>
           </el-dialog>
         </div>
 
@@ -140,7 +143,7 @@
             <el-button
               type="text"
               @click="open('To') "
-              style="    padding: 0px;margin-top: -37%;float: right;margin-right: 2%;"
+              style="    padding: 0px;margin-top: -5%;float: right;margin-right: 3%;"
             >...</el-button>
 
             <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose">
@@ -164,7 +167,7 @@
             <el-button
               type="text"
               @click="open('freight') "
-              style="padding: 0;margin-left: 47%;margin-top: 5%;"
+              style="padding: 0;margin-left: 42%;margin-top: 5%;"
             >...</el-button>
 
             <el-dialog title="运费" :visible.sync="freight" :before-close="handleClose"></el-dialog>
@@ -180,37 +183,81 @@
         </div>
       </div>
 
-      <div class="evaluate" v-for="item in goodsEvaluates" :key="item">
+      <div class="evaluate" v-if="goodsEvaluates.length==1">
         <div class="ev_head">
           <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
           <p class="count">1.8万+</p>
-          <p class="haoping">好评度{{item.Highpraise}}</p>
+          <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
+          <!-- <p class="haoping">好评度98%</p> -->
         </div>
         <div class="ev_key">
           <ul>
             <li>全部</li>
-            <li v-for="i in item.keyword" :key="i">{{i}}</li>
           </ul>
         </div>
-        <div class="ev-con">
+        <div class="ev-con" v-for="(item,index) in goodsEvaluates" :key="index">
           <div class="ev-tou">
-            <img :src="Evpath+item.headImg" alt="">
+            <!-- <img :src="Evpath+item.headImg" alt /> -->
             <span>{{item.username}}</span>
-            <p>{{item.evaluationTime}}</p>
+            <p>{{evaluateTime}}</p>
           </div>
           <div class="ev_detail">
-            <p style="width:100%;padding-left:10%">{{item.evaluationDetails}}</p>
-            <span style="margin-right:5px;padding-left:10%">{{item.evaluationNorm}}:</span>
+            <p style="width:100%;">{{item.evaluationDetails}}</p>
+            <div style="text-align:left">
+              <img v-image-preview v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a" alt />
+            </div>
+
+            <span style="margin-right:5px;">{{item.evaluationNorm}}:</span>
             <span>{{item.evaluationShop}}</span>
-            
           </div>
         </div>
         <button v-if="evaluate.length>2" class="more">查看更多评价</button>
       </div>
 
+      <div class="evaluate" v-if="goodsEvaluates.length>=2">
+        <div class="ev_head">
+          <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
+          <p class="count">1.8万+</p>
+          <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
+          <p class="haoping">好评度98%</p>
+        </div>
+        <div class="ev_key">
+          <ul>
+            <li>全部</li>
+            <li v-for="(i,j) in Ev_keyword" :key="j">{{i}}</li>
+          </ul>
+        </div>
+        <div
+          class="ev-con"
+          v-for="(list,index) in goodsEvaluates"
+          :key="index"
+          v-show="goodsEvaluates.length=2"
+        >
+          <div class="ev-tou">
+            <img :src="Evpath+list.headImg" alt />
+            <span>{{list.username}}</span>
+            <p>{{evaluateTime}}</p>
+          </div>
+          <div class="ev_detail">
+            <p style="width:100%;">{{list.evaluationDetails}}</p>
+            <div style="text-align:left">
+              <img  v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a" alt  @mousewheel="rollImg(this)" ref="bigImage"/>
+            </div>
+
+            <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
+            <span>{{list.evaluationShop}}</span>
+          </div>
+        </div>
+        <button v-if="evaluate.length>2" class="more">查看更多评价</button>
+      </div>
+
+      <!-- <details-evaluate :evaluate="goodsEvaluates" ></details-evaluate> -->
+
       <div class="Shop">
         <div class="shop_info">
-          <span class="shop_head"><img v-for="m in goodsEvaluates" :key="m" :src='Evpath+m.headImg'>头像</span>
+          <span class="shop_head">
+            <!-- <img :src="Evpath+goodsEvaluates[0].headImg" /> -->
+          </span>
           <p class="shopName">{{shopInfo.shopName}}</p>
           <p class="shop">店铺星级</p>
         </div>
@@ -221,21 +268,21 @@
           </div>
           <div class="shop_cl">
             <p class="num">{{shopInfo.cGoods}}</p>
-            <p class="fensi">粉丝人数</p>
+            <p class="fensi">全部商品</p>
           </div>
           <div class="shop_cr">
             <ul>
               <li>
                 评价
-                <span class="green">8.65|低</span>
+                <span class="green">8.65 | 低</span>
               </li>
               <li>
                 物流
-                <span class="green">8.79|低</span>
+                <span class="green">8.79 | 低</span>
               </li>
               <li>
                 售后
-                <span class="red">8.94|中</span>
+                <span class="red">8.94 | 中</span>
               </li>
             </ul>
           </div>
@@ -335,7 +382,7 @@
       </div>
     </scroll>
 
-    <details-tab-bar></details-tab-bar>
+    <details-tab-bar :addshopcart="addShop"  @to-add-order="addOrder"></details-tab-bar>
   </div>
 </template>
 
@@ -346,12 +393,14 @@ import DetailsRotation from "./childComp/DetailsRotation";
 
 import NavBar from "components/common/navbar/NavBar";
 import DetailsTabBar from "./childComp/DetailsTabBar";
+// import DetailsEvaluate from "./childComp/DetailsEvaluate";
 // 引入商品数据请求
 import { getGoodsId } from "network/goods";
 import { GoodsInfo, ShopInfo, SelectNorm } from "common/utils";
 
 import { getuserAddress } from "network/address";
 import { getGoodsSevaluate } from "network/goods";
+import { addShopCart,BuyGooods } from "network/shopCart";
 
 export default {
   name: "Details",
@@ -368,7 +417,7 @@ export default {
         desc: ""
       },
       path: "http://106.12.85.17:8090/public/image",
-      Evpath: "http://106.12.85.17:8090/public/image/evaluate/",//评价地址
+      Evpath: "http://106.12.85.17:8090/public/image/evaluate/", //评价地址
       activeName: "second",
       dialogVisible: false,
       direction: "btt",
@@ -384,7 +433,7 @@ export default {
       goodsImg: [],
       shopCeatgory: "自营",
       aa: true, //本地还是异地  true-本地   false-异地
-      shopInfo: null,
+      shopInfo: {},
       loading: false,
       selectNorm: {}, //规格数据
       // collectionActive:false,//查找用户是否存在改值
@@ -396,18 +445,25 @@ export default {
       free_freight: 0, //是否免运费 0 不免  1免
       shopCategory: "", //个体还是自营
       // allAddress: null
-      goodsEvaluates: null //评价
+      goodsEvaluates: {}, //评价
+      Ev_keyword: [],
+      Ev_detailImg: [],
+      Pingjia: [],
+      orderSel: {
+        norm: {},
+        num: 1
+      },
+      headImg:null
     };
   },
   components: {
     Scroll,
     DetailsRotation,
     NavBar,
-    DetailsTabBar
+    DetailsTabBar,
+    // DetailsEvaluate
   },
   created() {
-    console.log(this.$route.params.id);
-
     this.addre =
       window.localStorage.getItem("jdItem") == null
         ? "河北"
@@ -417,28 +473,11 @@ export default {
     this.getdata.exact.id = this.$route.params.id;
     this.getGoods(this.getdata.exact.id);
 
-    var p = 0;
-    $(window).scroll(function() {
-      p = $(window).scrollTop();
-      if (p >= 200) {
-        // slideDown 向下显示元素
-        $(".tab-bar-center").slideDown("fast");
-        $(".details-nav-bar").css("background-color", "white");
-        $(".navbar").css("box-shadow", "0 1px 1px rgba(100, 100, 100, 0.2)");
-      } else if (p < 200 && p > 50) {
-        // slideUp 向上隐藏元素
-        $(".tab-bar-center").slideDown("fast");
-        $(".details-nav-bar").css("background-color", "rgba(255,255,255,0.5)");
-        $(".navbar").css("box-shadow", "none");
-      } else {
-        $(".tab-bar-center").slideUp("fast");
-        $(".details-nav-bar").css("background-color", "transparent");
-      }
-    });
-
+    this.toptabbar();
     this.setDate();
     this.setWeek();
     this.getGoodsSevaluate();
+    this.lookLocalStorage();
   },
   computed: {
     allAddress() {
@@ -587,6 +626,29 @@ export default {
     // 监听数据改变，做一些数据变化的事情
   },
   methods: {
+    toptabbar() {
+      var p = 0;
+      $(window).scroll(function() {
+        p = $(window).scrollTop();
+        if (p >= 200) {
+          // slideDown 向下显示元素
+          $(".tab-bar-center").slideDown("fast");
+          $(".details-nav-bar").css("background-color", "white");
+          $(".navbar").css("box-shadow", "0 1px 1px rgba(100, 100, 100, 0.2)");
+        } else if (p < 200 && p > 50) {
+          // slideUp 向上隐藏元素
+          $(".tab-bar-center").slideDown("fast");
+          $(".details-nav-bar").css(
+            "background-color",
+            "rgba(255,255,255,0.5)"
+          );
+          $(".navbar").css("box-shadow", "none");
+        } else {
+          $(".tab-bar-center").slideUp("fast");
+          $(".details-nav-bar").css("background-color", "transparent");
+        }
+      });
+    },
     handleClose(done) {
       done();
     },
@@ -613,8 +675,12 @@ export default {
           res.data.relationGoods
         );
 
-        console.log(this.selectNorm);
+        console.log((res.data.relationGoods)[0].relation_keyword)
+        this.orderSel.norm=(res.data.relationGoods)[0].relation_keyword;
+
+
         this.shopCategory = res.data.shopData.category;
+        console.log(this.shopCategory)
 
         this.free_freight = res.data.goodsData.free_freight == 0 ? false : true;
         this.loading = false;
@@ -633,6 +699,45 @@ export default {
     },
     tabbarToggle(a, b) {
       $("html,body").animate({ scrollTop: 800 * b }, 500);
+    },
+    changeAddr(val) {
+      let arr = val.split(",");
+
+      this.addr = arr.join(" ");
+
+      // 存到本地存储，存储的数据，不存截取后值
+      let path = window.location.origin + "/jd";
+      let data = window.localStorage.getItem(path);
+      if (data != null) {
+        data = JSON.parse(data);
+      } else {
+        data = {};
+      }
+      data.orderAddr = val;
+      window.localStorage.setItem(path, JSON.stringify(data));
+      this.To = false;
+    },
+    getAddr() {
+      let data = window.localStorage.getItem(this.localPath);
+      if (data != null && data != "") {
+        data = JSON.parse(data);
+        if (
+          data.orderAddr != undefined &&
+          data.orderAddr != null &&
+          data.orderAddr != ""
+        ) {
+          this.addr = data.orderAddr;
+        } else {
+          this.addr = "北京市,北京市,昌平区,";
+          data.orderAddr = "北京市,北京市,昌平区,";
+        }
+      } else {
+        this.addr = "北京市,北京市,昌平区,";
+        data = {};
+        data.orderAddr = "北京市,北京市,昌平区,";
+      }
+      console.log(this.addr);
+      window.localStorage.setItem(this.localPath, JSON.stringify(data));
     },
     // 从新获取日期
     setDate(nowTime = new Date(), day = 3) {
@@ -688,6 +793,10 @@ export default {
 
       if (val == "To") {
         this.To = true;
+        if (!this.$store.state.userInfo) {
+          this.$router.path("/login");
+          return;
+        }
         if (this.allAddress == null) {
           getuserAddress({ user_id: this.$store.state.userInfo.id }).then(
             res => {
@@ -719,8 +828,123 @@ export default {
       getGoodsSevaluate({ goods_id: this.$route.params.id }).then(res => {
         console.log(res.data);
         this.goodsEvaluates = res.data;
+        this.Pingjia.push(this.goodsEvaluates[0]);
+        this.goodsEvaluates.forEach(list => {
+          this.Ev_keyword = list.keyword.split(",");
+          this.Ev_detailImg = list.evaluationImg.split(",");
+        });
       });
-    }
+    },
+    order_Num() {
+      this.orderSel.num++;
+    },
+    addShop() {
+      let shopCart = {};
+      shopCart.goods_id =this.getdata.exact.id;
+      shopCart.user_id = this.$store.state.userInfo
+        ? this.$store.state.userInfo.id
+        : "";
+      shopCart.num = this.orderSel.num;
+      shopCart.norm = JSON.stringify(this.orderSel.norm);
+      shopCart.takeover_addr = this.addr;
+      if (this.$store.state.userInfo) {
+        // 请求购物车
+        console.log("用户存在");
+        console.log(shopCart);
+        addShopCart(shopCart).then(res => {
+          console.log(res);
+          this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
+        });
+      } else {
+        //没用户，也能添加购物车
+        console.log("用户不存在");
+        let path = window.location.origin + "/jd";
+        let data = window.localStorage.getItem(path);
+        console.log(data);
+        if (data != null && data != "") {
+          data = JSON.parse(data);
+          let temp = 0;
+          console.log(data.shopCart)
+          if (data.shopCart) {
+            for (let i = 0; i < data.shopCart.length; i++) {
+              if (
+                data.shopCart[i].goods_id == shopCart.goods_id &&
+                data.shopCart[i].norm == shopCart.norm &&
+                data.shopCart[i].takeover_addr == shopCart.takeover_addr
+              ) {
+                console.log(data.shopCart[i].goods_id)
+                console.log(shopCart.goods_id)
+                console.log(data.shopCart[i].norm)
+                console.log(shopCart.norm)
+                console.log(data.shopCart[i].takeover_addr)
+                console.log(shopCart.takeover_addr)
+                data.shopCart[i].num += shopCart.num;
+                break;
+              }
+              temp++;
+            }
+            if (temp == data.shopCart.length) {
+              data.shopCart.push(shopCart);
+            }
+          } else {
+            data.shopCart = [];
+            data.shopCart.push(shopCart);
+          }
+        } else {
+          data = {};
+          data.shopCart = [];
+          data.shopCart.push(shopCart);
+        }
+        this.calculationStorageShopNum(data.shopCart);
+        window.localStorage.setItem(path, JSON.stringify(data));
+        console.log(window.localStorage.getItem(path));
+      }
+    },
+    addOrder(){
+      console.log("去购买");
+      let data={
+        goods_id:this.getdata.exact.id,
+        user_id:3,
+        num:this.orderSel.num,
+        norm:this.orderSel.norm,
+        takeover_addr:this.addr
+      }
+      BuyGooods(data).then(res=>{
+        console.log(res);
+      })
+
+    },
+    lookLocalStorage() {
+      if (!this.$store.state.userInfo) {
+        let path = window.location.origin + "/jd";
+        let data = window.localStorage.getItem(path);
+        if (data == null || data == "") return;
+        data = JSON.parse(data);
+        if (!data.shopCart) return;
+        this.calculationStorageShopNum(data.shop);
+      }
+    },
+    calculationStorageShopNum(arr) {
+      this.$store.state.shopCartLength = 0;
+      arr.forEach(item => {
+        this.$store.state.shopCartLength += item.num * 1;
+      });
+    },
+    rollImg() {
+      /* 获取当前页面的缩放比
+            若未设置zoom缩放比，则为默认100%，即1，原图大小
+        */
+      var zoom = parseInt(this.$refs.bigImage.style.zoom) || 100;
+      /* event.wheelDelta 获取滚轮滚动值并将滚动值叠加给缩放比zoom
+            wheelDelta统一为±120，其中正数表示为向上滚动，负数表示向下滚动
+        */
+      zoom += event.wheelDelta / 12;
+      /* 最小范围 和 最大范围 的图片缩放尺度 */
+      if (zoom >= 100 && zoom <250) {
+        this.$refs.bigImage.style.zoom = zoom + "%";
+      }
+      return false;
+    },
   },
   filters: {
     changePrice(val, str) {
@@ -744,6 +968,9 @@ export default {
       let time = val.getFullYear();
       return time;
     }
+    // changeEvTime(val){
+    //   // return val.replace(/(\w){1}(\w)[5,10]$/, "$1****$1");
+    // }
   }
 };
 </script>
@@ -806,7 +1033,6 @@ export default {
     position: relative;
     margin-top: 12px;
     margin-bottom: 0;
-    line-height: 20px;
     font-size: 12px;
   }
   .Dprice_box {
@@ -822,6 +1048,7 @@ export default {
       text-decoration: line-through;
       font-size: 16px;
       margin-right: 40%;
+      line-height: 32px;
     }
   }
   .Dprice_box .free {
@@ -833,6 +1060,7 @@ export default {
     display: block;
     float: left;
     font-size: 12px;
+    line-height: 1px;
   }
   .Dprice_box .free span img {
     position: absolute;
@@ -851,6 +1079,9 @@ export default {
       padding: 2px 6px;
       border-radius: 7px;
       font-size: 12px;
+      position: absolute;
+      left: 6px;
+      margin-top: 4px;
     }
   }
   .shopMessage .shopname {
@@ -859,6 +1090,7 @@ export default {
     color: #262626;
     font-size: 16px;
     text-align: left;
+    margin-left: 28px;
   }
   .shopMessage .desc {
     padding: 18px 0 0;
@@ -1178,7 +1410,7 @@ export default {
         }
       }
       .shop_cr {
-        width: 22%;
+        width: 25%;
         ul {
           margin-top: 12px;
 
@@ -1252,7 +1484,7 @@ export default {
     .ev-con {
       float: left;
       width: 100%;
-      margin-bottom:40px;
+      margin-bottom: 40px;
       .ev-tou {
         img {
           width: 20px;
@@ -1266,7 +1498,7 @@ export default {
           max-width: 8.2em;
           vertical-align: middle;
           font-size: 14px;
-          margin-top:-18px;
+          margin-top: -18px;
         }
         p {
           float: right;
@@ -1286,13 +1518,12 @@ export default {
           -webkit-box-orient: vertical;
         }
       }
-    
-      span{
+
+      span {
         float: left;
-        color:grey;
+        color: grey;
         font-size: 8px;
       }
-      
     }
     .more {
       border: 1px solid;
