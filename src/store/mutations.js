@@ -125,7 +125,7 @@ export default {
     let data = window.localStorage.getItem(window.location.origin+'/jd');
     data = (data != null && data != "") ? JSON.parse(data) : {}
     data.autoCode = payload.data.user.autocode;
-    window.localStorage.setItem(state.localData, JSON.stringify(data))
+    window.localStorage.setItem(window.location.origin+'/jd', JSON.stringify(data))
     //如果本地存储购物车有数据，则把购物车的数据和当前用户购物车合并，并删除本地存储的购物车
 
     if (data.shopCart != undefined && data.shopCart.length > 0) {
@@ -140,7 +140,7 @@ export default {
       })]).then(success => {
         console.log(success);
         delete data['shopCart']
-        window.localStorage.setItem(state.localData, JSON.stringify(data))
+        window.localStorage.setItem(window.location.origin+'/jd', JSON.stringify(data))
       },err=>{
         console.log(err);
       })

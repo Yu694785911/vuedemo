@@ -209,17 +209,24 @@ const routers = new Router({
 })
 
 routers.beforeEach((to, from, next) => {
-  // to and from are both route objects. must call `next`.
-  // console.log(to, from);
-
+  if(to.path==from.path) return;
   for (let item in store.state.TabBar) {
-    // item = false
-    // console.log(item);
     store.state.TabBar[item] = false
   }
   if (to.path == '/home' || to.path == '/category' || to.path == '/cart' || to.path == '/profile') store.state.TabBar.isTabBar = true
   else if (to.path.lastIndexOf('/jx') != -1) store.state.TabBar.isjxTabBar = true
-  else if (to.path == '/ranking') store.state.TabBar.isphbTabBar = true
+  else if (to.path == '/ranking') store.state.TabBar.isphbTabBar = true;
+
+  // 如果你即将访问的路由地址 包含confirm_order 的话，我就进入一下 来的路由地址
+  // if(to.path.split('/')[1]=='confirm_order') console.log(from.path);
+
+
+  if(to.path.indexOf('/confirm_order')!=-1){
+    store.state.areacodeHistory=from.path
+  }
+
+
+
   next();
 
 

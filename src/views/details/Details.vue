@@ -116,19 +116,34 @@
           >...</el-button>
 
           <el-dialog title="已选" :visible.sync="Selected" :before-close="handleClose">
-            <div v-for="(item,index) in selectNorm" :key="index">
-              <div v-for="(i,j) in item" :key="j">
-                <div>{{j}}</div>
-                <div
-                  v-for="(m,n) in i"
-                  :key="n"
-                  style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
-                >{{m.name}}</div>
+            <div>
+              <div v-for="(item,index) in selectNorm" :key="index">
+                <div v-for="(i,j) in item" :key="j">
+                  <div>{{j}}</div>
+                  <div
+                    v-for="(m,n) in i"
+                    :key="n"
+                    style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
+                  >{{m.name}}</div>
+                </div>
+              </div>
+
+              <div class="order_num">
+                <div>数量</div>
+                <div>
+                  <button @click="order_num--" :disabled="orderSel.order_num<=1">-</button>
+                  <input type="text" :value="orderSel.num" />
+                  <button @click="orderSel.num++">+</button>
+                </div>
+              </div>
+              <div class="selectBtnBox" v-if="isConfirm">
+                <button @click="addShop">添加至购物车</button>
+                <button @click="addOrder(2)">立即购买</button>
+              </div>
+              <div class="selectBtnBox" v-else>
+                <button @click="confirm">确认</button>
               </div>
             </div>
-
-            <input type="text" :value="orderSel.num" />
-            <button @click="order_Num">+</button>
           </el-dialog>
         </div>
 
@@ -153,7 +168,7 @@
                   style="padding:10px 0"
                   v-for="(item,index) in allAddress"
                   :key="index"
-                >{{item.takeover_addr|changeAddr}}</li>
+                >{{addr|changeAddr}}</li>
               </ul>
             </el-dialog>
           </div>
@@ -241,7 +256,14 @@
           <div class="ev_detail">
             <p style="width:100%;">{{list.evaluationDetails}}</p>
             <div style="text-align:left">
-              <img  v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a" alt  @mousewheel="rollImg(this)" ref="bigImage"/>
+              <img
+                v-for="(a,b) in Ev_detailImg"
+                :key="b"
+                :src="Evpath+a"
+                alt
+                @mousewheel="rollImg(this)"
+                ref="bigImage"
+              />
             </div>
 
             <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
@@ -382,7 +404,7 @@
       </div>
     </scroll>
 
-    <details-tab-bar :addshopcart="addShop"  @to-add-order="addOrder"></details-tab-bar>
+    <details-tab-bar :addshopcart="addShop" @to-add-order="addOrder"></details-tab-bar>
   </div>
 </template>
 
@@ -400,7 +422,7 @@ import { GoodsInfo, ShopInfo, SelectNorm } from "common/utils";
 
 import { getuserAddress } from "network/address";
 import { getGoodsSevaluate } from "network/goods";
-import { addShopCart,BuyGooods } from "network/shopCart";
+import { addShopCart } from "network/shopCart";
 
 export default {
   name: "Details",
@@ -453,69 +475,37 @@ export default {
         norm: {},
         num: 1
       },
-      headImg:null
+      isConfirm: true
     };
   },
   components: {
     Scroll,
     DetailsRotation,
     NavBar,
-    DetailsTabBar,
+    DetailsTabBar
     // DetailsEvaluate
   },
   created() {
-    this.addre =
-      window.localStorage.getItem("jdItem") == null
-        ? "河北"
-        : window.localStorage.getItem("jdItem");
+    // this.addre =
+    //   window.localStorage.getItem("jdItem") == null
+    //     ? "河北"
+    //     : window.localStorage.getItem("jdItem");
 
     console.log(localStorage.getItem("address"));
+
     this.getdata.exact.id = this.$route.params.id;
     this.getGoods(this.getdata.exact.id);
 
     this.toptabbar();
     this.setDate();
     this.setWeek();
+    this.getAddr();
     this.getGoodsSevaluate();
     this.lookLocalStorage();
   },
   computed: {
     allAddress() {
       return this.$store.state.allAddress;
-    },
-    addr() {
-      // if(this.$store.state.ShoppingAddress){
-      //   return this.setAddr();
-      // }else{
-      //   return "河北省邢台"
-      // }
-      var localStorageAdd = localStorage.getItem("address");
-
-      // let address = this.$store.state.shoppingAddress.takeover_addr;
-      // console.log(address);
-      // address = address.split(",");
-      // address.pop();
-      // let temp = [];
-      // for (let i of address) {
-      //   if (temp.indexOf(i) == -1) {
-      //     temp.push(i);
-      //   }
-      // }
-
-      // if (temp.length == 3) temp.pop();
-      // return temp.join(" ");
-
-      localStorageAdd = localStorageAdd.split(",");
-      localStorageAdd.pop();
-      let temp = [];
-      for (let i of localStorageAdd) {
-        if (temp.indexOf(i) == -1) {
-          temp.push(i);
-        }
-      }
-
-      if (temp.length == 3) temp.pop();
-      return temp.join(" ");
     },
     getDistributionTime() {
       let nowTime = new Date();
@@ -675,12 +665,11 @@ export default {
           res.data.relationGoods
         );
 
-        console.log((res.data.relationGoods)[0].relation_keyword)
-        this.orderSel.norm=(res.data.relationGoods)[0].relation_keyword;
-
+        console.log(res.data.relationGoods[0].relation_keyword);
+        this.orderSel.norm = res.data.relationGoods[0].relation_keyword;
 
         this.shopCategory = res.data.shopData.category;
-        console.log(this.shopCategory)
+        console.log(this.shopCategory);
 
         this.free_freight = res.data.goodsData.free_freight == 0 ? false : true;
         this.loading = false;
@@ -718,7 +707,7 @@ export default {
       this.To = false;
     },
     getAddr() {
-      let data = window.localStorage.getItem(this.localPath);
+      let data = window.localStorage.getItem(window.location.origin + "/jd");
       if (data != null && data != "") {
         data = JSON.parse(data);
         if (
@@ -736,8 +725,10 @@ export default {
         data = {};
         data.orderAddr = "北京市,北京市,昌平区,";
       }
-      console.log(this.addr);
-      window.localStorage.setItem(this.localPath, JSON.stringify(data));
+      window.localStorage.setItem(
+        window.location.origin + "/jd",
+        JSON.stringify(data)
+      );
     },
     // 从新获取日期
     setDate(nowTime = new Date(), day = 3) {
@@ -789,6 +780,7 @@ export default {
     open(val) {
       if (val == "Selected") {
         this.Selected = true;
+        this.isConfirm = true;
       }
 
       if (val == "To") {
@@ -840,7 +832,7 @@ export default {
     },
     addShop() {
       let shopCart = {};
-      shopCart.goods_id =this.getdata.exact.id;
+      shopCart.goods_id = this.getdata.exact.id;
       shopCart.user_id = this.$store.state.userInfo
         ? this.$store.state.userInfo.id
         : "";
@@ -864,7 +856,7 @@ export default {
         if (data != null && data != "") {
           data = JSON.parse(data);
           let temp = 0;
-          console.log(data.shopCart)
+          console.log(data.shopCart);
           if (data.shopCart) {
             for (let i = 0; i < data.shopCart.length; i++) {
               if (
@@ -872,12 +864,12 @@ export default {
                 data.shopCart[i].norm == shopCart.norm &&
                 data.shopCart[i].takeover_addr == shopCart.takeover_addr
               ) {
-                console.log(data.shopCart[i].goods_id)
-                console.log(shopCart.goods_id)
-                console.log(data.shopCart[i].norm)
-                console.log(shopCart.norm)
-                console.log(data.shopCart[i].takeover_addr)
-                console.log(shopCart.takeover_addr)
+                console.log(data.shopCart[i].goods_id);
+                console.log(shopCart.goods_id);
+                console.log(data.shopCart[i].norm);
+                console.log(shopCart.norm);
+                console.log(data.shopCart[i].takeover_addr);
+                console.log(shopCart.takeover_addr);
                 data.shopCart[i].num += shopCart.num;
                 break;
               }
@@ -900,19 +892,44 @@ export default {
         console.log(window.localStorage.getItem(path));
       }
     },
-    addOrder(){
+    // 去购买
+    addOrder(val) {
       console.log("去购买");
-      let data={
-        goods_id:this.getdata.exact.id,
-        user_id:3,
-        num:this.orderSel.num,
-        norm:this.orderSel.norm,
-        takeover_addr:this.addr
+      if (val == 1) {
+        this.Selected = true;
+        this.isConfirm = false;
+      } else {
+        this.confirm();
       }
-      BuyGooods(data).then(res=>{
-        console.log(res);
-      })
-
+    },
+    confirm() {
+      alert("a")
+      let arr = [];
+      let shopCart = {};
+      shopCart.goods_id = this.getdata.exact.id;
+      // shopCart.user_id = this.$store.state.userInfo
+      //   ? this.$store.state.userInfo.id
+      //   : "";
+      shopCart.user_id = 3
+      shopCart.num = this.orderSel.num;
+      shopCart.norm = JSON.stringify(this.orderSel.norm);
+      shopCart.takeover_addr = this.addr;
+      arr.push(shopCart);
+      console.log(shopCart);
+      console.log(window.localStorage.getItem(window.location.origin + "/jd"));
+      // var aaa=JSON.parse(window.location.origin + "/jd");
+      // console.log(aaa);
+      this.$router.push("/confirm_order/" + JSON.stringify(arr));
+      // let data={
+      //   goods_id:this.getdata.exact.id,
+      //   user_id:3,
+      //   num:this.orderSel.num,
+      //   norm:this.orderSel.norm,
+      //   takeover_addr:this.addr
+      // }
+      // BuyGooods().then(res => {
+      //   console.log(res);
+      // });
     },
     lookLocalStorage() {
       if (!this.$store.state.userInfo) {
@@ -940,11 +957,11 @@ export default {
         */
       zoom += event.wheelDelta / 12;
       /* 最小范围 和 最大范围 的图片缩放尺度 */
-      if (zoom >= 100 && zoom <250) {
+      if (zoom >= 100 && zoom < 250) {
         this.$refs.bigImage.style.zoom = zoom + "%";
       }
       return false;
-    },
+    }
   },
   filters: {
     changePrice(val, str) {
@@ -1583,6 +1600,30 @@ export default {
   .el-dialog {
     width: 100%;
     margin-top: 69vh;
+  }
+  .selectedopen{
+    padding-bottom:50px;
+    .selectBtnBox{
+      display:flex;
+      position: absolute;
+      left:0;
+      right:0;
+      bottom:40px;
+      background-color:#fff;
+      padding-bottom:5px;
+      button{
+        flex:1;
+        margin:0 10px;
+        border-radius: 25px;
+        border:none;
+        background-color:pink;
+        color:#fff;
+      } 
+      button:nth-child(2){
+        background-color:yellow;
+        color:#000;
+      }
+    }
   }
 }
 </style>

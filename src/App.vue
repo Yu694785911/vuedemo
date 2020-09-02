@@ -48,7 +48,6 @@ export default {
     // }
   },
   created() {
-
     requestIp().then(res => {
       // 判断是否有用户登录，如果没有用户登录，则配送为获取的地址
       if (!this.user) {
@@ -67,21 +66,27 @@ export default {
     });
 
     console.log(localStorage.autocode);
+
     if (localStorage.autocode) {
       autoLand({ autocode: localStorage.autocode }).then(res => {
         if (res.code != 200) return;
         localStorage.setItem("autocode", res.data.user.autocode);
-        this.$store.state.userInfo.defaddr = res.data.defaddr;
-
-        for (let j in res.data.user) {
-          this.$store.state.userInfo[j] = res.data.user[j];
-        }
+        // this.$store.state.userInfo.defaddr = res.data.defaddr;
+        this.$store.state.userInfo.id = res.data.user.id;
+        // for (let j in res.data.user) {
+        //   this.$store.state.userInfo.id = res.data.user[j].id;
+        // }
+        console.log(res.data.user.id);
+        console.log(this.$store.state.userInfo);
+        console.log(this.$store.state.userInfo.id);
       });
     }
   },
   computed: {
     userInfo() {
-      return this.$store.state.userInfo!=null?this.$store.state.userInfo:null;
+      return this.$store.state.userInfo != null
+        ? this.$store.state.userInfo
+        : null;
     },
     user() {
       return (

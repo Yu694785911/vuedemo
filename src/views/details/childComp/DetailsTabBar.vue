@@ -49,7 +49,7 @@
         <span>立即购买</span>
       </router-link>-->
 
-      <button class="payload" v-on:click="$emit('to-add-order')">
+      <button class="payload" v-on:click="$emit('to-add-order',1)">
         <span>立即购买</span>
       </button>
     </div>
@@ -70,16 +70,6 @@ export default {
     // TabBarItem
   },
   computed: {
-    // 通过计算属性来让tabbar效果改变
-    // isActive(){
-    //     return this.$route.path.indexOf(this.path)!==-1
-    //   },
-    // activeStyle(){
-    //   return this.isActive?{color:this.cstyle.activeTxt,background:this.cstyle.activeBG}:{color:this.cstyle.color,background:this.cstyle.bgcolor}
-    // }
-    // this.$router.path
-    // 计算路由地址是否和当前的tabbar相同
-
     shopCartLength() {
       return this.$store.state.shopCartLength;
     }

@@ -8,122 +8,179 @@
         <div slot="center">
           <div class="title">确认订单</div>
         </div>
+        <div slot="right">
+          <span @click="toLogin" v-if="!isShow">登录</span>
+        </div>
       </nav-bar>
 
-      <!-- 地址页 -->
-      <div class="Order-address">
-        <div v-if="$store.state.shoppingAddress==null">
-          <button class="addAddress" @click="toAddress">请添加地址</button>
+      <div v-if="isShow">
+        <!-- 地址页 -->
+        <div class="Order-address">
+          <div v-if="$store.state.shoppingAddress==null">
+            <button class="addAddress" @click="toAddress">请添加地址</button>
+          </div>
+
+          <ul v-else @click="toAddress">
+            <li
+              class="co_name"
+            >{{shoppingAddress.takeover_name}}{{shoppingAddress.takeover_tel|changeTel(shoppingAddress.takeover_tel)}}</li>
+            <li>{{shoppingAddress.takeover_addr}}</li>
+          </ul>
         </div>
 
-        <ul v-else @click="toAddress">
-          <li class="co_name">
-            {{shoppingAddress.takeover_name}}{{shoppingAddress.takeover_tel|changeTel(shoppingAddress.takeover_tel)}}</li>
-          <li>{{shoppingAddress.takeover_addr}}</li>
-        </ul>
+        <div class="order-con">
+          <div class="order-list" v-for="(item,index) in shop" :key="index">
+            <dt>
+              <i></i>
+              <span>{{item.shop_name}}</span>
+            </dt>
+            <dd class="order-shopm">
+              <img :src="path+'/goods/'+item.img_cover" alt />
+              <div class="order-sm-r">
+                <strong>{{item.goods_name}}</strong>
+                <p>
+                  {{item.money_now | changePrice("￥")}}
+                  <span style="float:right">x{{item.num}}</span>
+                </p>
+              </div>
+              <div class="zhuyi">
+                <ul>
+                  <li>
+                    <img src="../../images/qi.png" alt />
+                    支持7天无理由退货
+                  </li>
+                  <li>
+                    <img src="../../images/gg.png" alt class="jiage" />
+                    价格说明
+                  </li>
+                </ul>
+              </div>
+            </dd>
+
+            <dd class="peisong">
+              <strong>配送</strong>
+              <p>快递运输</p>
+              <div class="pei-justify">
+                <div class="left">中小件送货时间</div>工作日、双休日与节假日均可送货
+              </div>
+            </dd>
+
+            <dd class="peisong">
+              <strong>退换无忧</strong>
+              <div style=" 
+          font-size: 12px;color:#666;line-height:24px;">退换货可获运费赔付或免费取件</div>
+              <p style="color:red;float: right;
+    margin-top: -20px;">商家赠送</p>
+            </dd>
+
+            <dd class="peisong">
+              <strong>店铺备注</strong>
+              <p>选填,给商家留言</p>
+            </dd>
+          </div>
+          <div class="detailed">
+            <dd class="detail">
+              <strong>发票信息</strong>
+              <p>个人商品明细</p>
+            </dd>
+            <dd class="detail">
+              <strong>礼品卡</strong>
+              <p>无可用</p>
+            </dd>
+            <dd class="detail">
+              <strong>红包</strong>
+              <p>不可用</p>
+            </dd>
+            <dd class="detail">
+              <strong>京豆</strong>
+              <p>共12个,未满1000个,暂不可使用</p>
+            </dd>
+          </div>
+
+          <div class="shopMoney" v-for="i in shop" :key="i.id">
+            <dd class="detail">
+              <strong>商品金额</strong>
+              <p>{{i.money_now*i.num | changePrice("￥")}}</p>
+            </dd>
+            <dd class="detail">
+              <strong>运费</strong>
+              <p>+￥0.00</p>
+            </dd>
+            <h5
+              style="margin-right:18px;text-align:right"
+            >实际金额:{{i.money_now*i.num | changePrice("￥")}}</h5>
+          </div>
+
+          <el-button
+            type="default"
+            round
+            style="width:90%;background:#bbebe9;margin-bottom:10px;color:#0f8783;font-size:16px"
+            @click="open"
+          >货到付款</el-button>
+
+          <el-button type="primary" round style="width:90%;font-size:16px" @click="payment">在线支付</el-button>
+          <!-- <p style="color:grey;font-size:12px;">此订单不支持以下支付方式</p> -->
+
+          <a href class="hdfk">
+            <i></i>
+            <h3>货到付款</h3>
+            <p class>部分商品不支持货到付款，立即查看</p>
+          </a>
+
+          <div class="jd_footer">
+            <div></div>
+          </div>
+        </div>
       </div>
 
-      <div class="order-con">
-        <div class="order-list" v-for="(item,index) in shop" :key="index">
-          <dt>
-            <i></i>
-            <span>{{item.shop_name}}</span>
-          </dt>
-          <dd class="order-shopm">
-            <img :src="path+'/goods/'+item.img_cover" alt />
-            <div class="order-sm-r">
-              <strong>{{item.goods_name}}</strong>
-              <p>
-                {{item.money_now | changePrice("￥")}}
-                <span style="float:right">x{{item.num}}</span>
-              </p>
-            </div>
-            <div class="zhuyi">
-              <ul>
-                <li>
-                  <img src="../../images/qi.png" alt />
-                  支持7天无理由退货
-                </li>
-                <li>
-                  <img src="../../images/gg.png" alt class="jiage" />
-                  价格说明
-                </li>
-              </ul>
-            </div>
-          </dd>
-
-          <dd class="peisong">
-            <strong>配送</strong>
-            <p>快递运输</p>
-            <div class="pei-justify">
-              <div class="left">中小件送货时间</div>工作日、双休日与节假日均可送货
-            </div>
-          </dd>
-
-          <dd class="peisong">
-            <strong>退换无忧</strong>
-            <div style=" 
-          font-size: 12px;color:#666;line-height:24px;">退换货可获运费赔付或免费取件</div>
-            <p style="color:red;float: right;
-    margin-top: -20px;">商家赠送</p>
-          </dd>
-
-          <dd class="peisong">
-            <strong>店铺备注</strong>
-            <p>选填,给商家留言</p>
-          </dd>
+      <div v-if="!isShow">
+        用户没登录
+        <div>
+          电话
+          <input type="text" />
         </div>
-        <div class="detailed">
-          <dd class="detail">
-            <strong>发票信息</strong>
-            <p>个人商品明细</p>
-          </dd>
-          <dd class="detail">
-            <strong>礼品卡</strong>
-            <p>无可用</p>
-          </dd>
-          <dd class="detail">
-            <strong>红包</strong>
-            <p>不可用</p>
-          </dd>
-          <dd class="detail">
-            <strong>京豆</strong>
-            <p>共12个,未满1000个,暂不可使用</p>
-          </dd>
+        <div>
+          验证码
+          <input type="text" />
         </div>
-
-        <div class="shopMoney" v-for="i in shop" :key="i.id">
-          <dd class="detail">
-            <strong>商品金额</strong>
-            <p>{{i.money_now*i.num | changePrice("￥")}}</p>
-          </dd>
-          <dd class="detail">
-            <strong>运费</strong>
-            <p>+￥0.00</p>
-          </dd>
-          <h5
-            style="margin-right:18px;text-align:right"
-          >实际金额:{{i.money_now*i.num | changePrice("￥")}}</h5>
+        <hr />
+        <div>
+          姓名
+          <input type="text" />
         </div>
+        <div>
+          电话
+          <input type="text" />
+        </div>
+        <div>
+          城市
+          <input type="text" />
+        </div>
+        <div>
+          详细信息
+          <input type="text" />
+        </div>
+      </div>
 
-        <el-button
-          type="default"
-          round
-          style="width:90%;background:#bbebe9;margin-bottom:10px;color:#0f8783;font-size:16px"
-          @click="open"
-        >货到付款</el-button>
-
-        <el-button type="primary" round style="width:90%;font-size:16px" @click="payment">在线支付</el-button>
-        <!-- <p style="color:grey;font-size:12px;">此订单不支持以下支付方式</p> -->
-
-        <a href class="hdfk">
-          <i></i>
-          <h3>货到付款</h3>
-          <p class>部分商品不支持货到付款，立即查看</p>
-        </a>
-
-        <div class="jd_footer">
-          <div></div>
+      <div v-if="replaceAddr" class="replaceAddr">
+        <div>
+          <h3>更换地址</h3>
+          <div>您在浏览器更换了地址，是否匹配更换</div>
+          <ul>
+            <li
+              v-for="(item,index) in $store.state.allAddress"
+              :key="index"
+              @click="repAddrId=item.id"
+            >
+              <input type="radio" :id="'a'+item.id" :checked="replAddr==item.id" />
+              <label :for="'a'+item.id">{{item.takeover_addr|changeAddr}}</label>
+            </li>
+          </ul>
+          <div>
+            <button @click="$store.commit('ROUTERTO','/newAddr/0')">新建地址</button>
+            <button @click="replAddr(repAddrId)">确认</button>
+          </div>
+          {{repAddrId}}
         </div>
       </div>
     </scroll>
@@ -134,6 +191,8 @@
 import { create_order } from "network/order";
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
+// 用户地址
+import { getuserAddress } from "network/address";
 export default {
   name: "confirmorder",
   data() {
@@ -143,12 +202,74 @@ export default {
       orderData: {
         user_id: "",
         shopcarts_id: []
-      }
+      },
+      isShow: false,
+      replaceAddr: false, //替换地址的遮罩层显示
+      repAddrId: 1 //需要替换的id
     };
   },
-   beforeRoter(from,next){
-    this.$store.state.configOrderHistory=from.path
+  beforeRouteLeave(to, from, next) {
+    console.log(from);
+    this.$store.state.configOrderHistory = from.path;
     next();
+  },
+  created() {
+    console.log(this.$store.state.user);
+    // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
+    // JSON.parse() 方法把字符串数据转换为原来的类型
+
+    this.shop =
+      this.$route.params.shop != undefined
+        ? JSON.parse(this.$route.params.shop)
+        : "";
+
+    // 创建
+    if (this.$store.state.areacodeHistory.indexOf("/cart") != -1) {
+      console.log("购物车进入");
+      if (!this.$store.state.userInfo) {
+        this.$router.push("/home");
+        return;
+      }
+      // 查看地址
+      this.isShow = true;
+        //  item.takeover_addr=JSON.params(item.takeover_addr);
+        //  addr=item.takeover_addr.addr.split(",")
+        for (let i = 0; i < this.shop.length; i++) {
+          let addr = this.shop[i].takeover_addr.split(",");
+          if (addr[3] == "") {
+            this.showReplAddr();
+            break;
+          }
+        }
+    }
+    if (this.$store.state.areacodeHistory.indexOf("/details") != -1) {
+      console.log("详情进入");
+
+      let addr = this.shop[0].takeover_addr.split(",");
+      console.log(addr);
+      if (this.$store.state.userInfo) {
+        alert("b");
+        //  证明配送地址的最后一位(纤细地址) 替换地址
+        console.log("用户存在");
+        this.isShow = true;
+        if (addr[3] == "") {
+          this.showReplAddr();
+        }
+
+        // 在此处需要请求用户的配送地址
+      } else {
+        console.log("用户不存在");
+        this.isShow = false;
+        //用户不存在
+        // 去登陆
+        // 填写地址  电话号
+      }
+    } else {
+      // '/'
+      this.isShow = true;
+      console.log("页面刷新了");
+      this.$router.push("/home");
+    }
   },
   methods: {
     toAddress() {
@@ -183,6 +304,13 @@ export default {
         //  获取到要提交的数据
         this.orderData.user_id = this.$store.state.userInfo.id;
 
+        let temp={
+          name:this.shoppingAddress.takeover_name,
+          tel:this.shoppingAddress.takeover_tel,
+          addr:this.shoppingAddress.takeover_addr,
+        }
+
+        this.orderData.takeover_addr = JSON.stringify(temp);
         this.shop.forEach(item => {
           this.orderData.shopcarts_id.push(item.id);
         });
@@ -198,11 +326,42 @@ export default {
             // this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
 
             // 提交订单成功后，把默认的配送地址取回来，放到购物车页面
-            this.$store.state.shoppingAddress=this.$store.state.userInfo.defaddr;
+            this.$store.state.shoppingAddress = this.$store.state.userInfo.defaddr;
             this.$router.push("/payment/" + res.data.order_id);
           });
         }
       }
+    },
+    toLogin() {
+      this.$router.push("/login");
+    },
+    // 替换地址遮罩层的id
+    replAddr(id) {
+      if (id == null) return;
+      this.$store.state.shoppingAddress = null;
+
+      let arr = this.$store.state.allAddress.filter(item => {
+        if (item.id == id) {
+          return true;
+        }
+        return false;
+      });
+      this.$store.state.shoppingAddress = arr[0];
+      this.replaceAddr = false;
+    },
+    showReplAddr() {
+      this.replaceAddr = true;
+      getuserAddress({ user_id: this.$store.state.userInfo.id }).then(res => {
+        console.log(res);
+        let arr = res.data.filter(item => {
+          if (item.default == 1) {
+            return true;
+          }
+          return false;
+        });
+        this.repAddrId = arr[0].id;
+        this.$store.state.allAddress = res.data;
+      });
     }
   },
   components: {
@@ -213,28 +372,25 @@ export default {
     userInfo() {
       return this.$store.state.userInfo;
     },
-    defaddr(){
+    defaddr() {
       return this.$store.state.userInfo.defaddr;
     },
-    shoppingAddress(){
+    shoppingAddress() {
       return this.$store.state.shoppingAddress;
     }
   },
-  created() {
-    // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
-    // JSON.parse() 方法把字符串数据转换为原来的类型
-    this.shop = JSON.parse(this.$route.params.shop);
-  console.log(this.$store.state.shoppingAddress)
-  },
+
   filters: {
     changePrice(val, str = "$") {
       return str + Number(val).toFixed(2);
     },
     changeTel(val) {
       return val.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    },
+    changeAddr(val) {
+      return val.split(",").join("");
     }
-  },
- 
+  }
 };
 </script>
 <style lang='less'>
@@ -539,6 +695,23 @@ export default {
   }
   .newAddress {
     display: none;
+  }
+  .replaceAddr {
+    position: fixed;
+    top: 59px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    > div {
+      position: absolute;
+      top: 20%;
+      left: 15%;
+      right: 15%;
+      bottom: 30%;
+      background-color: #fff;
+      border-radius: 20px;
+    }
   }
 }
 .el-message-box {
