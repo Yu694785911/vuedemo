@@ -418,7 +418,7 @@ import DetailsTabBar from "./childComp/DetailsTabBar";
 // import DetailsEvaluate from "./childComp/DetailsEvaluate";
 // 引入商品数据请求
 import { getGoodsId } from "network/goods";
-import { GoodsInfo, ShopInfo, SelectNorm } from "common/utils";
+import { GoodsInfo, ShopInfo, SelectNorm,orderConfirmData } from "common/utils";
 
 import { getuserAddress } from "network/address";
 import { getGoodsSevaluate } from "network/goods";
@@ -475,7 +475,8 @@ export default {
         norm: {},
         num: 1
       },
-      isConfirm: true
+      isConfirm: true,
+      confirmData:{},//用于储存当前详情页提交的数据
     };
   },
   components: {
@@ -665,13 +666,16 @@ export default {
           res.data.relationGoods
         );
 
-        console.log(res.data.relationGoods[0].relation_keyword);
         this.orderSel.norm = res.data.relationGoods[0].relation_keyword;
 
         this.shopCategory = res.data.shopData.category;
-        console.log(this.shopCategory);
 
         this.free_freight = res.data.goodsData.free_freight == 0 ? false : true;
+
+        this.confirmData=new orderConfirmData(
+          res.data.goodsData,
+          res.data.shopData
+        )
         this.loading = false;
       });
       // getGoods(data).then(res => {
@@ -903,33 +907,18 @@ export default {
       }
     },
     confirm() {
-      alert("a")
-      let arr = [];
-      let shopCart = {};
-      shopCart.goods_id = this.getdata.exact.id;
-      // shopCart.user_id = this.$store.state.userInfo
-      //   ? this.$store.state.userInfo.id
-      //   : "";
-      shopCart.user_id = 3
-      shopCart.num = this.orderSel.num;
-      shopCart.norm = JSON.stringify(this.orderSel.norm);
-      shopCart.takeover_addr = this.addr;
-      arr.push(shopCart);
-      console.log(shopCart);
-      console.log(window.localStorage.getItem(window.location.origin + "/jd"));
-      // var aaa=JSON.parse(window.location.origin + "/jd");
-      // console.log(aaa);
-      this.$router.push("/confirm_order/" + JSON.stringify(arr));
-      // let data={
-      //   goods_id:this.getdata.exact.id,
-      //   user_id:3,
-      //   num:this.orderSel.num,
-      //   norm:this.orderSel.norm,
-      //   takeover_addr:this.addr
-      // }
-      // BuyGooods().then(res => {
-      //   console.log(res);
-      // });
+      this.confirmData.num=this.orderSel.num;
+      this.confirmData.norm=JSON.stringify(this.orderSel.norm);
+      this.confirmData.takeover_addr=this.addr;
+      this.$store.state.cartData=[this.confirmData];
+
+       let data=window.localStorage.getItem(window.location.origin + "/jd")
+        data=(data!=undefined && data!=null && data!="")?JSON.parse(data):{};
+
+        data.cartData=this.$store.state.cartData;
+        window.localStorage.setItem(window.location.origin + "/jd",JSON.stringify(data));
+        
+      this.$router.push('/confirm_order/aaa');
     },
     lookLocalStorage() {
       if (!this.$store.state.userInfo) {

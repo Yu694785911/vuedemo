@@ -159,17 +159,25 @@ export default {
     toConfirmOrder() {
       // 获取cart页面中被选择的订单商品
       let cart_goods = this.$refs.cart_goods;
-      let arr = [];
+      this.$store.state.cartData = [];
       cart_goods.forEach(item => {
         let inputAll = item.$el.querySelectorAll(".check");
         for (let i = 0; i < inputAll.length; i++) {
           if (inputAll[i].checked) {
             // this.paymentData.push(item.goods[i]);
-            arr.push(item.goods[i]);
+            this.$store.state.cartData.push(item.goods[i]);
           }
         }
       });
-      this.$router.push("/confirm_order/" + JSON.stringify(arr));
+
+       let data=window.localStorage.getItem(window.location.origin + "/jd")
+        data=(data!=undefined && data!=null && data!="")?JSON.parse(data):{};
+
+        data.cartData=this.$store.state.cartData;
+        window.localStorage.setItem(window.location.origin + "/jd",JSON.stringify(data));
+
+
+      this.$router.push("/confirm_order/aaa");
     },
     upDateShopCart() {
       let shopCart = { ...this.$store.state.shopCart };
@@ -193,12 +201,9 @@ export default {
             data.num = shopCart[i][j].num;
             data.ischeck = shopCart[i][j].ischeck;
             data.norm = shopCart[i][j].norm;
-            // temp++;
+            data.takeover_addr = shopCart[i][j].takeover_addr;
+            
             UpdataShopCart(data).then(res => {
-              // temp1++;
-              // if(temp==temp1){
-              //   console.log("啊啊啊");
-              // }
               console.log(res);
             });
           }

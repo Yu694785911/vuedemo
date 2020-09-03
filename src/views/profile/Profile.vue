@@ -244,7 +244,8 @@ export default {
       let path=window.location.origin+'/jd';
       localStorage.setItem(path,'')
       if(this.$store.state.userInfo==null){
-        this.$router.push('/home')
+        this.$router.push('/home');
+        window.location.reload();
       }
     }
   },

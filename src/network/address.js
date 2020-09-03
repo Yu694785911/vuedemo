@@ -1,4 +1,4 @@
-import { request } from "./request"
+import { request,requestPost } from "./request"
 
 // params get请求使用params  或者 query
 // post请求使用 data上传数据
@@ -74,3 +74,12 @@ export function updateuserAddressdef(params) {
         params
     })
 }
+
+// 修改购物车商品数据
+export function updateShopcar(data) {
+    return requestPost({
+        url: "/vuedemo/update_shopcart",
+        data
+    })
+}
+

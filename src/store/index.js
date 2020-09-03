@@ -62,6 +62,7 @@ const state = {
   addid:null,
   searchData:null,
   allAddress:null,
+  cartData:null,//购物车订单储存
 }
 const x = new Vuex.Store({
   state,      //状态管理数据

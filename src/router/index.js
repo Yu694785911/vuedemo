@@ -222,7 +222,10 @@ routers.beforeEach((to, from, next) => {
 
 
   if(to.path.indexOf('/confirm_order')!=-1){
-    store.state.areacodeHistory=from.path
+    if(from.path.indexOf('/newAddr')==-1||from.path.indexOf('allAddr')==-1&&from.path.indexOf('/payment')==-1&& from.path.indexOf('/login')==-1) {
+      store.state.areacodeHistory=from.path
+    }
+    
   }
 
 

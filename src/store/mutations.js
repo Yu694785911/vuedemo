@@ -20,6 +20,8 @@ export default {
     state.totalNum=0;
     postShopCart(payload).then(res=>{
       // console.log(res);
+      state.shopCart={};
+      state.shopCartHistory={};
       if(res.code != 200) return console.log('请求数据失败');
       state.shopCartLength = res.data.length;
 
@@ -64,8 +66,9 @@ export default {
         state.ShopCarMoneyAll+=item.money_now*item.num
         state.ShopCarMoneyGoodsNum+=item.num*1
       })
-      state.shopCartHistory={...state.shopCart};
-      console.log(state.shopCartHistory,'shopCartHistory')
+      state.loading=false;
+      // state.shopCartHistory={...state.shopCart};
+      // console.log(state.shopCartHistory,'shopCartHistory')
     })
   },
 

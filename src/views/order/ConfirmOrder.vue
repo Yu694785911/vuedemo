@@ -133,7 +133,28 @@
         </div>
       </div>
 
-      <div v-if="!isShow">
+      <!-- 快捷下单 -->
+      <div v-if="!isShow" class="quickOrder">
+        <div
+          style="line-height:50px;font-size:16px;color:#333;margin:0 10px;height:50px;text-align:left"
+        >
+          <p>快捷下单验证</p>
+        </div>
+        <div class="qo_phone">
+          <label class="area_box"><span>+86</span></label>
+          <input type="text">
+        </div>
+        
+         <div class="qo_phone">
+          <label class="area_box"><span style="font-size:12px;color:red">发送验证码</span></label>
+          <input type="text">
+        </div>
+        
+
+        <div class="qo_detailsBox">
+
+        </div>
+        
         用户没登录
         <div>
           电话
@@ -172,8 +193,12 @@
               :key="index"
               @click="repAddrId=item.id"
             >
-              <input type="radio" :id="'a'+item.id" :checked="replAddr==item.id" />
-              <label :for="'a'+item.id">{{item.takeover_addr|changeAddr}}</label>
+              <span>
+                <input type="radio" :id="'a'+item.id" :checked="repAddrId==item.id" />
+              </span>
+              <span>
+                <label :for="'a'+item.id">{{item.takeover_addr|changeAddr}}</label>
+              </span>
             </li>
           </ul>
           <div>
@@ -193,6 +218,7 @@ import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
 // 用户地址
 import { getuserAddress } from "network/address";
+import { BuyGooods, UpdataShopCart } from "network/shopCart";
 export default {
   name: "confirmorder",
   data() {
@@ -213,63 +239,54 @@ export default {
     this.$store.state.configOrderHistory = from.path;
     next();
   },
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo;
+    },
+    defaddr() {
+      return this.$store.state.userInfo.defaddr;
+    },
+    shoppingAddress() {
+      return this.$store.state.shoppingAddress;
+    },
+    shop() {
+      let data =
+        this.$store.state.cartData != null
+          ? this.$store.state.cartData
+          : JSON.parse(
+              window.localStorage.getItem(window.location.origin + "/jd")
+            ).cartData;
+      return data;
+    }
+  },
   created() {
-    console.log(this.$store.state.user);
     // JSON.stringify  把数组/对象类型的数据转换为JSON类型的字符串数据
     // JSON.parse() 方法把字符串数据转换为原来的类型
 
-    this.shop =
-      this.$route.params.shop != undefined
-        ? JSON.parse(this.$route.params.shop)
-        : "";
+    // this.shop =
+    //   this.$route.params.shop != undefined
+    //     ? JSON.parse(this.$route.params.shop)
+    // : "";
 
-    // 创建
-    if (this.$store.state.areacodeHistory.indexOf("/cart") != -1) {
-      console.log("购物车进入");
-      if (!this.$store.state.userInfo) {
-        this.$router.push("/home");
-        return;
-      }
-      // 查看地址
-      this.isShow = true;
-        //  item.takeover_addr=JSON.params(item.takeover_addr);
-        //  addr=item.takeover_addr.addr.split(",")
-        for (let i = 0; i < this.shop.length; i++) {
-          let addr = this.shop[i].takeover_addr.split(",");
-          if (addr[3] == "") {
-            this.showReplAddr();
-            break;
-          }
-        }
-    }
-    if (this.$store.state.areacodeHistory.indexOf("/details") != -1) {
-      console.log("详情进入");
-
-      let addr = this.shop[0].takeover_addr.split(",");
-      console.log(addr);
-      if (this.$store.state.userInfo) {
-        alert("b");
-        //  证明配送地址的最后一位(纤细地址) 替换地址
-        console.log("用户存在");
-        this.isShow = true;
-        if (addr[3] == "") {
-          this.showReplAddr();
-        }
-
-        // 在此处需要请求用户的配送地址
-      } else {
-        console.log("用户不存在");
-        this.isShow = false;
-        //用户不存在
-        // 去登陆
-        // 填写地址  电话号
-      }
-    } else {
-      // '/'
-      this.isShow = true;
-      console.log("页面刷新了");
+    if (
+      window.localStorage.getItem(window.location.origin + "/jd") ==
+        undefined ||
+      window.localStorage.getItem(window.location.origin + "/jd") == null ||
+      window.localStorage.getItem(window.location.origin + "/jd") == ""
+    ) {
       this.$router.push("/home");
     }
+    this.jumpPage();
+
+    // this.shop.forEach(item => {
+    //   this.updateShopcar({
+    //     id: item.id,
+    //     num: item.num,
+    //     norm: item.norm,
+    //     ischeck: 1,
+    //     takeover_addr: this.shoppingAddress.takeover_addr
+    //   });
+    // });
   },
   methods: {
     toAddress() {
@@ -304,32 +321,76 @@ export default {
         //  获取到要提交的数据
         this.orderData.user_id = this.$store.state.userInfo.id;
 
-        let temp={
-          name:this.shoppingAddress.takeover_name,
-          tel:this.shoppingAddress.takeover_tel,
-          addr:this.shoppingAddress.takeover_addr,
-        }
+        let temp = {
+          name: this.shoppingAddress.takeover_name,
+          tel: this.shoppingAddress.takeover_tel,
+          addr: this.shoppingAddress.takeover_addr
+        };
 
         this.orderData.takeover_addr = JSON.stringify(temp);
+
         this.shop.forEach(item => {
           this.orderData.shopcarts_id.push(item.id);
         });
 
         if (window.confirm("是否确认提交订单")) {
-          create_order(this.orderData).then(res => {
+          if (this.$store.state.areacodeHistory.indexOf("/cart") != -1) {
+            this.orderData.shopcarts_id = [];
+            this.shop.forEach(item => {
+              this.orderData.shopcarts_id.push(item.id);
+            });
+
+            create_order(this.orderData).then(res => {
+              if (res.code != 200) {
+                // 失败的话 给用户提示，当用户点击确认的时候，然后跳转页面
+                this.$router.push("/profile");
+                return;
+              }
+              // this.$store.state.shopcart = {};
+              // this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
+
+              // 提交订单成功后，把默认的配送地址取回来，放到购物车页面
+              this.$store.state.shoppingAddress = this.$store.state.userInfo.defaddr;
+              this.$router.push("/payment/" + res.data.order_id);
+            });
+          }
+        }
+
+        //从details进入确认订单
+        if (this.$store.state.areacodeHistory.indexOf("/details") != -1) {
+          //取出传递过来的数据
+          this.shop.forEach(item => {
+            this.orderData.goods_id = item.goods_id;
+            this.orderData.num = item.num;
+            this.orderData.norm = item.norm;
+          });
+
+          BuyGooods(this.orderData).then(res => {
+            console.log(res);
             if (res.code != 200) {
-              // 失败的话 给用户提示，当用户点击确认的时候，然后跳转页面
+              //失败的话 给用于一个提示。当用户点击确认的时候。跳转页面
               this.$router.push("/profile");
               return;
             }
-            // this.$store.state.shopcart = {};
-            // this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
-
-            // 提交订单成功后，把默认的配送地址取回来，放到购物车页面
-            this.$store.state.shoppingAddress = this.$store.state.userInfo.defaddr;
+            //提交订单成功后。把默认的配送地址取回来。放到购物车页面
+            this.$store.state.ShoppingAddress = this.$store.state.userInfo.defaddr;
             this.$router.push("/payment/" + res.data.order_id);
           });
         }
+        this.$store.state.cartData = null;
+        let data = window.localStorage.getItem(window.location.origin + "/jd");
+        data =
+          data != undefined && data != null && data != ""
+            ? JSON.parse(data)
+            : null;
+
+        data.cartData != undefined && data.cartData != null
+          ? delete data["cartData"]
+          : null;
+        window.localStorage.setItem(
+          window.location.origin + "/jd",
+          JSON.stringify(data)
+        );
       }
     },
     toLogin() {
@@ -362,22 +423,74 @@ export default {
         this.repAddrId = arr[0].id;
         this.$store.state.allAddress = res.data;
       });
+    },
+    // 页面跳转
+    jumpPage() {
+      if (this.$store.state.areacodeHistory.indexOf("/cart") != -1) {
+        console.log("购物车进入");
+        if (!this.$store.state.userInfo) {
+          this.$router.push("/home");
+          return;
+        }
+        // 查看地址
+        this.isShow = true;
+        //  item.takeover_addr=JSON.params(item.takeover_addr);
+        //  addr=item.takeover_addr.addr.split(",")
+        for (let i = 0, temp = true; i < this.shop.length; i++) {
+          let addr = this.shop[i].takeover_addr.split(",");
+          if (addr[3] == "" && temp) {
+            this.showReplAddr();
+            temp = false; //作用是为了当前的if只执行一次
+          }
+          // 修改确认订单页面  购买商品的配送地址
+          this.UpdataShopCart({
+            id: this.shop[i].id,
+            num: this.shop[i].num,
+            norm: this.shop[i].norm,
+            ischeck: 1,
+            takeover_addr: this.shoppingAddress.takeover_addr
+          });
+        }
+      }
+      if (this.$store.state.areacodeHistory.indexOf("/details") != -1) {
+        console.log("详情进入");
+
+        let addr = this.shop[0].takeover_addr.split(",");
+        console.log(addr);
+        if (this.$store.state.userInfo) {
+          alert("b");
+          //  证明配送地址的最后一位(纤细地址) 替换地址
+          console.log("用户存在");
+          this.isShow = true;
+          if (addr[3] == "") {
+            this.showReplAddr();
+          }
+
+          // 在此处需要请求用户的配送地址
+        } else {
+          console.log("用户不存在");
+          this.isShow = false;
+          //用户不存在
+          // 去登陆
+          // 填写地址  电话号
+        }
+      } else {
+        // '/'
+        this.isShow = true;
+        console.log("页面刷新了");
+        this.$router.push("/home");
+      }
+    },
+    UpdataShopCart(data) {
+      //离开购物车页面的时候，修改购物车的网络强求需要添加字段
+      UpdataShopCart(data).then(res => {
+        console.log(res);
+      });
     }
   },
   components: {
     NavBar,
     Scroll
-  },
-  computed: {
-    userInfo() {
-      return this.$store.state.userInfo;
-    },
-    defaddr() {
-      return this.$store.state.userInfo.defaddr;
-    },
-    shoppingAddress() {
-      return this.$store.state.shoppingAddress;
-    }
   },
 
   filters: {
@@ -711,6 +824,41 @@ export default {
       bottom: 30%;
       background-color: #fff;
       border-radius: 20px;
+    }
+  }
+  .quickOrder {
+    background: #fff;
+    margin-top: -16px;
+    .qo_phone {
+      margin: 0 10px 10px;
+      position: relative;
+      height: 46px;
+      line-height: 46px;
+      border-radius: 4px;
+      .area_box {
+        position: absolute;
+        width: 72px;
+        height: 46px;
+        top: 0;
+        left: 0;
+        line-height: 50px;
+      }
+      input {
+        display: block;
+        width: 100%;
+        height: 46px;
+        box-sizing: border-box;
+        padding: 0 96px 0 10px;
+        padding-left: 96px;
+        padding-right: 10px;
+         background: #f7f7f7;
+         border:none;
+         outline: none;
+      }
+    }
+    .qo_detailsBox{
+      margin-bottom:15px;
+      background:#fff;
     }
   }
 }
