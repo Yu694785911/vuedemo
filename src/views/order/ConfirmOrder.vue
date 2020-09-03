@@ -135,54 +135,52 @@
 
       <!-- 快捷下单 -->
       <div v-if="!isShow" class="quickOrder">
-        <div
-          style="line-height:50px;font-size:16px;color:#333;margin:0 10px;height:50px;text-align:left"
-        >
-          <p>快捷下单验证</p>
+        <div style="margin-bottom:20px;background:#fff;padding-bottom:20px">
+          <div
+            style="line-height:50px;font-size:16px;color:#333;margin:0 10px;height:50px;text-align:left"
+          >
+            <p>快捷下单验证</p>
+          </div>
+
+          <div class="qo_phone">
+            <label class="area_box">
+              <span>+86</span>
+            </label>
+            <input type="text" />
+          </div>
+
+          <div class="qo_phone">
+            <label class="area_box">
+              <span style="font-size:12px;color:red">发送验证码</span>
+            </label>
+            <input type="text" />
+          </div>
         </div>
-        <div class="qo_phone">
-          <label class="area_box"><span>+86</span></label>
-          <input type="text">
-        </div>
-        
-         <div class="qo_phone">
-          <label class="area_box"><span style="font-size:12px;color:red">发送验证码</span></label>
-          <input type="text">
-        </div>
-        
 
         <div class="qo_detailsBox">
+          <div class="qo_detailsBox_item">
+            <label for>收货人</label>
+            <input type="text" placeholder="姓名" />
+          </div>
+          <div class="qo_detailsBox_item">
+            <label for>手机号码</label>
+            <input type="text" placeholder="手机或电话号码" />
+          </div>
+          <div class="qo_detailsBox_item">
+            <label for>所在地区</label>
+            <input type="text" placeholder="选择省市区县" />
+          </div>
+          <div class="qo_detailsBox_item">
+            <label for>详细地址</label>
+            <input type="text" placeholder="街道、楼牌号等信息" />
+          </div>
+        </div>
 
-        </div>
-        
-        用户没登录
+        <button class="keep">保存信息</button>
         <div>
-          电话
-          <input type="text" />
-        </div>
-        <div>
-          验证码
-          <input type="text" />
-        </div>
-        <hr />
-        <div>
-          姓名
-          <input type="text" />
-        </div>
-        <div>
-          电话
-          <input type="text" />
-        </div>
-        <div>
-          城市
-          <input type="text" />
-        </div>
-        <div>
-          详细信息
-          <input type="text" />
+          <img src="../../images/logo.png" alt />
         </div>
       </div>
-
       <div v-if="replaceAddr" class="replaceAddr">
         <div>
           <h3>更换地址</h3>
@@ -827,7 +825,6 @@ export default {
     }
   }
   .quickOrder {
-    background: #fff;
     margin-top: -16px;
     .qo_phone {
       margin: 0 10px 10px;
@@ -851,14 +848,41 @@ export default {
         padding: 0 96px 0 10px;
         padding-left: 96px;
         padding-right: 10px;
-         background: #f7f7f7;
-         border:none;
-         outline: none;
+        background: #f7f7f7;
+        border: none;
+        outline: none;
       }
     }
-    .qo_detailsBox{
-      margin-bottom:15px;
-      background:#fff;
+    .qo_detailsBox {
+      margin-bottom: 15px;
+      background: #fff;
+      margin-top: 20px;
+      .qo_detailsBox_item {
+        display: flex;
+        position: relative;
+        margin-left: 10px;
+        height: 46px;
+        font-size: 16px;
+        label {
+          width: 74px;
+          line-height: 46px;
+          color: #333;
+        }
+        input {
+          padding-right: 20px;
+          flex: 1;
+          border: none;
+          outline: none;
+        }
+      }
+    }
+    button.keep {
+      width: 90%;
+      height: 50px;
+      background: red;
+      border: none;
+      color: #fff;
+      margin-bottom: 20px;
     }
   }
 }
