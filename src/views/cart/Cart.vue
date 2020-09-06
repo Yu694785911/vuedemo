@@ -25,22 +25,25 @@
           </el-dropdown>
         </div>
       </nav-bar>
-      <div v-if="!$store.state.userInfo" class="shopcart_login_bar">
-        登录可以同步账号下的购物车信息
-        <router-link tag="a" to="/login">登录</router-link>
-      </div>
+
       <div>
         <!-- 正常判断购物车数据 ShopCart 为空。。 -->
-        <div class="cart_empty" v-if="shopCart==null||shopCart.length==0">
-          <img :src="$store.state.urlPath+'/routine/cart_empty.png'" alt />
-          <p>您的购物车还没有任何数据，请添加商品 </p>
+        <div v-if="localShopCart.length==0">
+          <div class="cart_empty" v-if="shopCart==null||shopCart.length==0">
+            <img :src="$store.state.urlPath+'/routine/cart_empty.png'" alt />
+            <p>您的购物车还没有任何数据，请添加商品</p>
+          </div>
         </div>
-        <div v-else class="shop-cart-details">
+
+        <div
+          v-if="localShopCart.length>0||shopCart==null||shopCart.length==0"
+          class="shop-cart-details"
+        >
           <div class="ADD">
             <div class="ADD-bar">
               <div class="ADD-bar-first">
                 <div class="ADD-bar-first-text">{{address}}</div>
-               
+
                 <!-- <div class="ADD-bar-first-text" v-if="$store.state.shoppingAddress.takeover_addr==null">河北河北河北</div> -->
               </div>
               <span class="ADD-btn">编辑商品</span>
@@ -56,15 +59,19 @@
             @checknorm="selectNorm"
             @ischeckshopall="is_check_shop_all"
           >{{item}}</cart-goods>
+
+          <div v-if="!$store.state.userInfo" class="shopcart_login_bar">
+            登录可以同步账号下的购物车信息
+            <router-link tag="a" to="/login" class="loginBtn">登录</router-link>
+          </div>
         </div>
       </div>
+
       <div
         v-if="!$store.state.userInfo && localShopCart.length>0"
         style="background-color:#fff;margin-top:10px;"
       >
-        <div v-for="(item,i) in localShopCart" :key="i">
-          {{item}}
-          <hr />
+        <div  v-for="(item,i) in UnLoginProduct" :key="i">
         </div>
       </div>
     </scroll>
@@ -83,6 +90,7 @@ import CartGoods from "./childComp/CartGoods";
 
 import { UpdataShopCart } from "network/shopCart";
 import { SET_USERINFO } from "store/mutation-types";
+import { getGoodsId } from "network/goods";
 
 export default {
   name: "Cart",
@@ -91,30 +99,31 @@ export default {
       num: 1,
       payMentData: [],
       fullscreenLoading: false,
-      localShopCart: [], //本地存储的购物车
+      localShopCart: [], //本地存储的购物车,
+      UnLoginProduct: [] //没有登录时根据goods_id货到商品储存
     };
   },
   created() {
-    console.log(this.$store.state.userInfo)
-   
+    console.log(this.$store.state.userInfo);
+
     //如果用户存在。则网络请求shopCart数据
-    if (this.$store.state.userInfo.id) {
+    if (this.$store.state.userInfo) {
       this.getShopCart();
     }
     if (!this.$store.state.userInfo) {
-      this.$store.dispatch("autocode",{
-        resolve:res=>{
-            if(res.code!=200) return;
-            this.$store.commit(SET_USERINFO,res);
-            this.$store.dispatch("getShopCart",res.data.user.id);
-          }
+      this.$store.dispatch("autocode", {
+        resolve: res => {
+          if (res.code != 200) return;
+          this.$store.commit(SET_USERINFO, res);
+          this.$store.dispatch("getShopCart", res.data.user.id);
+        }
       });
     }
     // 获取本地存储中购物车的数据
     this.getLocalShopCart();
     // 如果用户存在，请求shopCart数据
-    if(this.$store.state.userInfo && this.shopCartLength==0){
-      this.$store.dispatch("getShopCart",this.$store.state.userInfo.id);
+    if (this.$store.state.userInfo && this.shopCartLength == 0) {
+      this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
     }
   },
   components: {
@@ -124,11 +133,11 @@ export default {
     CartGoods
   },
   beforeRouteLeave(to, from, next) {
-   // 如果取得页面时login页面，则记录页面
+    // 如果取得页面时login页面，则记录页面
     if (to.path == "/login") {
       this.$store.state.loginHistory = from.path;
     }
-    
+
     // if(this.$store.state.userInfo) this.upDateShopCart();
     next();
   },
@@ -170,12 +179,15 @@ export default {
         }
       });
 
-       let data=window.localStorage.getItem(window.location.origin + "/jd")
-        data=(data!=undefined && data!=null && data!="")?JSON.parse(data):{};
+      let data = window.localStorage.getItem(window.location.origin + "/jd");
+      data =
+        data != undefined && data != null && data != "" ? JSON.parse(data) : {};
 
-        data.cartData=this.$store.state.cartData;
-        window.localStorage.setItem(window.location.origin + "/jd",JSON.stringify(data));
-
+      data.cartData = this.$store.state.cartData;
+      window.localStorage.setItem(
+        window.location.origin + "/jd",
+        JSON.stringify(data)
+      );
 
       this.$router.push("/confirm_order/aaa");
     },
@@ -183,12 +195,8 @@ export default {
       let shopCart = { ...this.$store.state.shopCart };
       let shopCartHistory = { ...this.$store.state.shopCartHistory };
 
-      // let temp=0,temp1=0;
       for (let i in shopCart) {
         for (let j = 0; j < shopCart[i]; j++) {
-          // if(j=0){
-          //   console.log(shopCart[i][j]);
-          // }
           if (
             shopCart[i][j].ischeck != shopCartHistory[i][j].ischeck ||
             shopCart[i][j].num != shopCartHistory[i][j].num ||
@@ -202,7 +210,7 @@ export default {
             data.ischeck = shopCart[i][j].ischeck;
             data.norm = shopCart[i][j].norm;
             data.takeover_addr = shopCart[i][j].takeover_addr;
-            
+
             UpdataShopCart(data).then(res => {
               console.log(res);
             });
@@ -273,11 +281,19 @@ export default {
       console.log(data);
       // this.$router.push("/comfirm-order/"+data)
     },
-    getLocalShopCart(){
-      let data=window.localStorage.getItem(this.localPath);
-      data=data!=null?JSON.parse(data):[];
-      this.localShopCart=data.shopCart?data.shopCart:[]
-      console.log(this.localShopCart);
+    getLocalShopCart() {
+      let data = window.localStorage.getItem(this.localPath);
+      data = data != null ? JSON.parse(data) : [];
+      this.localShopCart = data.shopCart ? data.shopCart : [];
+      console.log(this.localShopCart.length);
+
+      console.log(this.localShopCart[this.localShopCart.length - 1].goods_id);
+      var ggid = this.localShopCart[this.localShopCart.length - 1].goods_id;
+      getGoodsId(ggid).then(res => {
+        console.log(res.data);
+        this.UnLoginProduct.push(res.data.goodsData);
+        console.log(this.UnLoginProduct);
+      });
     }
   },
   computed: {
@@ -290,19 +306,18 @@ export default {
     address() {
       // 取出地址中的指定默认配送地址
 
-      let addr="";
-      if(this.$store.state.userInfo.id){
-        addr=this.$store.state.shoppingAddress.takeover_addr;
-      }else{
-        let path=window.location.origin+'/jd';
-        let data=window.localStorage.getItem(path);
-        if(data!=null){
-          addr=data.orderAddr?data.orderAddr:"河北省,邢台市"
-        }else{
-          addr="河北省,邢台市"
+      let addr = "";
+      if (this.$store.state.userInfo) {
+        addr = this.$store.state.shoppingAddress.takeover_addr;
+      } else {
+        let path = window.location.origin + "/jd";
+        let data = window.localStorage.getItem(path);
+        if (data != null) {
+          addr = data.orderAddr ? data.orderAddr : "河北省,邢台市";
+        } else {
+          addr = "河北省,邢台市";
         }
         console.log(addr);
-        
       }
       return addr.split(",").join(" ");
     },
@@ -519,7 +534,15 @@ export default {
     background-color: #fff;
     height: 5000px;
   }
-  .shop-cart {
+  .shopcart_login_bar {
+    line-height: 40px;
+    margin-top:20px; 
+    .loginBtn {
+      background: red;
+      padding: 10px 20px;
+      border-radius: 20px;
+      color:#fff;
+    }
   }
 }
 body {

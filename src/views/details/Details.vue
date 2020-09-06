@@ -256,21 +256,14 @@
           <div class="ev_detail">
             <p style="width:100%;">{{list.evaluationDetails}}</p>
             <div style="text-align:left">
-              <img
-                v-for="(a,b) in Ev_detailImg"
-                :key="b"
-                :src="Evpath+a"
-                alt
-                @mousewheel="rollImg(this)"
-                ref="bigImage"
-              />
+              <img v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a"  v-image-preview style="margin-right:10px"/>
             </div>
 
             <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
             <span>{{list.evaluationShop}}</span>
           </div>
         </div>
-        <button v-if="evaluate.length>2" class="more">查看更多评价</button>
+        <button v-if="evaluate.length>2" class="more" @click="more">查看更多评价</button>
       </div>
 
       <!-- <details-evaluate :evaluate="goodsEvaluates" ></details-evaluate> -->
@@ -849,6 +842,10 @@ export default {
         console.log(shopCart);
         addShopCart(shopCart).then(res => {
           console.log(res);
+          if(res.data==200){
+            alert("加入购物车成功")
+          }
+          
           this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
         });
       } else {
@@ -868,13 +865,7 @@ export default {
                 data.shopCart[i].norm == shopCart.norm &&
                 data.shopCart[i].takeover_addr == shopCart.takeover_addr
               ) {
-                console.log(data.shopCart[i].goods_id);
-                console.log(shopCart.goods_id);
-                console.log(data.shopCart[i].norm);
-                console.log(shopCart.norm);
-                console.log(data.shopCart[i].takeover_addr);
-                console.log(shopCart.takeover_addr);
-                data.shopCart[i].num += shopCart.num;
+                data.shopCart[i].num += shopCart.num*1;
                 break;
               }
               temp++;
@@ -920,6 +911,7 @@ export default {
         
       this.$router.push('/confirm_order/aaa');
     },
+    // 查看本地存储是否存有购物车数据
     lookLocalStorage() {
       if (!this.$store.state.userInfo) {
         let path = window.location.origin + "/jd";
@@ -930,27 +922,16 @@ export default {
         this.calculationStorageShopNum(data.shop);
       }
     },
+    // 用户未登录时，购物车数量
     calculationStorageShopNum(arr) {
       this.$store.state.shopCartLength = 0;
       arr.forEach(item => {
         this.$store.state.shopCartLength += item.num * 1;
       });
     },
-    rollImg() {
-      /* 获取当前页面的缩放比
-            若未设置zoom缩放比，则为默认100%，即1，原图大小
-        */
-      var zoom = parseInt(this.$refs.bigImage.style.zoom) || 100;
-      /* event.wheelDelta 获取滚轮滚动值并将滚动值叠加给缩放比zoom
-            wheelDelta统一为±120，其中正数表示为向上滚动，负数表示向下滚动
-        */
-      zoom += event.wheelDelta / 12;
-      /* 最小范围 和 最大范围 的图片缩放尺度 */
-      if (zoom >= 100 && zoom < 250) {
-        this.$refs.bigImage.style.zoom = zoom + "%";
-      }
-      return false;
-    }
+    more(){
+      this.$router.push("/allEvaluate/"+this.getdata.exact.id);
+    },
   },
   filters: {
     changePrice(val, str) {

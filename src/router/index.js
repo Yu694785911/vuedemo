@@ -28,6 +28,7 @@ const phoneRegister = () => import("views/register/phoneRegister");
 const Address = () => import("views/address/Address");
 const myOrder = () => import("views/order/myOrder");
 const paySuccess = () => import("views/order/paySuccess");
+const allEvaluate = () => import("views/details/childComp/allEvaluate")
 
 
 const routes = [
@@ -200,6 +201,13 @@ const routes = [
       title: "支付成功"
     },
     component: paySuccess
+  },
+  {//支付成功  
+    path: '/allEvaluate/:allid',
+    mata: {
+      title: "评价页面"
+    },
+    component: allEvaluate
   },
 ]
 
