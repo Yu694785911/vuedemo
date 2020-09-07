@@ -209,6 +209,60 @@ const routes = [
     },
     component: allEvaluate
   },
+  {//支付成功  
+    path: '/shops/:id',
+    name:"shops",
+    mata: {
+      title: "店铺页面"
+    },
+    component: ()=>import('views/shops/Shops'),
+    children:[
+      {
+        path:'/',
+        redirect:"selected"
+      },
+      {
+        path:'selected',
+        name:'selected',
+        meta:{
+          title:"精选"
+        },
+        component: ()=>import('views/shops/child/Selected'),
+      },
+      {
+        path:'commodity',
+        name:'commodity',
+        meta:{
+          title:"商品"
+        },
+        component: ()=>import('views/shops/child/Commodity'),
+      },
+      {
+        path:'news',
+        name:'news',
+        meta:{
+          title:"新品"
+        },
+        component: ()=>import('views/shops/child/News'),
+      },
+      {
+        path:'buyshow',
+        name:'buyshow',
+        meta:{
+          title:"精选"
+        },
+        component: ()=>import('views/shops/child/Buyshow'),
+      },
+      {
+        path:'dynamic',
+        name:'dynamic',
+        meta:{
+          title:"动态"
+        },
+        component: ()=>import('views/shops/child/Dynamic'),
+      },
+    ]
+  },
 ]
 
 const routers = new Router({

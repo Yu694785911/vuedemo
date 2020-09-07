@@ -1,4 +1,5 @@
 import Vue from 'vue'
+// import VueRouter from 'vue-router'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -12,7 +13,7 @@ import 'vue-directive-image-previewer/dist/assets/style.css'
 
 // 配置cookie
 // import cookies from 'vue-cookies'
-
+// Vue.user(VueRouter)
 Vue.use(element);
 Vue.use(Vuesession);
 Vue.use(VueDirectiveImagePreviewer);

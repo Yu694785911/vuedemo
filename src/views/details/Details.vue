@@ -269,7 +269,7 @@
       <!-- <details-evaluate :evaluate="goodsEvaluates" ></details-evaluate> -->
 
       <div class="Shop">
-        <div class="shop_info">
+        <div class="shop_info" @click="toShops(shopInfo.shopsId)">
           <span class="shop_head">
             <!-- <img :src="Evpath+goodsEvaluates[0].headImg" /> -->
           </span>
@@ -610,6 +610,12 @@ export default {
     // 监听数据改变，做一些数据变化的事情
   },
   methods: {
+    // routerTo(path) {
+    //   this.$store.commit(ROUTERTO, path);
+    // },
+    toShops(shopsId){
+      this.$router.push('/shops/'+shopsId);
+    },
     toptabbar() {
       var p = 0;
       $(window).scroll(function() {
