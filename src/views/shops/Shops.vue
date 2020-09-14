@@ -5,10 +5,12 @@
         <div class="img_Box">
           <img src alt />
         </div>
-        <div class="title">1sddsdsadsad</div>
-        <span class="xj">店铺星级</span>
+        <div class="title">{{shopname[0].shopName}}</div>
+        <span class="xj">店铺星级:{{shopname[0].level}}</span>
+        <span class="fl">{{shopname[0].category}}</span>
 
         <button class="shoucang">收藏</button>
+        <p class="sc">1万人收藏</p>
         <!--<button title="更多"></button>-->
       </div>
 
@@ -18,33 +20,18 @@
           搜商品
         </button>
         <ul>
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <router-link tag="li" to="selected">
-              精选
-              <el-tab-pane label="用户管理" name="first">精选</el-tab-pane>
-            </router-link>
-            <router-link tag="li" to="commodity">商品
-              <el-tab-pane label="配置管理" name="second">商品</el-tab-pane>
-            </router-link>
-             <router-link tag="li" to="news">新品
-               <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-            </router-link>
-            <router-link tag="li" to="buyshow">买家秀
-               <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
-            </router-link>
-            <router-link tag="li" to="dynamic">动态
-              <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
-              </router-link>
-            <!-- 
-            <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-            <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>-->
-          </el-tabs>
-
-          <!-- <router-link tag="li" to="selected">精选</router-link>
-          <router-link tag="li" to="commodity">商品</router-link>
-          <router-link tag="li" to="news">新品</router-link>
-          <router-link tag="li" to="buyshow">买家秀</router-link>
-          <router-link tag="li" to="dynamic">动态</router-link>-->
+          <router-link
+            tag="li"
+            v-for="(item,index) in nav"
+            :key="index"
+            :to="item.path"
+            @click.native="change(index)"
+            :class="{ active:index===num}"
+          >{{item.name}}</router-link>
+          <!-- <router-link tag="li" to="commodity"><a>商品</a></router-link>
+          <router-link tag="li" to="news"><a>新品</a></router-link>
+          <router-link tag="li" to="buyshow"><a>买家秀</a></router-link>
+          <router-link tag="li" to="dynamic"><a>动态</a></router-link>-->
         </ul>
       </div>
     </div>
@@ -56,43 +43,92 @@
 </template>
 
 <script>
+import { getShops } from "network/shops";
 import $ from "jquery";
 export default {
   name: "Shops",
   data() {
     return {
-      activeName: "second"
+      num: 0,
+      shopname: null,
+      nav: [
+        {
+          path: "selected",
+          name: "精选"
+        },
+        {
+          path: "commodity",
+          name: "商品"
+        },
+        {
+          path: "news",
+          name: "新品"
+        },
+        {
+          path: "buyshow",
+          name: "买家秀"
+        },
+        {
+          path: "dynamic",
+          name: "动态"
+        }
+      ]
     };
   },
   components: {},
   computed: {},
   created() {
     console.log(this.$route.params.id);
-    $(window).scroll(function(){
-       var scrollTop　=　document.documentElement.scrollTop || document.body.scrollTop;
+    $(window).scroll(function() {
+      var scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop;
       //  console.log(scrollTop);
-       if(scrollTop>150){
+      if (scrollTop > 150) {
         //  console.log($("div.nav"));
-         $("div.nav").css({ 'position': 'fixed' , 'top': '0', 'width': '100%','height':'40px','background':'repeating-linear-gradient(45deg, black, transparent 100px)' })
-       }else{
-         $(".shop_top").css({'position':'relative'})
-          $("div.nav").css({'position': 'absolute','width':'100%','height':'40px','top':'73%','left':'0','bottom':'0','right':'0','float':'left','background':'none'})
-       }
-    })
+        $("div.nav").css({
+          position: "fixed",
+          top: "0",
+          width: "100%",
+          height: "40px",
+          background:
+            "repeating-linear-gradient(45deg, black, transparent 100px)",
+          zIndex: "500000"
+        });
+      } else {
+        $(".shop_top").css({ position: "relative" });
+        $("div.nav").css({
+          position: "absolute",
+          width: "100%",
+          height: "40px",
+          top: "73%",
+          left: "0",
+          bottom: "0",
+          right: "0",
+          float: "left",
+          background: "none"
+        });
+      }
+    });
+
+    getShops({ id: this.$route.params.id }).then(res => {
+      console.log(res.data);
+      this.shopname = res.data;
+      console.log(this.shopname[0].shopName);
+    });
   },
   activated() {},
   deactivated() {},
   mounted() {},
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
+    change(index) {
+      this.num = index;
     }
   }
 };
 </script>
 <style lang='less' scope>
 .Shops {
-  height:1000px;
+  height: 1000px;
   .shop_top {
     width: 100%;
     height: 150px;
@@ -124,6 +160,15 @@ export default {
         font-size: 12px;
         color: #fff;
       }
+      span.fl {
+        font-size: 6px;
+        padding: 1px 2px;
+        background: grey;
+        color: #fff;
+        position: absolute;
+        top: 93%;
+        left: 20%;
+      }
       .shoucang {
         position: absolute;
         top: 32%;
@@ -138,6 +183,14 @@ export default {
         line-height: 32px;
         padding: 0 15px;
         font-size: 14px;
+      }
+      p.sc {
+        float: right;
+        font-size: 12px;
+        position: absolute;
+        right: 15%;
+        top: 64%;
+        color: #fff;
       }
     }
     .nav {
@@ -164,8 +217,12 @@ export default {
       }
       ul {
         height: 40px;
+        line-height: 40px;
         li:first-child {
           margin-left: 30px;
+        }
+        .active {
+          color: #000;
         }
         li {
           float: left;
@@ -173,6 +230,18 @@ export default {
           color: #fff;
           margin-left: 20px;
           font-size: 14px;
+          li.active {
+            color: #000;
+          }
+          span {
+            width: 28px;
+            height: 2px;
+            background: red;
+            display: block;
+            position: absolute;
+            top: 71%;
+            left: 33%;
+          }
         }
       }
     }

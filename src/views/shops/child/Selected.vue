@@ -1,16 +1,20 @@
 <template>
   <div class='Selected'>
       精选
+      <all-commodity></all-commodity>
   </div>
 </template>
 
 <script>
+import AllCommodity from "./Commodity";
 export default {
   name: 'Selected',
   data(){
     return {}
   },
-  components: {},
+  components: {
+    AllCommodity
+  },
   computed: {},
   created(){},
   activated(){},

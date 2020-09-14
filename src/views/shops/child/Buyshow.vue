@@ -1,6 +1,6 @@
 <template>
   <div class='buyshow'>
-      买家秀
+    买家秀
   </div>
 </template>
 
