@@ -165,7 +165,8 @@ export default {
             console.log(this.$store.state.userInfo);
             this.$store.state.userInfo.id=3;
             
-            this.$router.push('/profile');
+            // this.$router.push('/profile');
+            this.$router.push(this.$store.state.loginHistory);
           });
         });
       }

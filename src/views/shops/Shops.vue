@@ -5,6 +5,7 @@
         <div class="img_Box">
           <img src alt />
         </div>
+        {{shopname}}
         <div class="title">{{shopname[0].shopName}}</div>
         <span class="xj">店铺星级:{{shopname[0].level}}</span>
         <span class="fl">{{shopname[0].category}}</span>

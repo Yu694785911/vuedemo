@@ -29,6 +29,7 @@ const Address = () => import("views/address/Address");
 const myOrder = () => import("views/order/myOrder");
 const paySuccess = () => import("views/order/paySuccess");
 const allEvaluate = () => import("views/details/childComp/allEvaluate")
+const toEvaluate = () => import("views/order/toEvaluate")
 
 
 const routes = [
@@ -100,7 +101,7 @@ const routes = [
     component: Details
   },
   {
-    path: "/search",
+    path: "/search/:msg",
     mata: {
       title: "搜索"
     },
@@ -262,6 +263,13 @@ const routes = [
         component: ()=>import('views/shops/child/Dynamic'),
       },
     ]
+  },
+  {//去评价  
+    path: '/toEvaluate/:id',
+    mata: {
+      title: "去评价"
+    },
+    component: toEvaluate
   },
 ]
 

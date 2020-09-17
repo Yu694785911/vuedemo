@@ -44,8 +44,9 @@ export function deleteOrder(data){
 }
 
 // 搜索商品
-export function getGoods(){
+export function getGoods(params){
     return request({
         url:'/vuedemo/get_goods',
+        params
     })
 }

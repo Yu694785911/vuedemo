@@ -35,7 +35,7 @@ export default {
   name: "search",
   data() {
     return {
-      searahData: []
+      searahData: null
     };
   },
   components: {
@@ -43,14 +43,17 @@ export default {
   },
   computed: {},
   created() {
-    getGoods().then(res => {
-      res.data.forEach(item => {
-        // console.log(item.name);
-        if (item.name.substr(0, 1) == "【") {
-          console.log(item);
-          this.searahData.push(item);
-        }
-      });
+    console.log(this.$route.params.msg);
+    getGoods({like:this.$route.params.msg}).then(res => {
+      // res.data.forEach(item => {
+      //   // console.log(item.name);
+      //   if (item.name.substr(0, 1) == "【") {
+      //     // console.log(item);
+      //     this.searahData.push(item);
+      //   }
+      // });
+      console.log(res);
+      this.searahData=res.data;
     });
   },
   mounted() {},

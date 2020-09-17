@@ -1,5 +1,5 @@
 <template>
-  <div class="confirmorder" style="background:#f2f2f2">
+  <div class="confirmorder" style="background:#f2f2f2" v-if="confirmorderShow">
     <scroll id="OrderScroll">
       <nav-bar class="OrderNavBar" ref="OrderNavBar">
         <div slot="left" class="left" v-on:click="$router.go(-1)">
@@ -229,7 +229,8 @@ export default {
       },
       isShow: false,
       replaceAddr: false, //替换地址的遮罩层显示
-      repAddrId: 1 //需要替换的id
+      repAddrId: 1, //需要替换的id
+      confirmorderShow:false,
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -266,6 +267,12 @@ export default {
     //     ? JSON.parse(this.$route.params.shop)
     // : "";
 
+    setTimeout(()=>{
+      this.confirmorderShow=true;
+    },500);
+
+
+    console.log(this.$store.state.userInfo);
     if (
       window.localStorage.getItem(window.location.origin + "/jd") ==
         undefined ||
@@ -326,7 +333,7 @@ export default {
         };
 
         this.orderData.takeover_addr = JSON.stringify(temp);
-
+        console.log(this.shop);
         this.shop.forEach(item => {
           this.orderData.shopcarts_id.push(item.id);
         });

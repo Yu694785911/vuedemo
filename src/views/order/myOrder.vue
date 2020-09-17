@@ -1,5 +1,5 @@
 <template>
-  <div class="myOrder">
+  <div class="myOrder" v-if="aaa">
     <scroll id="myOrderScroll" style="background:#d1d1">
       <nav-bar class="cartNavBar" ref="cartNavBar">
         <div slot="left" class="left" v-on:click="$router.go(-1)">
@@ -33,7 +33,7 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="全部" name="first">
           <dl class="dlData" v-for="(i,j) in all" :key="j">
-            <dt class="shop_name">
+            <dt class="shop_name" v-if="i.shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
             </dt>
@@ -66,7 +66,7 @@
         </el-tab-pane>
         <el-tab-pane label="代付款" name="second">
           <dl class="dlData" v-for="(i,j) in payfail" :key="j">
-            <dt class="shop_name">
+            <dt class="shop_name" v-if="i.shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg"  />
               {{i.shop_name}}
             </dt>
@@ -99,7 +99,7 @@
         </el-tab-pane>
         <el-tab-pane label="待收货" name="third">
           <dl class="dlData" v-for="(i,j) in paySuccess" :key="j">
-            <dt class="shop_name">
+            <dt class="shop_name" v-if="i.shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
             </dt>
@@ -132,7 +132,7 @@
         </el-tab-pane>
         <el-tab-pane label="已完成" name="fourth">
           <dl class="dlData" v-for="(i,j) in paySuccess" :key="j">
-            <dt class="shop_name">
+            <dt class="shop_name" v-if="i.shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
               <span>
@@ -159,7 +159,7 @@
                 </p>
 
                 <p class="money_now">
-                  <em>剩余支付时间：11.00</em>
+                  <el-button type="default" round @click="toevaluate(i.goods_id)">去评价</el-button>
                   <el-button type="danger" round @click="buymore(i.goods_id)">再次购买</el-button>
                   <br />
                 </p>
@@ -185,6 +185,7 @@ export default {
       paySuccess: [],
       payfail: null,
       all: [],
+      aaa:false,
     };
   },
   components: {
@@ -193,6 +194,9 @@ export default {
   },
   computed: {},
   created() {
+    setTimeout(()=>{
+      this.aaa=true;
+    },500)
     getOrder({ user_id: this.$store.state.userInfo.id }).then(res => {
       for (var i = 0; i < res.data.length; i++) {
         getOrderByOrderId(res.data[i].id).then(res => {
@@ -232,6 +236,9 @@ export default {
     },
     buymore(id){
       this.$router.push('/details/'+id)
+    },
+    toevaluate(id){
+      this.$router.push('/toEvaluate/'+id);
     },
     confimshou(){
       // 修改
@@ -360,7 +367,7 @@ dd {
       color: #999;
       display: flex;
       border-radius: 5px;
-      margin-left: 40%;
+      margin-left: 28%;
       margin-bottom: 5px;
       text-align: center;
       float: left;
@@ -411,7 +418,13 @@ dd {
     }
   }
 }
-.el-button {
+.el-button:nth-child(1){
+  width: 86px !important;
+  height: 30px !important;
+  line-height: 1px !important;
+  padding: 0 !important;
+}
+.el-button:nth-child(2) {
   width: 86px !important;
   height: 30px !important;
   line-height: 1px !important;

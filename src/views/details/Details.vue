@@ -1,5 +1,8 @@
 <template>
-  <div class="details" style="background:#f2f2f2" v-loading="loading">
+  <div class="details" style="background:#f2f2f2" v-loading="loading" >
+    <div v-if="aaa">
+
+    
     <nav-bar class="details-nav-bar">
       <div slot="left" @click="back" class="left">
         <i></i>
@@ -203,7 +206,7 @@
           <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
           <p class="count">1.8万+</p>
           <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
-          <!-- <p class="haoping">好评度98%</p> -->
+          <p class="haoping">好评度98%</p>
         </div>
         <div class="ev_key">
           <ul>
@@ -212,7 +215,7 @@
         </div>
         <div class="ev-con" v-for="(item,index) in goodsEvaluates" :key="index">
           <div class="ev-tou">
-            <!-- <img :src="Evpath+item.headImg" alt /> -->
+            <img :src="Evpath+item.headImg" alt />
             <span>{{item.username}}</span>
             <p>{{evaluateTime}}</p>
           </div>
@@ -248,6 +251,7 @@
           :key="index"
           v-show="goodsEvaluates.length=2"
         >
+          {{list}}
           <div class="ev-tou">
             <img :src="Evpath+list.headImg" alt />
             <span>{{list.username}}</span>
@@ -256,7 +260,13 @@
           <div class="ev_detail">
             <p style="width:100%;">{{list.evaluationDetails}}</p>
             <div style="text-align:left">
-              <img v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a"  v-image-preview style="margin-right:10px"/>
+              <img
+                v-for="(a,b) in Ev_detailImg"
+                :key="b"
+                :src="Evpath+a"
+                v-image-preview
+                style="margin-right:10px"
+              />
             </div>
 
             <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
@@ -315,7 +325,7 @@
         <h1>11212</h1>
       </div>
 
-      <div class="shop-M">
+      <div class="shop-M" v-if="shop_bottomShow">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="商品介绍" name="first">
             <div v-for="(item,index) in goodsImg" :key="index">
@@ -398,6 +408,7 @@
     </scroll>
 
     <details-tab-bar :addshopcart="addShop" @to-add-order="addOrder"></details-tab-bar>
+    </div>
   </div>
 </template>
 
@@ -411,7 +422,12 @@ import DetailsTabBar from "./childComp/DetailsTabBar";
 // import DetailsEvaluate from "./childComp/DetailsEvaluate";
 // 引入商品数据请求
 import { getGoodsId } from "network/goods";
-import { GoodsInfo, ShopInfo, SelectNorm,orderConfirmData } from "common/utils";
+import {
+  GoodsInfo,
+  ShopInfo,
+  SelectNorm,
+  orderConfirmData
+} from "common/utils";
 
 import { getuserAddress } from "network/address";
 import { getGoodsSevaluate } from "network/goods";
@@ -449,7 +465,7 @@ export default {
       shopCeatgory: "自营",
       aa: true, //本地还是异地  true-本地   false-异地
       shopInfo: {},
-      loading: false,
+      loading: true,
       selectNorm: {}, //规格数据
       // collectionActive:false,//查找用户是否存在改值
       evaluate: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -469,7 +485,9 @@ export default {
         num: 1
       },
       isConfirm: true,
-      confirmData:{},//用于储存当前详情页提交的数据
+      confirmData: {}, //用于储存当前详情页提交的数据
+      aaa: false,
+      shop_bottomShow:false,
     };
   },
   components: {
@@ -480,10 +498,20 @@ export default {
     // DetailsEvaluate
   },
   created() {
-    // this.addre =
-    //   window.localStorage.getItem("jdItem") == null
-    //     ? "河北"
-    //     : window.localStorage.getItem("jdItem");
+
+    // 延迟渲染页面 先加载页面数据
+    setTimeout(() => {
+      this.aaa = true;
+      this.loading=false;
+    }, 500);
+
+    setTimeout(() => {
+      this.shop_bottomShow = true;
+      // 刷新滚动条 重新加载滚动条高度
+    }, 1000);
+
+
+
 
     console.log(localStorage.getItem("address"));
 
@@ -613,8 +641,8 @@ export default {
     // routerTo(path) {
     //   this.$store.commit(ROUTERTO, path);
     // },
-    toShops(shopsId){
-      this.$router.push('/shops/'+shopsId);
+    toShops(shopsId) {
+      this.$router.push("/shops/" + shopsId);
     },
     toptabbar() {
       var p = 0;
@@ -671,10 +699,10 @@ export default {
 
         this.free_freight = res.data.goodsData.free_freight == 0 ? false : true;
 
-        this.confirmData=new orderConfirmData(
+        this.confirmData = new orderConfirmData(
           res.data.goodsData,
           res.data.shopData
-        )
+        );
         this.loading = false;
       });
       // getGoods(data).then(res => {
@@ -848,10 +876,10 @@ export default {
         console.log(shopCart);
         addShopCart(shopCart).then(res => {
           console.log(res);
-          if(res.data==200){
-            alert("加入购物车成功")
+          if (res.data == 200) {
+            alert("加入购物车成功");
           }
-          
+
           this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
         });
       } else {
@@ -871,7 +899,7 @@ export default {
                 data.shopCart[i].norm == shopCart.norm &&
                 data.shopCart[i].takeover_addr == shopCart.takeover_addr
               ) {
-                data.shopCart[i].num += shopCart.num*1;
+                data.shopCart[i].num += shopCart.num * 1;
                 break;
               }
               temp++;
@@ -904,18 +932,22 @@ export default {
       }
     },
     confirm() {
-      this.confirmData.num=this.orderSel.num;
-      this.confirmData.norm=JSON.stringify(this.orderSel.norm);
-      this.confirmData.takeover_addr=this.addr;
-      this.$store.state.cartData=[this.confirmData];
+      this.confirmData.num = this.orderSel.num;
+      this.confirmData.norm = JSON.stringify(this.orderSel.norm);
+      this.confirmData.takeover_addr = this.addr;
+      this.$store.state.cartData = [this.confirmData];
 
-       let data=window.localStorage.getItem(window.location.origin + "/jd")
-        data=(data!=undefined && data!=null && data!="")?JSON.parse(data):{};
+      let data = window.localStorage.getItem(window.location.origin + "/jd");
+      data =
+        data != undefined && data != null && data != "" ? JSON.parse(data) : {};
 
-        data.cartData=this.$store.state.cartData;
-        window.localStorage.setItem(window.location.origin + "/jd",JSON.stringify(data));
-        
-      this.$router.push('/confirm_order/aaa');
+      data.cartData = this.$store.state.cartData;
+      window.localStorage.setItem(
+        window.location.origin + "/jd",
+        JSON.stringify(data)
+      );
+
+      this.$router.push("/confirm_order/aaa");
     },
     // 查看本地存储是否存有购物车数据
     lookLocalStorage() {
@@ -931,13 +963,15 @@ export default {
     // 用户未登录时，购物车数量
     calculationStorageShopNum(arr) {
       this.$store.state.shopCartLength = 0;
-      arr.forEach(item => {
-        this.$store.state.shopCartLength += item.num * 1;
-      });
+      if (Array.isArray(arr) && arr.length > 0) {
+        arr.forEach(item => {
+          this.$store.state.shopCartLength += item.num * 1;
+        });
+      }
     },
-    more(){
-      this.$router.push("/allEvaluate/"+this.getdata.exact.id);
-    },
+    more() {
+      this.$router.push("/allEvaluate/" + this.getdata.exact.id);
+    }
   },
   filters: {
     changePrice(val, str) {
@@ -1577,27 +1611,27 @@ export default {
     width: 100%;
     margin-top: 69vh;
   }
-  .selectedopen{
-    padding-bottom:50px;
-    .selectBtnBox{
-      display:flex;
+  .selectedopen {
+    padding-bottom: 50px;
+    .selectBtnBox {
+      display: flex;
       position: absolute;
-      left:0;
-      right:0;
-      bottom:40px;
-      background-color:#fff;
-      padding-bottom:5px;
-      button{
-        flex:1;
-        margin:0 10px;
+      left: 0;
+      right: 0;
+      bottom: 40px;
+      background-color: #fff;
+      padding-bottom: 5px;
+      button {
+        flex: 1;
+        margin: 0 10px;
         border-radius: 25px;
-        border:none;
-        background-color:pink;
-        color:#fff;
-      } 
-      button:nth-child(2){
-        background-color:yellow;
-        color:#000;
+        border: none;
+        background-color: pink;
+        color: #fff;
+      }
+      button:nth-child(2) {
+        background-color: yellow;
+        color: #000;
       }
     }
   }

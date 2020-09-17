@@ -9,11 +9,19 @@
         <button @click="toSearch">搜索</button>
       </div>
     </nav-bar>
-
     <div class="keybox">
       <ul>
-        <li v-for="item in keywordData" :key="item" @click="searchDetail(item.id)">
+        <li v-for="(item,index) in keywordData" :key="index" @click="searchDetail(item.id)">
           <span>{{item.name}}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="$store.state.searchData" class="nowSearch">
+      <p style="text-align:left;margin-left:30px;font-size:14px;">最近搜索</p>
+      <ul>
+        <li v-for="(i,j) in $store.state.searchData" :key="j" @click="searchDetail(item.id)">
+          <span>{{i.name|changeName}}</span>
         </li>
       </ul>
     </div>
@@ -100,7 +108,8 @@ export default {
       keywordName: [],
       jd_category_three: [],
       searchName: [],
-      keywordData: []
+      keywordData: [],
+      keywordRoute:null,
     };
   },
   components: {
@@ -126,7 +135,9 @@ export default {
       this.aww = !this.aww;
     },
     toSearch() {
-      this.$router.push("/search");
+      console.log(this.keywordRoute);
+      this.$router.push("/search/"+this.keywordRoute);
+      this.$store.state.searchData = this.keywordData;
     },
     get_jd_category_three() {
       get_jd_category_three().then(res => {
@@ -136,20 +147,30 @@ export default {
         }
       });
     },
-    searchDetail(sid){
-      this.$router.push("/details/"+sid)
+    searchDetail(sid) {
+      this.$router.push("/details/" + sid);
     }
   },
   watch: {
     keywordIpt(newVal) {
-      this.searchName.forEach(i => {
-        if (newVal == (i.name).substr(0, 1)) {
+      // this.searchName.forEach(i => {
+      //   if (newVal == (i.name).substr(0, 1)) {
+      //     document.querySelector(".keybox").style.display = "block";
+      //     this.keywordData.push(i);
+      //     this.$store.state.searchData=this.keywordData;
+      //     console.log(this.$store.state.searchData)
+      //   }
+      // });
+      this.keywordRoute=newVal;
+      if (newVal.length > 0) {
+        getGoods({ like: newVal }).then(res => {
+          // console.log(res);
           document.querySelector(".keybox").style.display = "block";
-          this.keywordData.push(i);
-          this.$store.state.searchData=this.keywordData;
-          console.log(this.$store.state.searchData)
-        }
-      });
+          this.keywordData = res.data;
+        });
+      } else {
+        document.querySelector(".keybox").style.display = "none";
+      }
       console.log(newVal);
     }
   },
@@ -160,6 +181,15 @@ export default {
   beforeRouteLeave(to, from, next) {
     this.$root.$children[0].isTabBar = true;
     next();
+  },
+  filters: {
+    changeName(val) {
+      if (val.length > 9) {
+        return val.substring(0, 9);
+      } else {
+        return val;
+      }
+    }
   }
 };
 </script>
@@ -246,25 +276,36 @@ export default {
       display: block;
       li {
         height: 45px;
-        line-height:45px;
+        line-height: 45px;
         display: block;
         padding-right: 12px;
         list-style: none;
         border-bottom: 1px solid #eeeeee;
-     
+
         span {
           display: block;
           color: #232326;
           font-size: 13px;
           padding-top: 1px;
           padding-bottom: 1px;
-           white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 200px;
-    display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 200px;
+          display: block;
         }
       }
+    }
+  }
+  .nowSearch {
+    span {
+      display: block;
+      max-width: 50%;
+      // margin-left: 5%;
+      background: #f0f2f5;
+      line-height: 23px;
+      margin: 5px 5px 0 5%;
+      font-size: 12px;
     }
   }
 }
