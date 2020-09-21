@@ -47,10 +47,11 @@ margin-left: 8px;display:block;"
       </div>
 
       <div class="tabContent">
-        <div class="tabTitle">
+        <!-- <div class="tabTitle">
           <button @click="tabClick('recommend')">recommend</button>
           <button @click="tabClick('news')">news</button>
-        </div>
+        </div> -->
+        <img src="../../images/wntj.png" alt="" style="width:96%;margin:0 auto;">
 
         <goods-list :cgoods="showGoodsList" :cpath="path" :cisDirection="parentDirection"></goods-list>
         <!-- <goods-list :cgoods="goods" :cpath="path"></goods-list> -->
@@ -297,6 +298,7 @@ export default {
   /* padding-top: 44px; */
   height: 100vh;
   position: relative;
+  background: #f2f2f2;
 }
 .home-nav-bar {
   background-image: linear-gradient(
@@ -429,15 +431,16 @@ export default {
   border: none;
 }
 .tabContent div {
-  width: 100%;
+  width: 96%;
   background: #fff;
+  margin:0 auto;
 }
 .tabContent div ul {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
-/* .tabContent div ul li{
+.tabContent div ul li{
   width:95%;
   margin:0 2.5%;
  
@@ -453,8 +456,8 @@ export default {
 .tabContent div ul li a span{
   width:58%;
   padding:1%;
-} */
-.tabContent div ul li {
+}
+/* .tabContent div ul li {
   width: 50%;
 }
 .tabContent div ul li img {
@@ -466,5 +469,5 @@ export default {
 }
 .tabTitle button:first-child {
   border-right: 1px solid grey;
-}
+} */
 </style>

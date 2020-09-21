@@ -9,7 +9,7 @@
         <span>
           {{citem.name}}
           <br />
-          {{citem.money_now}}
+          <em>{{citem.money_now| changePrice("￥")}}</em>
           <br />
         </span>
       </a>
@@ -55,10 +55,15 @@ export default {
       if (!this.bus) return;
       this.$bus.$emit(this.bus);
     }
+  },
+  filters: {
+    changePrice(val, str = "$") {
+      return str + Number(val).toFixed(2);
+    }
   }
 };
 </script>
-<style scoped>
+<style lang="less">
 /* .GoodsListItem{
   width: 100%;
 }
@@ -90,6 +95,12 @@ export default {
 .GoodsListItem.transverse a span {
   width: 60%;
   display: block;
+  margin-top: 10%;
+  font-size: 12px;
+  em {
+    font-style: normal;
+    color: red;
+  }
 }
 .GoodsListItem.column {
   /* 多列 */

@@ -1,413 +1,464 @@
 <template>
-  <div class="details" style="background:#f2f2f2" v-loading="loading" >
-    <div v-if="aaa">
-
-    
-    <nav-bar class="details-nav-bar">
-      <div slot="left" @click="back" class="left">
-        <i></i>
-      </div>
-      <div slot="center" class="tab-bar-center">
-        <div
-          v-for="(item,index) in titleArr"
-          :key="index"
-          class="tab-bar-center-item"
-          @click="tabbarToggle(item,index)"
-        >{{item}}</div>
-      </div>
-      <div slot="right" class="right">
-        <el-dropdown trigger="click" @command="pushRouter">
-          <span class="el-dropdown-link">
-            <i class="rightsd"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="/home">首页</el-dropdown-item>
-            <el-dropdown-item command="/category">分类搜索</el-dropdown-item>
-            <el-dropdown-item command="/profile">我的京东</el-dropdown-item>
-            <el-dropdown-item command="/profile">浏览记录</el-dropdown-item>
-            <el-dropdown-item command="/profile">我的关注</el-dropdown-item>
-            <el-dropdown-item command="/profile">分享</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-    </nav-bar>
-
-    <scroll ref="DetailsScroll" class="DetailsScroll">
-      <details-rotation :cgoodsImg="goodsImg"></details-rotation>
-      <div class="Dprice-m">
-        <div class="Dprice_box">
-          <div class="dprice">{{detailsGoods.newPrice|changePrice("$")}}</div>
-          <div class="oprice">{{detailsGoods.oldPrice|changePrice("$")}}</div>
-          <div class="free">
-            <span style>
-              <a href>
-                <img src="../../images/tx.png" class="tx" />
-                <br />降价提醒
-              </a>
+  <div class="details" style="background:#f2f2f2" v-loading="loading">
+    <div v-if="delay">
+      <nav-bar class="details-nav-bar">
+        <div slot="left" @click="back" class="left">
+          <i></i>
+        </div>
+        <div slot="center" class="tab-bar-center">
+          <div
+            v-for="(item,index) in titleArr"
+            :key="index"
+            class="tab-bar-center-item"
+            @click="tabbarToggle(item,index)"
+          >{{item}}</div>
+        </div>
+        <div slot="right" class="right">
+          <el-dropdown trigger="click" @command="pushRouter">
+            <span class="el-dropdown-link">
+              <i class="rightsd"></i>
             </span>
-            <span>
-              <a href>
-                <img src="../../images/sc.png" class="tx" />
-                <br />收藏
-              </a>
-            </span>
-          </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="/home">首页</el-dropdown-item>
+              <el-dropdown-item command="/category">分类搜索</el-dropdown-item>
+              <el-dropdown-item command="/profile">我的京东</el-dropdown-item>
+              <el-dropdown-item command="/profile">浏览记录</el-dropdown-item>
+              <el-dropdown-item command="/profile">我的关注</el-dropdown-item>
+              <el-dropdown-item command="/profile">分享</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
-        <div class="shopMessage">
-          <span
-            v-if="detailsGoods.category=='个体'"
-            style="background-color:red;color:#fff"
-          >{{detailsGoods.category}}</span>
-          <div class="shopname">{{detailsGoods.title}}</div>
-          <div class="desc">
-            放心去喜欢，天然实木画框，手工装裱，安装方便，售后无忧！更多装饰画请点击！
-            <a>查看！</a>
+      </nav-bar>
+
+      <scroll ref="DetailsScroll" class="DetailsScroll">
+        <details-rotation :cgoodsImg="goodsImg"></details-rotation>
+        <div class="Dprice-m">
+          <div class="Dprice_box">
+            <div class="dprice">{{detailsGoods.newPrice|changePrice("$")}}</div>
+            <div class="oprice">{{detailsGoods.oldPrice|changePrice("$")}}</div>
+            <div class="free">
+              <span style>
+                <a href>
+                  <img src="../../images/tx.png" class="tx" />
+                  <br />降价提醒
+                </a>
+              </span>
+              <span>
+                <a href>
+                  <img src="../../images/sc.png" class="tx" />
+                  <br />收藏
+                </a>
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 优惠 -->
-      <div class="Discount">
-        <div class="Discount-box">
-          <span class="title">优惠</span>
-          <div class="content">
-            <div class="D-mj">
-              <span class="mj-fir">满30减6</span>
-              <span class="mj-fir">满30减6</span>
-              <span class="mj-fir xyh">新用户专享</span>
-
-              <el-button type="text" @click="dialogVisible = true" style="margin-left: 40px;">...</el-button>
-
-              <el-dialog title="优惠" :visible.sync="dialogVisible" :before-close="handleClose">
-                <span>促销</span>
-                <span>赠下方的热销商品（条件：购买1件及以上，赠完即止）</span>
-              </el-dialog>
-            </div>
-
-            <div class="kuadian">
-              <p class="kuadian-k">
-                <em>跨店铺满减</em>
-              </p>
-              <p class="kuadian-d">满300减30元</p>
-            </div>
-
-            <div class="kuadian">
-              <p class="kuadian-k">
-                <em>多买优惠</em>
-              </p>
-              <p class="kuadian-d">满2件,总价打九折;满3件,总价打...</p>
-            </div>
-
-            <div class="kuadian">
-              <p class="kuadian-k">
-                <em>满额返券</em>
-              </p>
-              <p class="kuadian-d">购物满1元返装修500元优惠券</p>
+          <div class="shopMessage">
+            <span
+              v-if="detailsGoods.category=='个体'"
+              style="background-color:red;color:#fff"
+            >{{detailsGoods.category}}</span>
+            <div class="shopname">{{detailsGoods.title}}</div>
+            <div class="desc">
+              放心去喜欢，天然实木画框，手工装裱，安装方便，售后无忧！更多装饰画请点击！
+              <a>查看！</a>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="Address">
-        <div class="Address_box">
-          <span>已选</span>
-          <p class="fuwu">本商品支持保障服务,点击可选服务</p>
-          <el-button
-            type="text"
-            @click="open('Selected')"
-            style="display:block;padding:0;padding-left:20%"
-          >...</el-button>
+        <!-- 优惠 -->
+        <div class="Discount">
+          <div class="Discount-box">
+            <span class="title">优惠</span>
+            <div class="content">
+              <div class="D-mj">
+                <span class="mj-fir">满30减6</span>
+                <span class="mj-fir">满30减6</span>
+                <span class="mj-fir xyh">新用户专享</span>
 
-          <el-dialog title="已选" :visible.sync="Selected" :before-close="handleClose">
-            <div>
-              <div v-for="(item,index) in selectNorm" :key="index">
-                <div v-for="(i,j) in item" :key="j">
-                  <div>{{j}}</div>
-                  <div
-                    v-for="(m,n) in i"
-                    :key="n"
-                    style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
-                  >{{m.name}}</div>
-                </div>
+                <el-button type="text" @click="dialogVisible = true" style="margin-left: 40px;">...</el-button>
+
+                <el-dialog title="优惠" :visible.sync="dialogVisible" :before-close="handleClose">
+                  <span>促销</span>
+                  <span>赠下方的热销商品（条件：购买1件及以上，赠完即止）</span>
+                </el-dialog>
               </div>
 
-              <div class="order_num">
-                <div>数量</div>
-                <div>
-                  <button @click="order_num--" :disabled="orderSel.order_num<=1">-</button>
-                  <input type="text" :value="orderSel.num" />
-                  <button @click="orderSel.num++">+</button>
-                </div>
+              <div class="kuadian">
+                <p class="kuadian-k">
+                  <em>跨店铺满减</em>
+                </p>
+                <p class="kuadian-d">满300减30元</p>
               </div>
-              <div class="selectBtnBox" v-if="isConfirm">
-                <button @click="addShop">添加至购物车</button>
-                <button @click="addOrder(2)">立即购买</button>
+
+              <div class="kuadian">
+                <p class="kuadian-k">
+                  <em>多买优惠</em>
+                </p>
+                <p class="kuadian-d">满2件,总价打九折;满3件,总价打...</p>
               </div>
-              <div class="selectBtnBox" v-else>
-                <button @click="confirm">确认</button>
+
+              <div class="kuadian">
+                <p class="kuadian-k">
+                  <em>满额返券</em>
+                </p>
+                <p class="kuadian-d">购物满1元返装修500元优惠券</p>
               </div>
             </div>
-          </el-dialog>
+          </div>
         </div>
 
-        <div class="Address_box" style="float: left;">
-          <span>送至</span>
-          <div class="toRight">
-            <p class="dizhi">{{addre}}</p>
-            <p class="xianhuo">
-              <span v-if="true">现货</span>
-            </p>
-            <p class="jztime">{{getDistributionTime}}</p>
+        <div class="Address">
+          <div class="Address_box select">
+            <span>已选</span>
+            <p class="fuwu">本商品支持保障服务,点击可选服务</p>
             <el-button
               type="text"
-              @click="open('To') "
-              style="    padding: 0px;margin-top: -5%;float: right;margin-right: 3%;"
+              @click="open('Selected')"
+              style="display:block;padding:0;padding-left:20%"
             >...</el-button>
 
-            <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose">
-              <ul style="text-align:left;line-height:20px;font-size:14px;">
-                <!-- 使用过滤器把地址拼接 -->
-                <li
-                  style="padding:10px 0"
-                  v-for="(item,index) in allAddress"
-                  :key="index"
-                >{{addr|changeAddr}}</li>
-              </ul>
+            <el-dialog title :visible.sync="Selected" :before-close="handleClose">
+              <div>
+                <div v-for="(item,index) in selectNorm" :key="index">
+                  <div v-for="(i,j) in item" :key="j">
+                    <div class="select_img">
+                      <img :src="path+'/goods/'+i[0].img_cover" alt />
+                      <div class="select_r">
+                        <p>{{i[0].money_now|changePrice("￥")}}</p>
+                        <div
+                          v-for="(m,n) in i"
+                          :key="n"
+                          style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;line-height:30px;margin-left:5%;border-radius:15px"
+                        >已选:{{m.name}}</div>
+                      </div>
+                    </div>
+                    <!-- {{i}} -->
+                    <div>
+                      <p
+                        style="width: 100%;float: left;font-size: 14px;color: #000;text-align: left;"
+                      >{{j}}</p>
+                    </div>
+                    <div
+                      v-for="(m,n) in i"
+                      :key="n"
+                      style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
+                    >{{m.name}}</div>
+                  </div>
+                </div>
+
+                <div class="order_num" style="float:left;width:100%">
+                  <div>
+                    <p style="float: left;font-size: 14px;color: #000;text-align: left;">数量</p>
+                    <div style="margin-top:4%;padding-left:67%">
+                      <button
+                        @click="orderSel.num--"
+                        :disabled="orderSel.order_num<=1"
+                        v-if="orderSel.order_num>1"
+                        style="background:transparent;border:none;outline:none"
+                      >-</button>
+                      <input
+                        type="text"
+                        :value="orderSel.num"
+                        style="width:34px;height:18px;color:#333;font-size:11px;background:#f2f2f2;text-align:center;border:none;outline:none"
+                      />
+                      <button
+                        @click="orderSel.num++"
+                        style="background:transparent;border:none;outline:none"
+                      >+</button>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p
+                    style="width: 100%;float: left;font-size: 14px;color: #000;text-align: left;"
+                  >保障服务</p>
+                  <p style="width: 100%;float: left;text-align: left;line-height: 50px;">
+                    只换不修
+                    <span style="float:right">服务介绍></span>
+                  </p>
+                  <div class="bzfw" style>
+                    <p>1年只换不修<e>19.00</e></p>
+                    <i class="lalian">拉链五金断裂、缝线开裂免费换新</i>
+                  </div>
+                </div>
+                <div class="selectBtnBox" v-if="isConfirm">
+                  <button @click="addShop" style="border:none;outline:none;background-image: linear-gradient(135deg,#f2140c,#f2270c 70%,#f24d0c);width:50%;border-radius:20px;height:38px;line-height:38px;color:#fff;">添加至购物车</button>
+                  <button @click="addOrder(2)" style="border:none;outline:none;background-image: linear-gradient(135deg,#ffba0d,#ffc30d 69%,#ffcf0d);width:50%;border-radius:20px;height:38px;line-height:38px;color:#fff;">立即购买</button>
+                </div>
+                <div class="selectBtnBox" v-else>
+                  <button @click="confirm">确认</button>
+                </div>
+              </div>
             </el-dialog>
           </div>
+
+          <div class="Address_box" style="float: left;">
+            <span>送至</span>
+            <div class="toRight">
+              <p class="dizhi">{{addre}}</p>
+              <p class="xianhuo">
+                <span v-if="true">现货</span>
+              </p>
+              <p class="jztime">{{getDistributionTime}}</p>
+              <el-button
+                type="text"
+                @click="open('To') "
+                style="    padding: 0px;margin-top: -5%;float: right;margin-right: 3%;"
+              >...</el-button>
+
+              <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose">
+                <ul style="text-align:left;line-height:20px;font-size:14px;">
+                  <!-- 使用过滤器把地址拼接 -->
+                  <li
+                    style="padding:10px 0"
+                    v-for="(item,index) in allAddress"
+                    :key="index"
+                  >{{addr|changeAddr}}</li>
+                </ul>
+              </el-dialog>
+            </div>
+          </div>
+
+          <div class="Address_box" style="float: left;">
+            <span>运费</span>
+
+            <div class="freight">
+              <p class="free">在线支付免运费</p>
+              <el-button
+                type="text"
+                @click="open('freight') "
+                style="padding: 0;margin-left: 42%;margin-top: 5%;"
+              >...</el-button>
+
+              <el-dialog title="运费" :visible.sync="freight" :before-close="handleClose"></el-dialog>
+              <ul>
+                <li>商家发货售后</li>
+                <li>不支持七天无理由退货</li>
+                <br />
+                <li>闪电退款</li>
+                <li>极速审核</li>
+                <li>可选京东快递</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
-        <div class="Address_box" style="float: left;">
-          <span>运费</span>
-
-          <div class="freight">
-            <p class="free">在线支付免运费</p>
-            <el-button
-              type="text"
-              @click="open('freight') "
-              style="padding: 0;margin-left: 42%;margin-top: 5%;"
-            >...</el-button>
-
-            <el-dialog title="运费" :visible.sync="freight" :before-close="handleClose"></el-dialog>
+        <div class="evaluate" v-if="goodsEvaluates.length==1">
+          <div class="ev_head">
+            <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
+            <p class="count">1.8万+</p>
+            <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
+            <p class="haoping">好评度98%</p>
+          </div>
+          <div class="ev_key">
             <ul>
-              <li>商家发货售后</li>
-              <li>不支持七天无理由退货</li>
-              <br />
-              <li>闪电退款</li>
-              <li>极速审核</li>
-              <li>可选京东快递</li>
+              <li>全部</li>
+            </ul>
+          </div>
+          <div class="ev-con" v-for="(item,index) in goodsEvaluates" :key="index">
+            <div class="ev-tou">
+              <img :src="Evpath+item.headImg" alt />
+              <span>{{item.username}}</span>
+              <p>{{item.evaluationTime|splitTime}}</p>
+            </div>
+            <div class="ev_detail">
+              <p style="width:100%;">{{item.evaluationDetails}}</p>
+              <div style="text-align:left">
+                <img v-image-preview v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a" alt />
+              </div>
+
+              <span style="margin-right:5px;">{{item.evaluationNorm}}:</span>
+              <span>{{item.evaluationShop}}</span>
+            </div>
+          </div>
+          <button v-if="evaluate.length>2" class="more">查看更多评价</button>
+        </div>
+
+        <!-- 大于两条的评价 -->
+        <div class="evaluate" v-if="goodsEvaluates.length>=2">
+          <div class="ev_head">
+            <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
+            <p class="count">1.8万+</p>
+            <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
+            <p class="haoping">好评度98%</p>
+          </div>
+          <div class="ev_key">
+            <ul>
+              <li>全部</li>
+              <li v-for="(i,j) in Ev_keyword" :key="j">{{i}}</li>
+            </ul>
+          </div>
+          <div
+            class="ev-con"
+            v-for="(list,index) in goodsEvaluates"
+            :key="index"
+            v-show="goodsEvaluates.length=2"
+          >
+            <div class="ev-tou">
+              <img :src="Evpath+list.headImg" alt />
+              <span>{{list.username}}</span>
+              <p>{{list.evaluationTime|splitTime}}</p>
+            </div>
+            <div class="ev_detail">
+              <p style="width:100%;">{{list.evaluationDetails}}</p>
+              <div style="text-align:left">
+                <img
+                  v-for="(a,b) in Ev_detailImg"
+                  :key="b"
+                  :src="Evpath+a"
+                  v-image-preview
+                  style="margin-right:10px"
+                />
+              </div>
+
+              <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
+              <span>{{list.evaluationShop}}</span>
+            </div>
+          </div>
+          <button v-if="evaluate.length>2" class="more" @click="more">查看更多评价</button>
+        </div>
+
+        <!-- <details-evaluate :evaluate="goodsEvaluates" ></details-evaluate> -->
+
+        <div class="Shop">
+          <div class="shop_info" @click="toShops(shopInfo.shopsId)">
+            <span class="shop_head">
+              <!-- <img :src="Evpath+goodsEvaluates[0].headImg" /> -->
+            </span>
+            <p class="shopName">{{shopInfo.shopName}}</p>
+            <p class="shop">店铺星级</p>
+          </div>
+          <div class="shop_center">
+            <div class="shop_cl">
+              <p class="num">{{shopInfo.Collection}}</p>
+              <p class="fensi">粉丝人数</p>
+            </div>
+            <div class="shop_cl">
+              <p class="num">{{shopInfo.cGoods}}</p>
+              <p class="fensi">全部商品</p>
+            </div>
+            <div class="shop_cr">
+              <ul>
+                <li>
+                  评价
+                  <span class="green">8.65 | 低</span>
+                </li>
+                <li>
+                  物流
+                  <span class="green">8.79 | 低</span>
+                </li>
+                <li>
+                  售后
+                  <span class="red">8.94 | 中</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button @click="collectionStore" :class="{active:collectionActive}" class="gz">
+            <i></i>关注店铺
+          </button>
+          <button class="jr">
+            <i></i>进入店铺
+          </button>
+        </div>
+
+        <div class="recommend">
+          <div class="re_head">
+            <h3 style="font-size:15px;padding:0;text-align:left">猜你喜欢</h3>
+          </div>
+          <div class="re_con">
+            <ul>
+              <li v-for="(a,b) in GuessLike" :key="b">
+                <img :src="path+'/goods/'+a.img_cover" alt />
+                <p>{{a.name}}</p>
+                <span>{{a.money_now|changePrice("￥")}}</span>
+              </li>
             </ul>
           </div>
         </div>
-      </div>
 
-      <div class="evaluate" v-if="goodsEvaluates.length==1">
-        <div class="ev_head">
-          <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
-          <p class="count">1.8万+</p>
-          <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
-          <p class="haoping">好评度98%</p>
+        <div class="shop-M" v-if="shop_bottomShow">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="商品介绍" name="first">
+              <div v-for="(item,index) in goodsImg" :key="index">
+                <img :src="path+'/goods/'+item" alt />
+              </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="规格参数" name="second">
+              规格参数
+              <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="商品编号">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="主体"></el-form-item>
+
+                <el-form-item label="尺寸">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="肩带长度">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="斜挎带">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="内部结构"></el-form-item>
+                <el-form-item label="主袋">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="手机袋">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="证件袋">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="拉链暗袋">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="电脑插袋">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+
+            <el-tab-pane label="售后保障" name="third">
+              <div class="SH-line">
+                <h3>权利声明</h3>
+              </div>
+              <div class="SH-text">
+                <p>
+                  京东商城上的所有商品信息、客户评价、商品咨询、网友讨论等内容，是京东商城重要的经营资源，未经许可，禁止非法转载使用。
+                  <b>住:</b>
+                  本站商品信息均来自于厂商，其真实性、准确性和合法性由信息拥有者（厂商）负责。本站不提供任何保证，并不承担任何法律责任。
+                </p>
+              </div>
+
+              <div class="SH-line">
+                <h3>价格说明</h3>
+              </div>
+              <div class="SH-text">
+                <p>
+                  <strong>1.京东价：</strong>
+                  京东价为商品的销售价，是您最终决定是否购买商品的依据。
+                </p>
+                <p>
+                  <strong>2.划线价：</strong>
+                  商品展示的划横线价格为参考价，该价格可能是品牌专柜标价、商品吊牌价或由品牌供应商提供的正品零售价（如厂商指导价、建议零售价等）或该商品在京东平台上曾经展示过的销售价；由于地区、时间的差异性和市场行情波动，品牌专柜标价、商品吊牌价等可能会与您购物时展示的不一致，该价格仅供您参考。
+                </p>
+                <p>
+                  <strong>3.折扣：</strong>
+                  如无特殊说明，折扣指销售商在原价、或划线价（如品牌专柜标价、商品吊牌价、厂商指导价、厂商建议零售价）等某一价格基础上计算出的优惠比例或优惠金额；如有疑问，您可在购买前联系销售商进行咨询。
+                </p>
+                <p>
+                  <strong>4.异常问题：</strong>
+                  商品促销信息以商品详情页“促销”栏中的信息为准；商品的具体售价以订单结算页价格为准；如您发现活动商品售价或促销信息有异常，建议购买前先联系销售商咨询。
+                </p>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
-        <div class="ev_key">
-          <ul>
-            <li>全部</li>
-          </ul>
-        </div>
-        <div class="ev-con" v-for="(item,index) in goodsEvaluates" :key="index">
-          <div class="ev-tou">
-            <img :src="Evpath+item.headImg" alt />
-            <span>{{item.username}}</span>
-            <p>{{evaluateTime}}</p>
-          </div>
-          <div class="ev_detail">
-            <p style="width:100%;">{{item.evaluationDetails}}</p>
-            <div style="text-align:left">
-              <img v-image-preview v-for="(a,b) in Ev_detailImg" :key="b" :src="Evpath+a" alt />
-            </div>
+      </scroll>
 
-            <span style="margin-right:5px;">{{item.evaluationNorm}}:</span>
-            <span>{{item.evaluationShop}}</span>
-          </div>
-        </div>
-        <button v-if="evaluate.length>2" class="more">查看更多评价</button>
-      </div>
-
-      <div class="evaluate" v-if="goodsEvaluates.length>=2">
-        <div class="ev_head">
-          <h3 style="font-size:15px;padding:0;text-align:left">评价</h3>
-          <p class="count">1.8万+</p>
-          <p class="haoping">好评度{{goodsEvaluates[0].Highpraise}}</p>
-          <p class="haoping">好评度98%</p>
-        </div>
-        <div class="ev_key">
-          <ul>
-            <li>全部</li>
-            <li v-for="(i,j) in Ev_keyword" :key="j">{{i}}</li>
-          </ul>
-        </div>
-        <div
-          class="ev-con"
-          v-for="(list,index) in goodsEvaluates"
-          :key="index"
-          v-show="goodsEvaluates.length=2"
-        >
-          {{list}}
-          <div class="ev-tou">
-            <img :src="Evpath+list.headImg" alt />
-            <span>{{list.username}}</span>
-            <p>{{evaluateTime}}</p>
-          </div>
-          <div class="ev_detail">
-            <p style="width:100%;">{{list.evaluationDetails}}</p>
-            <div style="text-align:left">
-              <img
-                v-for="(a,b) in Ev_detailImg"
-                :key="b"
-                :src="Evpath+a"
-                v-image-preview
-                style="margin-right:10px"
-              />
-            </div>
-
-            <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
-            <span>{{list.evaluationShop}}</span>
-          </div>
-        </div>
-        <button v-if="evaluate.length>2" class="more" @click="more">查看更多评价</button>
-      </div>
-
-      <!-- <details-evaluate :evaluate="goodsEvaluates" ></details-evaluate> -->
-
-      <div class="Shop">
-        <div class="shop_info" @click="toShops(shopInfo.shopsId)">
-          <span class="shop_head">
-            <!-- <img :src="Evpath+goodsEvaluates[0].headImg" /> -->
-          </span>
-          <p class="shopName">{{shopInfo.shopName}}</p>
-          <p class="shop">店铺星级</p>
-        </div>
-        <div class="shop_center">
-          <div class="shop_cl">
-            <p class="num">{{shopInfo.Collection}}</p>
-            <p class="fensi">粉丝人数</p>
-          </div>
-          <div class="shop_cl">
-            <p class="num">{{shopInfo.cGoods}}</p>
-            <p class="fensi">全部商品</p>
-          </div>
-          <div class="shop_cr">
-            <ul>
-              <li>
-                评价
-                <span class="green">8.65 | 低</span>
-              </li>
-              <li>
-                物流
-                <span class="green">8.79 | 低</span>
-              </li>
-              <li>
-                售后
-                <span class="red">8.94 | 中</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <button @click="collectionStore" :class="{active:collectionActive}" class="gz">
-          <i></i>关注店铺
-        </button>
-        <button class="jr">
-          <i></i>进入店铺
-        </button>
-      </div>
-
-      <div class="recommend">
-        推荐
-        <h1>11212</h1>
-      </div>
-
-      <div class="shop-M" v-if="shop_bottomShow">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="商品介绍" name="first">
-            <div v-for="(item,index) in goodsImg" :key="index">
-              <img :src="path+'/goods/'+item" alt />
-            </div>
-          </el-tab-pane>
-
-          <el-tab-pane label="规格参数" name="second">
-            规格参数
-            <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="商品编号">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="主体"></el-form-item>
-
-              <el-form-item label="尺寸">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="肩带长度">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="斜挎带">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="内部结构"></el-form-item>
-              <el-form-item label="主袋">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="手机袋">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="证件袋">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="拉链暗袋">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="电脑插袋">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-
-          <el-tab-pane label="售后保障" name="third">
-            <div class="SH-line">
-              <h3>权利声明</h3>
-            </div>
-            <div class="SH-text">
-              <p>
-                京东商城上的所有商品信息、客户评价、商品咨询、网友讨论等内容，是京东商城重要的经营资源，未经许可，禁止非法转载使用。
-                <b>住:</b>
-                本站商品信息均来自于厂商，其真实性、准确性和合法性由信息拥有者（厂商）负责。本站不提供任何保证，并不承担任何法律责任。
-              </p>
-            </div>
-
-            <div class="SH-line">
-              <h3>价格说明</h3>
-            </div>
-            <div class="SH-text">
-              <p>
-                <strong>1.京东价：</strong>
-                京东价为商品的销售价，是您最终决定是否购买商品的依据。
-              </p>
-              <p>
-                <strong>2.划线价：</strong>
-                商品展示的划横线价格为参考价，该价格可能是品牌专柜标价、商品吊牌价或由品牌供应商提供的正品零售价（如厂商指导价、建议零售价等）或该商品在京东平台上曾经展示过的销售价；由于地区、时间的差异性和市场行情波动，品牌专柜标价、商品吊牌价等可能会与您购物时展示的不一致，该价格仅供您参考。
-              </p>
-              <p>
-                <strong>3.折扣：</strong>
-                如无特殊说明，折扣指销售商在原价、或划线价（如品牌专柜标价、商品吊牌价、厂商指导价、厂商建议零售价）等某一价格基础上计算出的优惠比例或优惠金额；如有疑问，您可在购买前联系销售商进行咨询。
-              </p>
-              <p>
-                <strong>4.异常问题：</strong>
-                商品促销信息以商品详情页“促销”栏中的信息为准；商品的具体售价以订单结算页价格为准；如您发现活动商品售价或促销信息有异常，建议购买前先联系销售商咨询。
-              </p>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </scroll>
-
-    <details-tab-bar :addshopcart="addShop" @to-add-order="addOrder"></details-tab-bar>
+      <details-tab-bar :addshopcart="addShop" @to-add-order="addOrder"></details-tab-bar>
     </div>
   </div>
 </template>
@@ -430,7 +481,7 @@ import {
 } from "common/utils";
 
 import { getuserAddress } from "network/address";
-import { getGoodsSevaluate } from "network/goods";
+import { getGoodsSevaluate, getGoods } from "network/goods";
 import { addShopCart } from "network/shopCart";
 
 export default {
@@ -486,8 +537,9 @@ export default {
       },
       isConfirm: true,
       confirmData: {}, //用于储存当前详情页提交的数据
-      aaa: false,
-      shop_bottomShow:false,
+      delay: false,
+      shop_bottomShow: false,
+      GuessLike: null
     };
   },
   components: {
@@ -498,22 +550,21 @@ export default {
     // DetailsEvaluate
   },
   created() {
-
     // 延迟渲染页面 先加载页面数据
     setTimeout(() => {
-      this.aaa = true;
-      this.loading=false;
-    }, 500);
+      this.delay = true;
+      this.loading = false;
+    }, 1000);
 
     setTimeout(() => {
       this.shop_bottomShow = true;
       // 刷新滚动条 重新加载滚动条高度
-    }, 1000);
+    }, 1500);
 
-
-
-
-    console.log(localStorage.getItem("address"));
+    getGoods().then(res => {
+      this.GuessLike = res.data.slice(0, 6);
+      console.log(this.GuessLike);
+    });
 
     this.getdata.exact.id = this.$route.params.id;
     this.getGoods(this.getdata.exact.id);
@@ -593,11 +644,11 @@ export default {
       return temp;
     },
 
-    evaluateTime() {
-      //评价时间
-      let time = new Date();
-      return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
-    },
+    // evaluateTime() {
+    //   //评价时间
+    //   let time = new Date();
+    //   return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
+    // },
     collectionActive() {
       // let arr=this.$store.state.userInfo.['收藏的店铺key']；
       // let arr=[1,22,3,4];
@@ -994,6 +1045,11 @@ export default {
     changeTime(val) {
       let time = val.getFullYear();
       return time;
+    },
+    splitTime(val) {
+      let a = new Date(val);
+      a = a.getFullYear() + "-" + (a.getMonth() * 1 + 1) + "-" + a.getDate();
+      return a;
     }
     // changeEvTime(val){
     //   // return val.replace(/(\w){1}(\w)[5,10]$/, "$1****$1");
@@ -1291,6 +1347,7 @@ export default {
     div.Address_box {
       width: 100%;
       margin-bottom: 5%;
+
       span {
         width: 20%;
         float: left;
@@ -1349,6 +1406,27 @@ export default {
             display: inline-block;
             line-height: 1;
             color: #8c8c8c;
+          }
+        }
+      }
+    }
+    div.select {
+      .select_img {
+        float: left;
+        img {
+          width: 30%;
+          float: left;
+          border: 1px solid grey;
+          border-radius: 20px;
+        }
+        div.select_r {
+          width: 50%;
+          float: left;
+          p {
+            text-align: left;
+            color: red;
+            font-size: 18px;
+            margin-left: 10px;
           }
         }
       }
@@ -1563,6 +1641,66 @@ export default {
       left: 38%;
     }
   }
+
+  .recommend {
+    position: relative;
+    .re_head {
+      position: relative;
+      height: 45px;
+      line-height: 45px;
+      color: #262626;
+      padding-left: 8px;
+      margin-top: 3px;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 15px;
+        background-image: linear-gradient(180deg, #f5503a, #fad1cb);
+      }
+    }
+    .re_con {
+      ul {
+        width: 100%;
+        li {
+          width: 31%;
+          float: left;
+          height: 200px;
+          background: #f2f2f2;
+          margin-right: 2%;
+          img {
+            width: 100%;
+            height: 50%;
+          }
+          p {
+            margin: 0;
+            padding: 7px 0 0;
+            line-height: 1.5em;
+            color: #333;
+            font-size: 12px;
+            font-weight: 400;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          span {
+            font-family: JDZH-Regular;
+            color: #f2270c;
+            font-size: 16px !important;
+            float: left;
+            padding-left: 3px;
+            margin-top: 5%;
+          }
+        }
+      }
+    }
+  }
+
   .shop-M {
     margin-top: 12px;
     padding: 0 18px;
@@ -1633,6 +1771,46 @@ export default {
         background-color: yellow;
         color: #000;
       }
+    }
+  }
+  .bzfw {
+    padding: 12px 18px 12px 52px;
+    background: lightgrey;
+    width: 78%;
+    margin: 0 auto;
+    float: left;
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 18px;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 1px solid #8c8c8c;
+    }
+    p {
+      font-size: 13px;
+      color: #333;
+      line-height: 1em;
+      padding-bottom: 3px;
+      padding-top: 3px;
+      text-align: left;
+      margin-top: -1%;
+      e{
+        font-style: normal;
+        color:red;
+        font-size:11px;
+        float:right;
+      }
+    }
+    i.lalian {
+      color: #8c8c8c;
+      font-size: 11px;
+      font-style:normal;
+      text-align:left;
+      margin-left:-30%;
     }
   }
 }

@@ -33,9 +33,10 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="全部" name="first">
           <dl class="dlData" v-for="(i,j) in all" :key="j">
-            <dt class="shop_name" v-if="i.shop_name">
+            <dt class="shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
+              <!-- {{i}} -->
             </dt>
             <dd class="cart-goods">
               <img :src="$store.state.urlPath+'/goods/'+i.img_cover" alt="图片" />
@@ -66,7 +67,7 @@
         </el-tab-pane>
         <el-tab-pane label="代付款" name="second">
           <dl class="dlData" v-for="(i,j) in payfail" :key="j">
-            <dt class="shop_name" v-if="i.shop_name">
+            <dt class="shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg"  />
               {{i.shop_name}}
             </dt>
