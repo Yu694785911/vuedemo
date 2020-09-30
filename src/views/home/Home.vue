@@ -18,13 +18,12 @@ margin-left: 8px;display:block;"
       </div>
       <div slot="right">
         <!-- 登录前 -->
-        <span v-if="!$store.state.userInfo" @click="routerTo('/login')">登录</span>
+        <span v-if="!$store.state.userInfo" @click="routerTo('/login')" style="color:#fff">登录</span>
 
         <!-- 登录后 -->
         <span v-else class="el-icon-s-custom" @click="routerTo('/profile')"></span>
       </div>
     </nav-bar>
-    <hr />
 
     <scroll
       class="homeContent"
@@ -34,8 +33,13 @@ margin-left: 8px;display:block;"
       :pullUpLoad="true"
       @pullingUp="loadMore"
     >
-      <!-- 轮播图 -->
-      <home-rotation :cbanners="banners"></home-rotation>
+      <div class="bannerbox" style>
+        <!-- <div style="width:100%;height:100%"> -->
+        <!-- 轮播图 -->
+        <home-rotation :cbanners="banners"></home-rotation>
+        <!-- </div>/ -->
+      </div>
+
       <hr />
       <img src="../../images/home-b.png.webp" alt style="width:100%" />
       <!-- 功能视图 -->
@@ -43,15 +47,15 @@ margin-left: 8px;display:block;"
       <hr />
 
       <div>
-        <button style="width:100%" @click="changeDirection">改变商品数据排列</button>
+        <button class="changeD" @click="changeDirection"></button>
       </div>
 
       <div class="tabContent">
         <!-- <div class="tabTitle">
           <button @click="tabClick('recommend')">recommend</button>
           <button @click="tabClick('news')">news</button>
-        </div> -->
-        <img src="../../images/wntj.png" alt="" style="width:96%;margin:0 auto;">
+        </div>-->
+        <img src="../../images/wntj.png" alt style="width:96%;margin:0 auto;" />
 
         <goods-list :cgoods="showGoodsList" :cpath="path" :cisDirection="parentDirection"></goods-list>
         <!-- <goods-list :cgoods="goods" :cpath="path"></goods-list> -->
@@ -136,7 +140,7 @@ export default {
     // this.filterFeatrue(100)
     this.getGoodsMax("recommend");
     this.getGoodsMax("news");
-    this.getShopCart("getShopCart", this.$store.state.userInfo);
+    // this.getShopCart(this.$store.state.userInfo.id);
 
     if (!this.$store.state.userInfo) {
       this.auto_code();
@@ -154,7 +158,7 @@ export default {
   computed: {
     showGoodsList() {
       return this.goods[this.tabCurrentType].list;
-    },
+    }
     // addr(){
     //    let path = window.location.origin + "/jd";
     //   let data = window.localStorage.getItem(path);
@@ -253,15 +257,14 @@ export default {
       let path = window.location.origin + "/jd";
       let data = window.localStorage.getItem(path);
       // if (data != null) {
-        let autocode = JSON.parse(data).autocode;
-        autoLand({
-          autocode: autocode
-        }).then(res => {
-          console.log(res);
-          if (res.code != 200) return;
-          this.$store.commit(SET_USERINFO, res);//每次都更改登陆码
-          this.getShopCart(res.data.user.id);
-        });
+      let autocode = JSON.parse(data).autoCode;
+      autoLand({
+        autocode: autocode
+      }).then(res => {
+        if (res.code != 200) return;
+        this.$store.commit(SET_USERINFO, res); //每次都更改登陆码
+        this.getShopCart(res.data.user.id);
+      });
       // }
     }
   },
@@ -293,7 +296,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style lang="less" scoped>
 #home {
   /* padding-top: 44px; */
   height: 100vh;
@@ -301,7 +304,8 @@ export default {
   background: #f2f2f2;
 }
 .home-nav-bar {
-  background-image: linear-gradient(
+  background: #c82519;
+  /* background-image: linear-gradient(
     122deg,
     #ff8b58 0,
     #ff3e3e 41%,
@@ -313,7 +317,27 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  border-radius: 100%/0 0 20% 20%;
+  border-radius: 100%/0 0 20% 20%; */
+}
+.changeD{
+  width:15%;
+  background:#c82519;
+  opacity: 0.6;
+  border-radius:20px;
+  position:fixed;
+  right:-26px;
+  border:none;
+  outline: none;
+  background:url("../../images/gg.png") no-repeat;
+  margin-top:-2%;
+  height:100%;
+}
+.bannerbox {
+  float: left;
+  background: #c82519;
+  height: 170px;
+  margin-bottom: 70px;
+  border-radius: 0 0 20% 20%;
 }
 .homeContent {
   position: absolute;
@@ -432,30 +456,27 @@ export default {
 }
 .tabContent div {
   width: 96%;
-  background: #fff;
-  margin:0 auto;
+  margin: 0 auto;
 }
 .tabContent div ul {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
-.tabContent div ul li{
-  width:95%;
-  margin:0 2.5%;
- 
-
+.tabContent div ul li {
+  width: 95%;
+  margin: 0 2.5%;
 }
-.tabContent div ul li img{
-  width:40%;
+.tabContent div ul li img {
+  width: 40%;
 }
-.tabContent div ul li a{
-  width:100%; 
+.tabContent div ul li a {
+  width: 100%;
   display: flex;
 }
-.tabContent div ul li a span{
-  width:58%;
-  padding:1%;
+.tabContent div ul li a span {
+  width: 58%;
+  padding: 1%;
 }
 /* .tabContent div ul li {
   width: 50%;

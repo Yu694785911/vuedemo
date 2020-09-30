@@ -82,6 +82,7 @@ export default {
       this.$router.push({ path: "/cart" });
     },
     shopcart() {
+      alert("加入购物车成功");
       this.$parent.addShop();
     }
   },

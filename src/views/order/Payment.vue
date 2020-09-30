@@ -88,7 +88,6 @@
           <input type="radio" name="radio" />
         </li>
       </ul>
-      <button>支付(成功跳转订单页面，失败-跳转我的页面)</button>
       <div class="pay_footer">
         <a
           href="javascript:;"

@@ -1,183 +1,181 @@
 <template>
-  <div style="background:#f2f2f2">
-    <scroll id="ProfileScroll">
-      <nav-bar class="cartNavBar" ref="cartNavBar">
-        <div slot="left" class="left" v-on:click="$router.go(-1)">
-          <i class="el-icon-arrow-left"></i>
+  <div style="background:#f2f2f2" >
+    <div v-if="profileShow">
+      <scroll id="ProfileScroll">
+        <nav-bar class="cartNavBar" ref="cartNavBar">
+          <div slot="left" class="left" v-on:click="$router.go(-1)">
+            <i class="el-icon-arrow-left"></i>
+          </div>
+          <div slot="center">
+            <div class="title">我的京东</div>
+          </div>
+          <div slot="right" class="right">
+            <el-dropdown trigger="click" @command="pushRouter">
+              <span class="el-dropdown-link">
+                <i class="el-icon-more-outline el-icon-more"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="/home">首页</el-dropdown-item>
+                <el-dropdown-item command="/keywords">分类搜索</el-dropdown-item>
+                <el-dropdown-item command="/profile">我的京东</el-dropdown-item>
+                <el-dropdown-item command="/profile" disabled>浏览记录</el-dropdown-item>
+                <el-dropdown-item command="/profile" divided>我的关注</el-dropdown-item>
+                <el-dropdown-item command="/profile" divided>分享</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </nav-bar>
+
+        <div v-if="!$store.state.userInfo" @click="$store.commit('ROUTERTO','/login')">登录</div>
+
+        <div v-else @click="signOut">退出</div>
+
+        <!-- 内容 -->
+        <div class="content-first">
+          <div class="user-message">
+            <div class="user-left">
+              <div class="user-img">
+                <img src="../../images/user.png" alt />
+              </div>
+              <div class="user-sm">待实名认证></div>
+            </div>
+
+            <div class="user-right">
+              <div class="ur-top">
+                <span v-if="userInfo">{{userInfo.name}}</span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="ur-m" v-if="userInfo">用户名:{{userInfo.name}}</div>
+            </div>
+
+            <div class="user-bottom">
+              <div class="ub jx">京享值614</div>
+              <div class="ub xb">小白信用64.6 ></div>
+            </div>
+
+            <div class="user-set">
+              <img src="../../images/user-shezhi.png" alt />
+              账户设置
+            </div>
+
+            <div class="bheader">
+              <div class="btitle">
+                <div class="bt">免费试用 立领1张运费券</div>
+                <div class="br">0元使用></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div slot="center">
-          <div class="title">我的京东</div>
-        </div>
-        <div slot="right" class="right">
-          <el-dropdown trigger="click" @command="pushRouter">
-            <span class="el-dropdown-link">
-              <i class="el-icon-more-outline el-icon-more"></i>
+
+        <div class="content-middle">
+          <div class="middle-one">
+            <div class="middle-top-tu">
+              <div class="tu-one" @click="tomyOrder">
+                <img src="../../images/um1.png" alt />
+                <br />代付款
+              </div>
+              <div class="tu-one">
+                <img src="../../images/um2.png" alt />
+                <br />待收货
+              </div>
+              <div class="tu-one">
+                <img src="../../images/um3.png" alt />
+                <br />退换/售后
+              </div>
+              <div class="tu-one">
+                <img src="../../images/um4.png" alt />
+                <br />全部订单
+              </div>
+            </div>
+          </div>
+
+          <div class="middle-one">
+            <div class="middle-top-tu">
+              <div class="tu-two">
+                <span>0张</span>
+                <br />京东券
+              </div>
+              <div class="tu-two">
+                <span>开通有礼</span>
+                <br />白条
+              </div>
+              <div class="tu-two">
+                <span>12个</span>
+                <br />京豆
+              </div>
+              <div class="tu-two">
+                <span>0元</span>
+                <br />红包
+              </div>
+              <div class="tu-two">
+                <img src="../../images/um5.png" alt />
+                <br />我的资产
+              </div>
+            </div>
+          </div>
+
+          <div class="middle-one">
+            <div class="middle-top-tu">
+              <div class="tu-three">
+                <span>0</span>
+                <br />商品收藏
+              </div>
+              <div class="tu-three">
+                <span>0</span>
+                <br />店铺收藏
+              </div>
+              <div class="tu-three">
+                <span>2</span>
+                <br />我的足迹
+              </div>
+            </div>
+          </div>
+
+          <div class="middle-four">
+            <div class="middle-top-tu">
+              <div class="tu-four">
+                <img src="../../images/um6.png.webp" alt />
+                <br />代付款
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um7.png.webp" alt />
+                <br />待收货
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um8.png.webp" alt />
+                <br />退换/售后
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um9.png.webp" alt />
+                <br />全部订单
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um10.png.webp" alt />
+                <br />全部订单
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um11.png.webp" alt />
+                <br />全部订单
+              </div>
+              <div class="tu-four">
+                <img src="../../images/um12.png.webp" alt />
+                <br />全部订单
+              </div>
+            </div>
+          </div>
+
+          <div class="middle-five">
+            <span>
+              客户服务
+              <i>></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="/home">首页</el-dropdown-item>
-              <el-dropdown-item command="/keywords">分类搜索</el-dropdown-item>
-              <el-dropdown-item command="/profile">我的京东</el-dropdown-item>
-              <el-dropdown-item command="/profile" disabled>浏览记录</el-dropdown-item>
-              <el-dropdown-item command="/profile" divided>我的关注</el-dropdown-item>
-              <el-dropdown-item command="/profile" divided>分享</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          </div>
+
+          <div>为你推荐</div>
         </div>
-      </nav-bar>
-
-
-
-      <div v-if="!$store.state.userInfo" @click="$store.commit('ROUTERTO','/login')">登录</div>
-
-       <div v-else @click="signOut">退出</div>
-
-
-
-      <!-- 内容 -->
-      <div class="content-first">
-        <div class="user-message">
-          <div class="user-left">
-            <div class="user-img">
-              <img src="../../images/user.png" alt />
-            </div>
-            <div class="user-sm">待实名认证></div>
-          </div>
-
-          <div class="user-right">
-            <div class="ur-top">
-              <span v-if="userInfo">{{userInfo.name}}</span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="ur-m"  v-if="userInfo">用户名:{{userInfo.name}}</div>
-          </div>
-
-          <div class="user-bottom">
-            <div class="ub jx">京享值614</div>
-            <div class="ub xb">小白信用64.6 ></div>
-          </div>
-
-          <div class="user-set">
-            <img src="../../images/user-shezhi.png" alt />
-            账户设置
-          </div>
-
-          <div class="bheader">
-            <div class="btitle">
-              <div class="bt">免费试用 立领1张运费券</div>
-              <div class="br">0元使用></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="content-middle">
-        <div class="middle-one">
-          <div class="middle-top-tu">
-            <div class="tu-one" @click="tomyOrder">
-              <img src="../../images/um1.png" alt />
-              <br />代付款
-            </div>
-            <div class="tu-one">
-              <img src="../../images/um2.png" alt />
-              <br />待收货
-            </div>
-            <div class="tu-one">
-              <img src="../../images/um3.png" alt />
-              <br />退换/售后
-            </div>
-            <div class="tu-one">
-              <img src="../../images/um4.png" alt />
-              <br />全部订单
-            </div>
-          </div>
-        </div>
-
-        <div class="middle-one">
-          <div class="middle-top-tu">
-            <div class="tu-two">
-              <span>0张</span>
-              <br />京东券
-            </div>
-            <div class="tu-two">
-              <span>开通有礼</span>
-              <br />白条
-            </div>
-            <div class="tu-two">
-              <span>12个</span>
-              <br />京豆
-            </div>
-            <div class="tu-two">
-              <span>0元</span>
-              <br />红包
-            </div>
-            <div class="tu-two">
-              <img src="../../images/um5.png" alt />
-              <br />我的资产
-            </div>
-          </div>
-        </div>
-
-        <div class="middle-one">
-          <div class="middle-top-tu">
-            <div class="tu-three">
-              <span>0</span>
-              <br />商品收藏
-            </div>
-            <div class="tu-three">
-              <span>0</span>
-              <br />店铺收藏
-            </div>
-            <div class="tu-three">
-              <span>2</span>
-              <br />我的足迹
-            </div>
-          </div>
-        </div>
-
-        <div class="middle-four">
-          <div class="middle-top-tu">
-            <div class="tu-four">
-              <img src="../../images/um6.png.webp" alt />
-              <br />代付款
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um7.png.webp" alt />
-              <br />待收货
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um8.png.webp" alt />
-              <br />退换/售后
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um9.png.webp" alt />
-              <br />全部订单
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um10.png.webp" alt />
-              <br />全部订单
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um11.png.webp" alt />
-              <br />全部订单
-            </div>
-            <div class="tu-four">
-              <img src="../../images/um12.png.webp" alt />
-              <br />全部订单
-            </div>
-          </div>
-        </div>
-
-        <div class="middle-five">
-          <span>
-            客户服务
-            <i>></i>
-          </span>
-        </div>
-
-        <div>为你推荐</div>
-      </div>
-    </scroll>
+      </scroll>
+    </div>
   </div>
 </template>
 
@@ -189,24 +187,35 @@ import Scroll from "components/contents/scroll/Scroll";
 import { ROUTERTO } from "store/mutation-types";
 export default {
   name: "Profile",
-  data(){
-    return {};
+  data() {
+    return {
+      profileShow: false,
+    };
   },
   created() {
-    // this.$store.state.userInfo=null;
-   if(!this.$store.state.userInfo){
-     this.$store.commit('AUTO_CODE')
-   }
-    
-  console.log(this.$store.state.userInfo);
+    setTimeout(() => {
+      this.profileShow = true;
+    }, 1000);
 
-    if (this.$store.state.userInfo.id != null) {
-      this.$router.push("/profile");
-    } else if ( this.$store.state.userInfo.id == null) {
-      this.$router.push("/login");
+    if (!this.$store.state.userInfo) {
+      this.$store.commit("AUTO_CODE");
     }
 
+    console.log(this.$store.state.userInfo);
 
+    // if (this.$store.state.userInfo) {
+    //   if (this.$store.state.userInfo.id != null) {
+    //     this.$router.push("/profile");
+    //   } else if (this.$store.state.userInfo.id == null) {
+    //     this.$router.push("/login");
+    //   }
+    // }
+
+    if (this.$store.state.userInfo) {
+      this.$router.push("/profile");
+    } else {
+      this.$router.push("/login");
+    }
   },
   components: {
     NavBar,
@@ -216,51 +225,42 @@ export default {
     pushRouter(path) {
       this.$router.push(path);
     },
-    tomyOrder(){
-      // if(this.$store.state.userInfo.id){
-      //   this.$router.push("/myorder")
-      // }else{
-      //   this.$router.push("/login")
-      // }
-    
-    console.log(this.$store.state.userInfo)
-      
-    if (this.$store.state.userInfo != null) {
-      this.$router.push("/myorder");
-    } else if ( this.$store.state.userInfo == null) {
-      this.$router.push("/login");
-    }
+    tomyOrder() {
+      console.log(this.$store.state.userInfo);
 
-
-      
+      if (this.$store.state.userInfo) {
+        this.$router.push("/myorder");
+      } else if (this.$store.state.userInfo == null) {
+        this.$router.push("/login");
+      }
     },
-    routerTo(path){
-      this.$store.commit(ROUTERTO,path);
+    routerTo(path) {
+      this.$store.commit(ROUTERTO, path);
     },
-    signOut(){
-      this.$store.state.userInfo=null;
-      this.$store.state.shopCart=null;
-      this.$store.state.shopCartLength=0;
-      let path=window.location.origin+'/jd';
-      localStorage.setItem(path,'')
-      if(this.$store.state.userInfo==null){
-        this.$router.push('/home');
+    signOut() {
+      this.$store.state.userInfo = null;
+      this.$store.state.shopCart = null;
+      this.$store.state.shopCartLength = 0;
+      let path = window.location.origin + "/jd";
+      localStorage.setItem(path, "");
+      if (this.$store.state.userInfo == null) {
+        this.$router.push(this.$store.state.loginHistory);
         window.location.reload();
       }
     }
   },
-  computed:{
-    userInfo(){
+  computed: {
+    userInfo() {
       return this.$store.state.userInfo;
     }
   },
   beforeRouteLeave(to, from, next) {
-      // 如果取得页面时login页面，则记录页面
-    if(to.path=='/login'){
-      this.$store.state.loginHistory=from.path;
+    // 如果取得页面时login页面，则记录页面
+    if (to.path == "/login") {
+      this.$store.state.loginHistory = from.path;
     }
     next();
-  },
+  }
 };
 </script>
 <style lang='less' scoped>

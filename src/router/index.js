@@ -290,7 +290,6 @@ routers.beforeEach((to, from, next) => {
   // 如果你即将访问的路由地址 包含confirm_order 的话，我就进入一下 来的路由地址
   // if(to.path.split('/')[1]=='confirm_order') console.log(from.path);
 
-
   if(to.path.indexOf('/confirm_order')!=-1){
     if(from.path.indexOf('/newAddr')==-1||from.path.indexOf('allAddr')==-1&&from.path.indexOf('/payment')==-1&& from.path.indexOf('/login')==-1) {
       store.state.areacodeHistory=from.path

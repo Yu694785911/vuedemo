@@ -1,4 +1,4 @@
-import { request } from './request'
+import { request,requestPost } from './request'
 
 // export function getgoods() {
 //   return request({
@@ -59,5 +59,12 @@ export function getGoodsSevaluate(params){
   return request({
       url:"/vuedemo/get_goods_sevaluate",
       params
+  })
+}
+
+export function updateUserdet(data){
+  return requestPost({
+      url:'/vuedemo/update_userdet',
+      data
   })
 }

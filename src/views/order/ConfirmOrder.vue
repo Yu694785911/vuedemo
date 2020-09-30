@@ -230,7 +230,7 @@ export default {
       isShow: false,
       replaceAddr: false, //替换地址的遮罩层显示
       repAddrId: 1, //需要替换的id
-      confirmorderShow:false,
+      confirmorderShow: false
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -267,12 +267,10 @@ export default {
     //     ? JSON.parse(this.$route.params.shop)
     // : "";
 
-    setTimeout(()=>{
-      this.confirmorderShow=true;
-    },500);
+    setTimeout(() => {
+      this.confirmorderShow = true;
+    }, 1000);
 
-
-    console.log(this.$store.state.userInfo);
     if (
       window.localStorage.getItem(window.location.origin + "/jd") ==
         undefined ||
@@ -334,9 +332,11 @@ export default {
 
         this.orderData.takeover_addr = JSON.stringify(temp);
         console.log(this.shop);
-        this.shop.forEach(item => {
-          this.orderData.shopcarts_id.push(item.id);
-        });
+        if (this.shop) {
+          this.shop.forEach(item => {
+            this.orderData.shopcarts_id.push(item.id);
+          });
+        }
 
         if (window.confirm("是否确认提交订单")) {
           if (this.$store.state.areacodeHistory.indexOf("/cart") != -1) {
@@ -442,11 +442,14 @@ export default {
         //  item.takeover_addr=JSON.params(item.takeover_addr);
         //  addr=item.takeover_addr.addr.split(",")
         for (let i = 0, temp = true; i < this.shop.length; i++) {
-          let addr = this.shop[i].takeover_addr.split(",");
-          if (addr[3] == "" && temp) {
-            this.showReplAddr();
-            temp = false; //作用是为了当前的if只执行一次
+          if (this.shop[i].takeover_addr) {
+            let addr = this.shop[i].takeover_addr.split(",");
+            if (addr[3] == "" && temp) {
+              this.showReplAddr();
+              temp = false; //作用是为了当前的if只执行一次
+            }
           }
+
           // 修改确认订单页面  购买商品的配送地址
           this.UpdataShopCart({
             id: this.shop[i].id,

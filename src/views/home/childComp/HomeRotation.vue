@@ -1,10 +1,11 @@
 <template>
+
   <rotation :interval="1000" :showIndicator="true" divID="bannerBox">
-    <rotation-item v-for="(item,index) in cbanners" :key="index">
-      <a :href="item.href">
-        <img :src="path+item.crs" alt />
-      </a>
-    </rotation-item>
+      <rotation-item v-for="(item,index) in cbanners" :key="index">
+        <a :href="item.href">
+          <img :src="path+item.crs" alt />
+        </a>
+      </rotation-item>
   </rotation>
 </template>
 
@@ -34,10 +35,11 @@ export default {
 </script>
 
 <style scoped>
-#bannerBox{
+#bannerBox {
   overflow: hidden;
-  width:90%;
-  margin:0 auto;
-  border-radius:50px;
+  width: 90%;
+  margin: 0 auto;
+  border-radius: 20px;
+  margin-top:20px;
 }
 </style>

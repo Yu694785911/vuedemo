@@ -40,7 +40,7 @@
               </dd>
             </dl>
             <dl>
-              <dt>热门分类 <el-button type="text" style="float:right"><a :href="'http://localhost:8080/#/ranking'"><img src="../../images/phb.png" style="width:12px;height:12px;">排行榜></a></el-button></dt>
+              <dt>热门分类 <el-button type="text" style="float:right"><a :href="'http://localhost:8080/ranking'"><img src="../../images/phb.png" style="width:12px;height:12px;">排行榜></a></el-button></dt>
               
               <dd v-for="(item,key) in secMenuList" :key="key" @click="Browhistory(item,1)">
                 <img :src="path+item.c3_img" alt />

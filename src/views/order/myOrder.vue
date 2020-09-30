@@ -1,5 +1,5 @@
 <template>
-  <div class="myOrder" v-if="aaa">
+  <div class="myOrder" v-if="myOrderShow">
     <scroll id="myOrderScroll" style="background:#d1d1">
       <nav-bar class="cartNavBar" ref="cartNavBar">
         <div slot="left" class="left" v-on:click="$router.go(-1)">
@@ -27,16 +27,97 @@
 
       <div class="myorder_Ipt">
         <img src="../../images/fdj.png" alt />
-        <input type="text" placeholder="商品名称/商品编号/订单号" />
+        <input type="text" placeholder="商品名称/商品编号/订单号" v-model="myOrderInput" />
       </div>
 
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="全部" name="first">
-          <dl class="dlData" v-for="(i,j) in all" :key="j">
+      <div v-if="all==null">
+        <el-button type="danger" round @click="GTlogin">登录</el-button>
+      </div>
+
+      <div class="findOrder" v-if="keywordData">
+        <dl class="dlData" v-for="(i,j) in keywordData" :key="j">
+            <dt class="shop_name">
+              <img src="../../images/dianpu.png" alt class="shopImg" />
+              <!-- {{i.shop_name}} -->
+              张秋雨
+            </dt>
+            <dd class="cart-goods">
+              <img :src="$store.state.urlPath+'/goods/'+i.img_cover" alt="图片" />
+
+              <div>
+                <p class="title">
+                  {{i.name}}
+                  <br />
+                </p>
+
+                <p class="norm" v-on:click.stop="checkNorm(i)">
+                  <span>共1件商品</span>
+                  <span>
+                    应付金额
+                    <i>{{1*i.money_now |changePrice("￥")}}</i>
+                  </span>
+                  <br />
+                </p>
+
+                <p class="money_now">
+                  <!-- <em>剩余支付时间：11.00</em> -->
+                  <el-button type="danger" round @click="toPay(i.goods_id)">去支付</el-button>
+                  <br />
+                </p>
+              </div>
+            </dd>
+          </dl>
+      </div>
+
+
+      <el-tabs v-model="activeName" @tab-click="handleClick" class="quanbu">
+        
+        <el-tab-pane label="全部" name="first" v-if="all!=null">
+          {{all.length}}
+          <div v-for="(i,j) in all" :key="j">
+            <dl class="dlData" v-for="(a,b) in i" :key="b">
+              <dt class="shop_name">
+                <img src="../../images/dianpu.png" alt class="shopImg" />
+                {{a.shop_name}}
+              </dt>
+              <dd class="cart-goods">
+                <img :src="$store.state.urlPath+'/goods/'+a.img_cover" alt="图片" />
+
+                <div>
+                  <p class="title">
+                    {{a.goods_name}}
+                    <br />
+                  </p>
+
+                  <p class="norm" v-on:click.stop="checkNorm(a)">
+                    <span>共{{a.num}}件商品</span>
+                    <span>
+                      应付金额
+                      <i>{{a.num*a.money_now |changePrice("￥")}}</i>
+                    </span>
+                    <br />
+                  </p>
+
+                  <p class="money_now">
+                    <em>剩余支付时间：11.00</em>
+
+                    <br />
+                  </p>
+                  <el-button type="danger" round v-if="states==1">待收货</el-button>
+                  <el-button type="danger" round v-if="states==2">已完成</el-button>
+                  <el-button type="danger" round v-if="states==0">待支付</el-button>
+                  <el-button type="danger" round v-if="states==4">再次购买</el-button>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="代付款" name="second" v-if="payfail!=null && payfail.length>0">
+          <span>{{payfail.length}}</span>
+          <dl class="dlData" v-for="(i,j) in payfail" :key="j">
             <dt class="shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
               {{i.shop_name}}
-              <!-- {{i}} -->
             </dt>
             <dd class="cart-goods">
               <img :src="$store.state.urlPath+'/goods/'+i.img_cover" alt="图片" />
@@ -57,48 +138,15 @@
                 </p>
 
                 <p class="money_now">
-                  <em>剩余支付时间：11.00</em>
-                  <el-button type="danger" round>再次购买</el-button>
+                  <!-- <em>剩余支付时间：11.00</em> -->
+                  <el-button type="danger" round @click="toPay(i.goods_id)">去支付</el-button>
                   <br />
                 </p>
               </div>
             </dd>
           </dl>
         </el-tab-pane>
-        <el-tab-pane label="代付款" name="second">
-          <dl class="dlData" v-for="(i,j) in payfail" :key="j">
-            <dt class="shop_name">
-              <img src="../../images/dianpu.png" alt class="shopImg"  />
-              {{i.shop_name}}
-            </dt>
-            <dd class="cart-goods">
-              <img :src="$store.state.urlPath+'/goods/'+i.img_cover" alt="图片" />
-
-              <div>
-                <p class="title">
-                  {{i.goods_name}}
-                  <br />
-                </p>
-
-                <p class="norm" v-on:click.stop="checkNorm(i)">
-                  <span>共{{i.num}}件商品</span>
-                  <span>
-                    应付金额
-                    <i>{{i.num*i.money_now |changePrice("￥")}}</i>
-                  </span>
-                  <br />
-                </p>
-
-                <p class="money_now">
-                  <em>剩余支付时间：11.00</em>
-                  <el-button type="danger" round>去支付</el-button>
-                  <br />
-                </p>
-              </div>
-            </dd>
-          </dl>
-        </el-tab-pane>
-        <el-tab-pane label="待收货" name="third">
+        <el-tab-pane label="待收货" name="third" v-if="paySuccess!=null && paySuccess.length>0">
           <dl class="dlData" v-for="(i,j) in paySuccess" :key="j">
             <dt class="shop_name" v-if="i.shop_name">
               <img src="../../images/dianpu.png" alt class="shopImg" />
@@ -123,8 +171,7 @@
                 </p>
 
                 <p class="money_now">
-                  <em>剩余支付时间：11.00</em>
-                  <el-button type="danger" round @click="confimshou">确认收货</el-button>
+                  <el-button type="danger" round @click="confimshou(i.goods_id)">确认收货</el-button>
                   <br />
                 </p>
               </div>
@@ -175,7 +222,13 @@
 </template>
 
 <script>
-import { getOrder, getOrderByOrderId, deleteOrder } from "network/order";
+import {
+  getOrder,
+  getOrderByOrderId,
+  deleteOrder,
+  updateOrderState,
+  getGoods
+} from "network/order";
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/contents/scroll/Scroll";
 export default {
@@ -183,10 +236,12 @@ export default {
   data() {
     return {
       activeName: "first",
-      paySuccess: [],
+      paySuccess: null,
       payfail: null,
-      all: [],
-      aaa:false,
+      all: {},
+      myOrderShow: false,
+      myOrderInput: "",
+      keywordData:null,
     };
   },
   components: {
@@ -195,13 +250,21 @@ export default {
   },
   computed: {},
   created() {
-    setTimeout(()=>{
-      this.aaa=true;
-    },500)
+    setTimeout(() => {
+      this.myOrderShow = true;
+    }, 1000);
+
     getOrder({ user_id: this.$store.state.userInfo.id }).then(res => {
+      console.log(res.data);
+      for (var j = 0; j < res.data.length; j++) {
+        this.states = res.data[j].state;
+      }
       for (var i = 0; i < res.data.length; i++) {
+        let a = res.data[i].id;
         getOrderByOrderId(res.data[i].id).then(res => {
-          this.all.push(res.data[0]);
+          if (res.data && res.data.length > 0) {
+            this.all[a] = res.data;
+          }
         });
       }
     });
@@ -209,7 +272,7 @@ export default {
     getOrder({ user_id: this.$store.state.userInfo.id, state: 2 }).then(res => {
       for (var i = 0; i < res.data.length; i++) {
         getOrderByOrderId(res.data[i].id).then(res => {
-          this.paySuccess.push(res.data[0]);
+          this.paySuccess = res.data;
         });
       }
     });
@@ -232,17 +295,29 @@ export default {
     pushRouter(path) {
       this.$router.push(path);
     },
+    GTlogin() {
+      this.$router.push("/login");
+    },
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    buymore(id){
-      this.$router.push('/details/'+id)
+    buymore(id) {
+      this.$router.push("/details/" + id);
     },
-    toevaluate(id){
-      this.$router.push('/toEvaluate/'+id);
+    toevaluate(id) {
+      this.$router.push("/toEvaluate/" + id);
     },
-    confimshou(){
+    confimshou(goodsId) {
       // 修改
+      console.log(goodsId);
+      alert("aa");
+      updateOrderState({ order_id: goodsId, state: 2 }).then(res => {
+        console.log(res);
+      });
+    },
+    toPay(id){
+      console.log(id);
+      this.$router.push("/details/"+id);
     },
     deleteOrder() {
       console.log("a");
@@ -254,6 +329,25 @@ export default {
       deleteOrder().then(res => {
         console.log(res);
       });
+    }
+  },
+  watch: {
+    myOrderInput(newVal) {
+      console.log(newVal);
+      console.log(this.all);
+
+      if (newVal.length > 0) {
+        getGoods({ like: newVal }).then(res => {
+          console.log(res.data);
+          this.keywordData = res.data;
+          document.querySelector(".quanbu").style.display = "none";
+          document.querySelector(".findOrder").style.display = "block";
+        });
+      } else {
+        document.querySelector(".quanbu").style.display = "block";
+        document.querySelector(".findOrder").style.display = "none";
+        console.log("qqqq");
+      }
     }
   },
   filters: {
@@ -419,7 +513,7 @@ dd {
     }
   }
 }
-.el-button:nth-child(1){
+.el-button:nth-child(1) {
   width: 86px !important;
   height: 30px !important;
   line-height: 1px !important;
@@ -440,5 +534,11 @@ dd {
   ) !important;
   color: #fff !important;
   font-size: 14px;
+}
+.el-button.is-round {
+  float: right;
+  width: 20;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 </style>

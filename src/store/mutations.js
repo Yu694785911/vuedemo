@@ -19,7 +19,7 @@ export default {
     state.totalPayment=0;
     state.totalNum=0;
     postShopCart(payload).then(res=>{
-      // console.log(res);
+      console.log(res);
       state.shopCart={};
       state.shopCartHistory={};
       if(res.code != 200) return console.log('请求数据失败');
@@ -119,6 +119,14 @@ export default {
 
   [types.SET_USERINFO](state,payload){
     state.userInfo={}
+
+    // 把返回的用户信息中的收藏店铺做处理
+    if(payload.data.user.collectShop && payload.data.user.collectShop !=''){//存储有值
+      // 有值，做分割----变成数组
+      payload.data.user.collectShop=payload.data.user.collectShop.split(",");
+    }else{
+      payload.data.user.collectShop=[];
+    }
     for(let i in payload.data.user){
       state.userInfo[i]=payload.data.user[i];
     }

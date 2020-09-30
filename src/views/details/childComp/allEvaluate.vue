@@ -26,33 +26,38 @@
     </nav-bar>
 
     <div class="ev_head">
+      <p style="text-align:left">
+        <input type="radio" />只看当前商品
+      </p>
       <p class="haoping">好评度98%</p>
     </div>
     <div class="ev_key">
       <ul>
         <li>全部</li>
-        <li v-for="(i,j) in all_keyword" :key="j">{{i}}</li>
+        <li v-for="(i,j) in all_keyword" :key="j" v-show="i">{{i}}</li>
       </ul>
     </div>
-    <div
-          class="ev-con"
-          v-for="(list,index) in allEvaluate"
-          :key="index"
-        >
-          <div class="ev-tou">
-            <img :src="Evpath+list.headImg" alt />
-            <span>{{list.username}}</span>
-            <p>{{evaluateTime}}</p>
-          </div>
-          <div class="ev_detail">
-            <p style="width:100%;">{{list.evaluationDetails}}</p>
-            <div style="text-align:left">
-              <img v-for="(a,b) in all_detailImg" :key="b" :src="Evpath+a"  v-image-preview style="margin-right:10px"/>
-            </div>
+    <div class="ev-con" v-for="(list,index) in allEvaluate" :key="index">
+      <div class="ev-tou">
+        <img :src="Evpath+list.headImg" alt />
+        <span>{{list.username}}</span>
+        <p>{{list.evaluationTime|splitTime}}</p>
+      </div>
+      <div class="ev_detail">
+        <p style="width:100%;">{{list.evaluationDetails}}</p>
+        <div style="text-align:left">
+          <img
+            v-for="(a,b) in all_detailImg"
+            :key="b"
+            :src="Evpath+a"
+            v-image-preview
+            style="margin-right:10px"
+          />
+        </div>
 
-            <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
-            <span>{{list.evaluationShop}}</span>
-          </div>
+        <span style="margin-right:5px;">{{list.evaluationNorm}}:</span>
+        <span>{{list.evaluationShop}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -64,21 +69,21 @@ export default {
   name: "allEvaluate",
   data() {
     return {
-        Evpath: "http://106.12.85.17:8090/public/image/evaluate/", 
+      Evpath: "http://106.12.85.17:8090/public/image/evaluate/",
       allEvaluate: [],
       all_keyword: [],
-      all_detailImg: [],
+      all_detailImg: []
     };
   },
   components: {
     NavBar
   },
   computed: {
-      evaluateTime() {
+    evaluateTime() {
       //评价时间
       let time = new Date();
       return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
-    },
+    }
   },
   created() {
     console.log(this.$route.params.allid);
@@ -91,7 +96,8 @@ export default {
         this.allEvaluate.forEach(list => {
           this.all_keyword = list.keyword.split(",");
           console.log(this.all_keyword);
-            this.all_detailImg = list.evaluationImg.split(",");
+          this.all_detailImg = list.evaluationImg.split(",");
+          console.log(this.all_detailImg);
         });
       });
     }
@@ -105,6 +111,13 @@ export default {
     },
     back() {
       this.$router.go(-1);
+    }
+  },
+  filters: {
+    splitTime(val) {
+      let a = new Date(val);
+      a = a.getFullYear() + "-" + (a.getMonth() * 1 + 1) + "-" + a.getDate();
+      return a;
     }
   }
 };
@@ -121,8 +134,6 @@ export default {
     bottom: 0px;
     z-index: 100;
   }
-
-  
 
   .right .rightsd {
     background: url("../../../images/rightsd.png") no-repeat 50%;
@@ -187,7 +198,7 @@ export default {
     float: left;
     width: 90%;
     margin-bottom: 40px;
-    padding:0 20px;
+    padding: 0 20px;
     .ev-tou {
       img {
         width: 20px;

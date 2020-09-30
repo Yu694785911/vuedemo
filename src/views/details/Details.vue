@@ -30,7 +30,13 @@
         </div>
       </nav-bar>
 
-      <scroll ref="DetailsScroll" class="DetailsScroll">
+      <scroll
+        ref="DetailsScrollCom"
+        class="DetailsScroll"
+        :probeType="3"
+        @parentScroll="DetailsScroll"
+        :pullUpLoad="true"
+      >
         <details-rotation :cgoodsImg="goodsImg"></details-rotation>
         <div class="Dprice-m">
           <div class="Dprice_box">
@@ -76,7 +82,12 @@
 
                 <el-button type="text" @click="dialogVisible = true" style="margin-left: 40px;">...</el-button>
 
-                <el-dialog title="优惠" :visible.sync="dialogVisible" :before-close="handleClose">
+                <el-dialog
+                  title="优惠"
+                  :visible.sync="dialogVisible"
+                  :before-close="handleClose"
+                  append-to-body
+                >
                   <span>促销</span>
                   <span>赠下方的热销商品（条件：购买1件及以上，赠完即止）</span>
                 </el-dialog>
@@ -107,8 +118,9 @@
         </div>
 
         <div class="Address">
+          <!-- 已选 -->
           <div class="Address_box select">
-            <span>已选</span>
+            <span class="xuanxiang">已选</span>
             <p class="fuwu">本商品支持保障服务,点击可选服务</p>
             <el-button
               type="text"
@@ -116,18 +128,24 @@
               style="display:block;padding:0;padding-left:20%"
             >...</el-button>
 
-            <el-dialog title :visible.sync="Selected" :before-close="handleClose">
+            <el-dialog title :visible.sync="Selected" :before-close="handleClose" append-to-body>
               <div>
                 <div v-for="(item,index) in selectNorm" :key="index">
                   <div v-for="(i,j) in item" :key="j">
-                    <div class="select_img">
-                      <img :src="path+'/goods/'+i[0].img_cover" alt />
+                    <div class="select_img" style="display:flex">
+                      <img
+                        :src="path+'/goods/'+i[0].img_cover"
+                        alt
+                        style="width: 40%;border: 1px solid lightgrey;border-radius: 20px;"
+                      />
                       <div class="select_r">
-                        <p>{{i[0].money_now|changePrice("￥")}}</p>
+                        <p
+                          style="text-align: left;color: red;font-size: 18px;margin-left: 10px;"
+                        >{{i[0].money_now|changePrice("￥")}}</p>
                         <div
                           v-for="(m,n) in i"
                           :key="n"
-                          style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;line-height:30px;margin-left:5%;border-radius:15px"
+                          style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;line-height:30px;margin-left:5%;border-radius:15px;"
                         >已选:{{m.name}}</div>
                       </div>
                     </div>
@@ -140,7 +158,7 @@
                     <div
                       v-for="(m,n) in i"
                       :key="n"
-                      style="width:90%;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px"
+                      style="width:42% !important;height:30px;text-overflow:hidden;overflow:hidden;margin-bottom:10px;text-align:left;background:#d4d4d4;line-height:30px;margin-left:5%;border-radius:15px;padding: 0 10px;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;"
                     >{{m.name}}</div>
                   </div>
                 </div>
@@ -152,7 +170,6 @@
                       <button
                         @click="orderSel.num--"
                         :disabled="orderSel.order_num<=1"
-                        v-if="orderSel.order_num>1"
                         style="background:transparent;border:none;outline:none"
                       >-</button>
                       <input
@@ -176,13 +193,22 @@
                     <span style="float:right">服务介绍></span>
                   </p>
                   <div class="bzfw" style>
-                    <p>1年只换不修<e>19.00</e></p>
+                    <p>
+                      1年只换不修
+                      <e>19.00</e>
+                    </p>
                     <i class="lalian">拉链五金断裂、缝线开裂免费换新</i>
                   </div>
                 </div>
                 <div class="selectBtnBox" v-if="isConfirm">
-                  <button @click="addShop" style="border:none;outline:none;background-image: linear-gradient(135deg,#f2140c,#f2270c 70%,#f24d0c);width:50%;border-radius:20px;height:38px;line-height:38px;color:#fff;">添加至购物车</button>
-                  <button @click="addOrder(2)" style="border:none;outline:none;background-image: linear-gradient(135deg,#ffba0d,#ffc30d 69%,#ffcf0d);width:50%;border-radius:20px;height:38px;line-height:38px;color:#fff;">立即购买</button>
+                  <button
+                    @click="addShop"
+                    style="border:none;outline:none;background-image: linear-gradient(135deg,#f2140c,#f2270c 70%,#f24d0c);width:48%;border-radius:20px;height:38px;line-height:38px;color:#fff;margin-right:1%;"
+                  >添加至购物车</button>
+                  <button
+                    @click="addOrder(2)"
+                    style="border:none;outline:none;background-image: linear-gradient(135deg,#ffba0d,#ffc30d 69%,#ffcf0d);width:48%;border-radius:20px;height:38px;line-height:38px;color:#fff;margin-left:1%;"
+                  >立即购买</button>
                 </div>
                 <div class="selectBtnBox" v-else>
                   <button @click="confirm">确认</button>
@@ -191,10 +217,11 @@
             </el-dialog>
           </div>
 
-          <div class="Address_box" style="float: left;">
-            <span>送至</span>
+          <!-- 送至 -->
+          <div class="Address_box arrive" style="float: left;">
+            <span class="xuanxiang">送至</span>
             <div class="toRight">
-              <p class="dizhi">{{addre}}</p>
+              <p class="dizhi" style="width:100%;text-align:left">{{addr}}</p>
               <p class="xianhuo">
                 <span v-if="true">现货</span>
               </p>
@@ -205,13 +232,14 @@
                 style="    padding: 0px;margin-top: -5%;float: right;margin-right: 3%;"
               >...</el-button>
 
-              <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose">
+              <el-dialog title="配送至" :visible.sync="To" :before-close="handleClose" append-to-body>
                 <ul style="text-align:left;line-height:20px;font-size:14px;">
                   <!-- 使用过滤器把地址拼接 -->
                   <li
                     style="padding:10px 0"
                     v-for="(item,index) in allAddress"
                     :key="index"
+                    @click="routerTo('/address/0')"
                   >{{addr|changeAddr}}</li>
                 </ul>
               </el-dialog>
@@ -219,7 +247,7 @@
           </div>
 
           <div class="Address_box" style="float: left;">
-            <span>运费</span>
+            <span class="xuanxiang" style="margin-left:-5px;">运费</span>
 
             <div class="freight">
               <p class="free">在线支付免运费</p>
@@ -229,8 +257,43 @@
                 style="padding: 0;margin-left: 42%;margin-top: 5%;"
               >...</el-button>
 
-              <el-dialog title="运费" :visible.sync="freight" :before-close="handleClose"></el-dialog>
-              <ul>
+              <el-dialog
+                title="服务"
+                :visible.sync="freight"
+                :before-close="handleClose"
+                append-to-body
+              >
+                <div class="arrive">
+                  <ul>
+                    <li>
+                      <p>商家发货&售后</p>
+                      <span>由专营店负责发货,并提供售后发货</span>
+                    </li>
+                    <li>
+                      <p>七天无理由退货</p>
+                      <span>支持七天无理由退货</span>
+                    </li>
+                    <li>
+                      <p>送运费险</p>
+                      <span>由送运费险</span>
+                    </li>
+                    <li>
+                      <p>闪电退款</p>
+                      <span>闪电退款是为京东优质会员提供的快速退款服务</span>
+                    </li>
+                    <li>
+                      <p>极速审核</p>
+                      <span>极速审核是商家为用户提供的针对售后退换货流程的专项服务,开通后售后服务单会在24H内审核完毕;</span>
+                    </li>
+                    <li>
+                      <p>可配送港澳台及海外</p>
+                      <span>支持收货地址为香港、澳门、台湾及海外</span>
+                    </li>
+                    <el-button type="danger" round @click="closeF('freight')">确定</el-button>
+                  </ul>
+                </div>
+              </el-dialog>
+              <ul class="freight_ul">
                 <li>商家发货售后</li>
                 <li>不支持七天无理由退货</li>
                 <br />
@@ -270,7 +333,7 @@
               <span>{{item.evaluationShop}}</span>
             </div>
           </div>
-          <button v-if="evaluate.length>2" class="more">查看更多评价</button>
+          <button v-if="evaluate.length>2" class="more" @click="more">查看更多评价</button>
         </div>
 
         <!-- 大于两条的评价 -->
@@ -284,7 +347,7 @@
           <div class="ev_key">
             <ul>
               <li>全部</li>
-              <li v-for="(i,j) in Ev_keyword" :key="j">{{i}}</li>
+              <li v-for="(i,j) in Ev_keyword" :key="j" v-show="i">{{i}}</li>
             </ul>
           </div>
           <div
@@ -353,10 +416,13 @@
               </ul>
             </div>
           </div>
-          <button @click="collectionStore" :class="{active:collectionActive}" class="gz">
-            <i></i>关注店铺
+          <button  @click="collectionStore" :class="{active:collectionActive}" class="gz">
+            <i class="el-icon-star-off" v-if="!collectionActive">关注店铺</i>
+            <i class="el-icon-star-on" v-if="collectionActive">关注店铺</i>
           </button>
-          <button class="jr">
+       
+
+          <button class="jr" @click="toShops(shopInfo.shopsId)">
             <i></i>进入店铺
           </button>
         </div>
@@ -457,6 +523,7 @@
           </el-tabs>
         </div>
       </scroll>
+      <a class="toTop" @click="toTop" v-if="isShowBackTop"></a>
 
       <details-tab-bar :addshopcart="addShop" @to-add-order="addOrder"></details-tab-bar>
     </div>
@@ -472,7 +539,7 @@ import NavBar from "components/common/navbar/NavBar";
 import DetailsTabBar from "./childComp/DetailsTabBar";
 // import DetailsEvaluate from "./childComp/DetailsEvaluate";
 // 引入商品数据请求
-import { getGoodsId } from "network/goods";
+import { getGoodsId, updateUserdet } from "network/goods";
 import {
   GoodsInfo,
   ShopInfo,
@@ -483,6 +550,7 @@ import {
 import { getuserAddress } from "network/address";
 import { getGoodsSevaluate, getGoods } from "network/goods";
 import { addShopCart } from "network/shopCart";
+import { ROUTERTO } from "store/mutation-types";
 
 export default {
   name: "Details",
@@ -500,7 +568,7 @@ export default {
       },
       path: "http://106.12.85.17:8090/public/image",
       Evpath: "http://106.12.85.17:8090/public/image/evaluate/", //评价地址
-      activeName: "second",
+      activeName: "first",
       dialogVisible: false,
       direction: "btt",
       getdata: {
@@ -539,7 +607,8 @@ export default {
       confirmData: {}, //用于储存当前详情页提交的数据
       delay: false,
       shop_bottomShow: false,
-      GuessLike: null
+      GuessLike: null,
+      isShowBackTop: false
     };
   },
   components: {
@@ -549,6 +618,7 @@ export default {
     DetailsTabBar
     // DetailsEvaluate
   },
+
   created() {
     // 延迟渲染页面 先加载页面数据
     setTimeout(() => {
@@ -563,13 +633,11 @@ export default {
 
     getGoods().then(res => {
       this.GuessLike = res.data.slice(0, 6);
-      console.log(this.GuessLike);
     });
 
     this.getdata.exact.id = this.$route.params.id;
     this.getGoods(this.getdata.exact.id);
 
-    this.toptabbar();
     this.setDate();
     this.setWeek();
     this.getAddr();
@@ -652,29 +720,67 @@ export default {
     collectionActive() {
       // let arr=this.$store.state.userInfo.['收藏的店铺key']；
       // let arr=[1,22,3,4];
-
+      // indexof 找不到-1
       // Object.keys(对象)  返回一个数组，数组的值是对象的key的集合
 
-      console.log(Object.keys(this.shopInfo).length);
-      if (Object.keys(this.shopInfo).length > 0) {
-        return [1, 2, 34, 6].indexOf(this.shopInfo.shopsId) != -1
-          ? false
-          : true;
+      // 先判断是否收藏
+      // var temp = false;
+      // if (this.$store.state.userInfo) {
+      //   return (temp =
+      //     this.$store.state.userInfo.collectShop.indexOf(
+      //       this.shopInfo.shopsId
+      //     ) != -1
+      //       ? true
+      //       : false);
+      // }
+      // console.log(temp);
+      // return temp;
+
+      if (this.$store.state.userInfo) {
+        let arr = this.$store.state.userInfo.collectShop;
+        if (arr.length > 0) {
+          return arr.indexOf(this.shopInfo.shopsId) != -1 ? true : false;
+        }
+        return false;
+      }else{
+        return false;
       }
-      return false;
+
+      // console.log(Object.keys(this.shopInfo).length);
+      // if (Object.keys(this.shopInfo).length > 0) {
+      //   console.log(
+      //     [1, 2, 34, 6].indexOf(this.shopInfo.shopsId) != -1 ? false : true
+      //   );
+      //   return [1, 2, 34, 6].indexOf(this.shopInfo.shopsId) != -1
+      //     ? false
+      //     : true;
+      // } else {
+      //   console.log(false);
+      //   return false;
+      // }
+
+      // 先判断用户登没登陆 登录-查找数据库是否存在-存在true-否则false
+      // 没登录-查找本地存储是否存在-存在true-否则false
     }
   },
-
   activated() {
-    console.log("details处于活跃");
+    this.$refs.DetailsScrollCom.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.DetailsScrollCom.scroll.refresh();
+  },
+  deactivated() {
+    this.saveY = this.$refs.DetailsScrollCom.scroll.y;
   },
   mounted() {
-    console.log("details被渲染");
     this.$parent.isTabBar = false;
     this.$parent.isjxTabBar = false;
     this.$parent.isphbTabBar = false;
     this.$parent.isxqTabBar = true;
+    // const refresh = debounce(this.$refs.DetailsScrollCom.refresh, 50);
+    // this.$bus.$on("goodsImageLoad", () => {
+    //   return refresh();
+    // });
   },
+
   watch: {
     // detailsGoods(newVal) {
     //   console.log(newVal);
@@ -689,34 +795,31 @@ export default {
     // 监听数据改变，做一些数据变化的事情
   },
   methods: {
-    // routerTo(path) {
-    //   this.$store.commit(ROUTERTO, path);
-    // },
+    DetailsScroll(position) {
+      this.isShowBackTop = -position.y > 1000;
+      // Math.trunc()  取整数
+      if (Math.trunc(position.y) <= -200) {
+        // slideDown 向下显示元素
+        $(".tab-bar-center").slideDown("fast");
+        $(".details-nav-bar").css("background-color", "#fff");
+        $(".navbar").css("box-shadow", "0 1px 1px rgba(100, 100, 100, 0.2)");
+      } else if (
+        Math.trunc(position.y) > -200 &&
+        Math.trunc(position.y) < -50
+      ) {
+        $(".tab-bar-center").slideDown("fast");
+        $(".details-nav-bar").css("background-color", "rgba(255,255,255,0.5)");
+        $(".navbar").css("box-shadow", "none");
+      } else if (Math.trunc(position.y) >= 0) {
+        $(".tab-bar-center").slideUp("fast");
+        $(".details-nav-bar").css("background-color", "transparent");
+      }
+    },
+    routerTo(path) {
+      this.$store.commit(ROUTERTO, path);
+    },
     toShops(shopsId) {
       this.$router.push("/shops/" + shopsId);
-    },
-    toptabbar() {
-      var p = 0;
-      $(window).scroll(function() {
-        p = $(window).scrollTop();
-        if (p >= 200) {
-          // slideDown 向下显示元素
-          $(".tab-bar-center").slideDown("fast");
-          $(".details-nav-bar").css("background-color", "white");
-          $(".navbar").css("box-shadow", "0 1px 1px rgba(100, 100, 100, 0.2)");
-        } else if (p < 200 && p > 50) {
-          // slideUp 向上隐藏元素
-          $(".tab-bar-center").slideDown("fast");
-          $(".details-nav-bar").css(
-            "background-color",
-            "rgba(255,255,255,0.5)"
-          );
-          $(".navbar").css("box-shadow", "none");
-        } else {
-          $(".tab-bar-center").slideUp("fast");
-          $(".details-nav-bar").css("background-color", "transparent");
-        }
-      });
     },
     handleClose(done) {
       done();
@@ -724,20 +827,22 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
+    toTop() {
+      // console.log("回到顶部");
+      this.$refs.DetailsScrollCom.scrollTo(0, 0, 300);
+    },
     getGoods(data) {
       this.loading = true;
       getGoodsId(data).then(res => {
         if (res.code != 200) return;
         // this.detailsGoods = res.data.goodsData;
         this.goodsImg = res.data.goodsData.img_detalis_list;
-        console.log(this.goodsImg);
 
         this.detailsGoods = new GoodsInfo(
           res.data.goodsData,
           res.data.shopData
         );
         this.shopInfo = new ShopInfo(res.data.shopData);
-
         // 取规格数据
         this.selectNorm = new SelectNorm(
           res.data.norms,
@@ -816,7 +921,6 @@ export default {
     setDate(nowTime = new Date(), day = 3) {
       let temp = new Date(nowTime.getTime() + day * 24 * 60 * 60 * 1000);
       temp = `${temp.getMonth() + 1}月${temp.getDate()}日`;
-      console.log(temp);
       return temp;
     },
 
@@ -867,17 +971,16 @@ export default {
 
       if (val == "To") {
         this.To = true;
-        if (!this.$store.state.userInfo) {
-          this.$router.path("/login");
-          return;
-        }
-        if (this.allAddress == null) {
-          getuserAddress({ user_id: this.$store.state.userInfo.id }).then(
-            res => {
-              console.log(res);
-              this.$store.state.allAddress = res.data;
-            }
-          );
+        if (this.$store.state.userInfo.id) {
+          if (this.allAddress == null) {
+            getuserAddress({ user_id: this.$store.state.userInfo.id }).then(
+              res => {
+                this.$store.state.allAddress = res.data;
+              }
+            );
+          }
+        } else {
+          this.$store.state.allAddress = "河北 邢台";
         }
       }
 
@@ -885,22 +988,169 @@ export default {
         this.freight = true;
       }
     },
-    collectionStore() {
-      if (this.$store.state.userInfo) {
-        this.collectionActive = !this.collectionActive;
-        if (this.collectionActive) {
-          // 收藏
-        } else {
-          // 取消收藏
-        }
-      } else {
-        // 跳转登录页面
-        // 登录后在执行当前的方法
+    closeF(val) {
+      if (val == "freight") {
+        this.freight = false;
       }
+    },
+    collectionStore() {
+      // console.log(this.collectionActive); //true
+
+      if (this.$store.state.userInfo) {
+        let arr = this.$store.state.userInfo.collectShop;
+        // 先判断是收藏 还是  取消收藏
+        if (this.collectionActive) {
+          // 如果当前的收藏状态，则取消收藏
+          let temp = arr.filter(item => {
+            if (item === this.shopInfo.shopsId) {
+              return false;
+            }
+            // 不是当前店铺的id，存放到temp
+            return true;
+          });
+          arr = temp;
+        } else {
+          //点击时未收藏 false
+          // 添加收藏
+          arr.push(this.shopInfo.shopsId);
+        }
+
+        // arr 一定能获取到一个新的值
+
+        //修改数据库中当前用户收藏的店铺；
+
+        updateUserdet({
+          id: this.$store.state.userInfo.id,
+          collectShop: arr.join(",")
+        }).then(res => {
+          if (res.code != 200) return console.log("添加收藏失败");
+          let temp1 = this.$store.state.userInfo;
+
+          // 为了能监听到数据改变，我们把userInfo先清空
+          this.$store.state.userInfo = null;
+
+          // 把改变后的arr 重新赋值给 temp1
+          temp1.collectShop = arr;
+          // 再把 temp1给 userInfo
+          this.$store.state.userInfo = temp1;
+          // console.log(this.$store.state.userInfo); //data中会返回修改后的用户数据
+        });
+      } else {
+        this.$router.push("/login");
+      }
+
+      // 如果在收藏店铺中的数组中取到的值 等于  当前店铺的id，则不追加到新数组中。
+
+      // let temp = this.collectionActive ? false : true;
+      // console.log(temp);
+      // if (temp) {
+      //   // 收藏
+      //   console.log("收藏");
+      //   //可能要用到Vue.set(对象,key,val)
+      //   // this.$store.state.userInfo.collect.push(this.shopInfo.shopsId);
+      // } else {
+      //   console.log("取消收藏");
+      // }
+
+      // if (this.$store.state.userInfo) {
+      //   let temp = this.collectionActive ? false : true;
+      //   if (temp) {
+      //     this.$store.state.userInfo.collectShop.push(this.shopInfo.shopsId);
+      //     updateUserdet({
+      //       id: this.$store.state.userInfo.id,
+      //       collectShop: this.$store.state.userInfo.collectShop.join(",")
+      //     }).then(res => {
+      //       if (res.code == 200) {
+      //         this.$store.state.userInfo = null;
+      //         this.$store.state.userInfo.defaddr = res.data;
+      //         this.$store.state.userInfo.collectShop(
+      //           Number(res.data.collectShop)
+      //         );
+      //         console.log(this.$store.state.userInfo);
+      //       }
+      //     });
+      //     this.$set(
+      //       this.$store.state.userInfo.collectShop,
+      //       this.$store.state.userInfo.collectShop.length,
+      //       Number(this.shopInfo.shopsId)
+      //     );
+      //     // 收藏
+      //   } else {
+      //     let temp = this.$store.state.userInfo.collectShop.filter(item => {
+      //       console.log(item);
+      //       console.log(this.shopInfo.shopsId);
+      //       if (item === Number(this.shopInfo.shopsId)) {
+      //         return false;
+      //       } else {
+      //         var index = this.$store.state.userInfo.collectShop.indexOf(
+      //           this.shopInfo.shopsId
+      //         );
+      //         console.log(this.$store.state.userInfo.collectShop);
+      //         var aaa = this.$store.state.userInfo.collectShop.splice(index, 1);
+      //         console.log(aaa);
+      //         console.log(this.$store.state.userInfo.collectShop);
+
+      //         updateUserdet({
+      //           id: this.$store.state.userInfo.id,
+      //           collectShop: this.$store.state.userInfo.collectShop.join(",")
+      //         }).then(res => {
+      //           if (res.code == 200) {
+      //             this.$store.state.userInfo.defaddr = res.data;
+      //             this.$store.state.userInfo.collectShop(
+      //               Number(res.data.collectShop)
+      //             );
+      //             console.log(this.$store.state.userInfo);
+      //           }
+      //         });
+      //         return true;
+      //       }
+      //     });
+
+      //     console.log(temp);
+      //     console.log(this.$store.state.userInfo.collectShop);
+
+      //     //循环 filter
+      //     // 取消收藏
+      //     console.log("取消收藏");
+      //   }
+      // } // else {
+      //   // 跳转登录页面
+      //   // 登录后在执行当前的方法
+      //   this.$router.push("/login");
+      // }
+
+      // if (this.$store.state.userInfo) {
+      //   this.collectionActive = !this.collectionActive;
+      //   console.log(this.collectionActive);
+      //   if (this.collectionActive) {
+      //     this.$store.state.userInfo.collect.push(this.shopInfo.shopsId);
+      //     console.log(this.$store.state.userInfo.collect);
+      //     // 收藏
+      //     console.log("收藏");
+      //   } else {
+      //     this.$store.state.userInfo.collect.push(this.shopInfo.shopsId);
+
+      //     let temp = this.$store.state.userInfo.collect.filter(item=>{
+      //       if(item === this.shopInfo.shopsId){
+      //         return false
+      //       }
+      //       return true
+      //     })
+
+      //     console.log(temp);
+
+      //     //循环 filter
+      //     // 取消收藏
+      //     console.log("取消收藏");
+      //   }
+      // } else {
+      //   // 跳转登录页面
+      //   // 登录后在执行当前的方法
+      //   this.$router.push("/login");
+      // }
     },
     getGoodsSevaluate() {
       getGoodsSevaluate({ goods_id: this.$route.params.id }).then(res => {
-        console.log(res.data);
         this.goodsEvaluates = res.data;
         this.Pingjia.push(this.goodsEvaluates[0]);
         this.goodsEvaluates.forEach(list => {
@@ -924,9 +1174,7 @@ export default {
       if (this.$store.state.userInfo) {
         // 请求购物车
         console.log("用户存在");
-        console.log(shopCart);
         addShopCart(shopCart).then(res => {
-          console.log(res);
           if (res.data == 200) {
             alert("加入购物车成功");
           }
@@ -938,11 +1186,9 @@ export default {
         console.log("用户不存在");
         let path = window.location.origin + "/jd";
         let data = window.localStorage.getItem(path);
-        console.log(data);
         if (data != null && data != "") {
           data = JSON.parse(data);
           let temp = 0;
-          console.log(data.shopCart);
           if (data.shopCart) {
             for (let i = 0; i < data.shopCart.length; i++) {
               if (
@@ -969,12 +1215,10 @@ export default {
         }
         this.calculationStorageShopNum(data.shopCart);
         window.localStorage.setItem(path, JSON.stringify(data));
-        console.log(window.localStorage.getItem(path));
       }
     },
     // 去购买
     addOrder(val) {
-      console.log("去购买");
       if (val == 1) {
         this.Selected = true;
         this.isConfirm = false;
@@ -1034,10 +1278,6 @@ export default {
         return Number(val).toFixed(2);
       }
     },
-    // changeEvaluate(val){
-    //   console.log(val);
-    //   return val;
-    // }
     changeAddr(val) {
       let addr = val.split(",").join(" ");
       return addr;
@@ -1051,15 +1291,115 @@ export default {
       a = a.getFullYear() + "-" + (a.getMonth() * 1 + 1) + "-" + a.getDate();
       return a;
     }
-    // changeEvTime(val){
-    //   // return val.replace(/(\w){1}(\w)[5,10]$/, "$1****$1");
-    // }
   }
 };
 </script>
 
 <style lang="less">
-.detailsScroll {
+.el-dialog {
+  width: 100% !important;
+  position: fixed;
+  bottom: 0;
+  margin: 0;
+  margin-top: 15vh;
+  min-height: 10%;
+  max-height: 80%;
+  overflow: auto;
+}
+
+.bzfw {
+  padding: 12px 18px 12px 52px;
+  background: lightgrey;
+  width: 78%;
+  margin: 0 auto;
+  float: left;
+  position: relative;
+  margin-bottom: 20px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    border: 1px solid #8c8c8c;
+  }
+  p {
+    font-size: 13px;
+    color: #333;
+    line-height: 1em;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    text-align: left;
+    margin-top: -1%;
+    e {
+      font-style: normal;
+      color: red;
+      font-size: 11px;
+      float: right;
+    }
+  }
+  i.lalian {
+    color: #8c8c8c;
+    font-size: 11px;
+    font-style: normal;
+    text-align: left;
+    margin-left: -30%;
+  }
+}
+
+.arrive {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  ul {
+    li {
+      float: left;
+      text-align: left;
+      width: 100%;
+      margin-top: 10px;
+      p {
+        color: #262626;
+        font-size: 13px;
+        line-height: 21px;
+        &::before {
+          content: "";
+          display: inline-block;
+          vertical-align: middle;
+          margin-top: -3px;
+          margin-right: 6px;
+          width: 12px;
+          height: 12px;
+          background: url("../../images/xxx.png") no-repeat;
+          background-size: 12px auto;
+        }
+      }
+      span {
+        font-size: 12px;
+        margin-top: 12px;
+        color: #8c8c8c;
+      }
+    }
+  }
+}
+.toTop {
+  position: absolute;
+  bottom: 100px;
+  right: 5px;
+  /* background-color: red; */
+  background-image: url(../../images/top.png);
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-size: 100%;
+}
+.el-button.is-round {
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.DetailsScroll {
   height: calc(100vh - 49px);
   overflow: hidden;
 }
@@ -1193,6 +1533,7 @@ export default {
     background-color: #fff;
     overflow: hidden;
     .el-dialog {
+      width: 100%;
       position: fixed;
       bottom: -50px;
       left: 0;
@@ -1346,9 +1687,7 @@ export default {
     }
     div.Address_box {
       width: 100%;
-      margin-bottom: 5%;
-
-      span {
+      span.xuanxiang {
         width: 20%;
         float: left;
         line-height: 50px;
@@ -1394,7 +1733,8 @@ export default {
           float: left;
           line-height: 26px;
         }
-        ul {
+        .freight_ul {
+          width: 100%;
           color: #262626;
           font-size: 12px;
           overflow: hidden;
@@ -1406,6 +1746,51 @@ export default {
             display: inline-block;
             line-height: 1;
             color: #8c8c8c;
+            &::before {
+              content: "";
+              display: inline-block;
+              vertical-align: middle;
+              margin-top: -3px;
+              margin-right: 6px;
+              width: 12px;
+              height: 12px;
+              background: url("../../images/xxx.png") no-repeat;
+              background-size: 12px auto;
+            }
+          }
+        }
+        .arrive {
+          height: 400px;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+          ul {
+            li {
+              float: left;
+              text-align: left;
+              width: 100%;
+              margin-top: 10px;
+              p {
+                color: #262626;
+                font-size: 13px;
+                line-height: 21px;
+                &::before {
+                  content: "";
+                  display: inline-block;
+                  vertical-align: middle;
+                  margin-top: -3px;
+                  margin-right: 6px;
+                  width: 12px;
+                  height: 12px;
+                  background: url("../../images/xxx.png") no-repeat;
+                  background-size: 12px auto;
+                }
+              }
+              span {
+                font-size: 12px;
+                margin-top: 12px;
+                color: #8c8c8c;
+              }
+            }
           }
         }
       }
@@ -1445,20 +1830,21 @@ export default {
       border: 1px solid grey;
       width: 40%;
       margin-bottom: 20px;
+      outline: none;
     }
     button.gz {
-      i {
-        width: 14px;
-        height: 14px;
-        background: no-repeat 50%;
-        background-size: 100%;
-        position: relative;
-        top: -2px;
-        margin-right: 5px;
-        vertical-align: middle;
-        display: inline-block;
-        background-image: url("../../images/guanzhu.png");
-      }
+      // i {
+      //   width: 14px;
+      //   height: 14px;
+      //   background: no-repeat 50%;
+      //   background-size: 100%;
+      //   position: relative;
+      //   top: -2px;
+      //   margin-right: 5px;
+      //   vertical-align: middle;
+      //   display: inline-block;
+      //   // background-image: url("../../images/guanzhu.png");
+      // }
     }
     button.jr {
       i {
@@ -1669,7 +2055,6 @@ export default {
           width: 31%;
           float: left;
           height: 200px;
-          background: #f2f2f2;
           margin-right: 2%;
           img {
             width: 100%;
@@ -1746,8 +2131,17 @@ export default {
     padding: 0 40px;
   }
   .el-dialog {
-    width: 100%;
+    width: 100% !important;
     margin-top: 69vh;
+    height: 300px;
+    overflow: auto;
+    position: fixed;
+    bottom: 0;
+  }
+  .el-button.is-round {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
   .selectedopen {
     padding-bottom: 50px;
@@ -1773,45 +2167,9 @@ export default {
       }
     }
   }
-  .bzfw {
-    padding: 12px 18px 12px 52px;
-    background: lightgrey;
-    width: 78%;
-    margin: 0 auto;
-    float: left;
-    position: relative;
-    &::before {
-      content: "";
-      position: absolute;
-      top: 12px;
-      left: 18px;
-      width: 19px;
-      height: 19px;
-      border-radius: 50%;
-      border: 1px solid #8c8c8c;
-    }
-    p {
-      font-size: 13px;
-      color: #333;
-      line-height: 1em;
-      padding-bottom: 3px;
-      padding-top: 3px;
-      text-align: left;
-      margin-top: -1%;
-      e{
-        font-style: normal;
-        color:red;
-        font-size:11px;
-        float:right;
-      }
-    }
-    i.lalian {
-      color: #8c8c8c;
-      font-size: 11px;
-      font-style:normal;
-      text-align:left;
-      margin-left:-30%;
-    }
+  .el-dialog__body {
+    margin: 0 20px;
+    padding: 0 !important;
   }
 }
 </style>

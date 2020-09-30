@@ -1,11 +1,11 @@
 <template>
-  <div class="Shops">
+  <div class="Shops" v-if="store">
     <div class="shop_top">
       <div class="head">
+      
         <div class="img_Box">
-          <img src alt />
+          <img src="../../images/head5.jpg" alt />
         </div>
-        {{shopname}}
         <div class="title">{{shopname[0].shopName}}</div>
         <span class="xj">店铺星级:{{shopname[0].level}}</span>
         <span class="fl">{{shopname[0].category}}</span>
@@ -29,10 +29,6 @@
             @click.native="change(index)"
             :class="{ active:index===num}"
           >{{item.name}}</router-link>
-          <!-- <router-link tag="li" to="commodity"><a>商品</a></router-link>
-          <router-link tag="li" to="news"><a>新品</a></router-link>
-          <router-link tag="li" to="buyshow"><a>买家秀</a></router-link>
-          <router-link tag="li" to="dynamic"><a>动态</a></router-link>-->
         </ul>
       </div>
     </div>
@@ -52,6 +48,7 @@ export default {
     return {
       num: 0,
       shopname: null,
+      store:false,
       nav: [
         {
           path: "selected",
@@ -79,7 +76,12 @@ export default {
   components: {},
   computed: {},
   created() {
-    console.log(this.$route.params.id);
+    setTimeout(()=>{
+      this.store=true;
+    },1000)
+
+
+    console.log(this.shopname);
     $(window).scroll(function() {
       var scrollTop =
         document.documentElement.scrollTop || document.body.scrollTop;

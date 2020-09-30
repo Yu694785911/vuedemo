@@ -6,12 +6,10 @@
     <div>
       <a href="javascript:;">
         <img :src="itempath+'/goods/'+citem.img_cover" @load="loadMore" />
-        <span>
-          {{citem.name}}
-          <br />
+        <div style="flex:1">
+          <span>{{citem.name}}</span>
           <em>{{citem.money_now| changePrice("￥")}}</em>
-          <br />
-        </span>
+        </div>
       </a>
     </div>
   </div>
@@ -74,12 +72,11 @@ export default {
 .goodslist a span {
   width: 98%;
 } */
-.GoodsListItem {
-  border-bottom: 1px solid grey;
-}
 .GoodsListItem.transverse {
   /* 横向独占一行 */
   width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2%;
 }
 .GoodsListItem.transverse a {
   width: 100%;
@@ -93,19 +90,22 @@ export default {
   width: 40%;
 }
 .GoodsListItem.transverse a span {
-  width: 60%;
   display: block;
   margin-top: 10%;
   font-size: 12px;
-  em {
-    font-style: normal;
-    color: red;
-  }
+}
+em {
+  font-style: normal;
+  color: red;
+  float: right;
+  width: 100%;
+  // margin-top: -10%;
 }
 .GoodsListItem.column {
   /* 多列 */
   width: 48%;
-  margin: 0 1%;
+  margin: 1% 1%;
+  background: #fff;
 }
 .GoodsListItem.column img {
   display: block;
@@ -115,6 +115,20 @@ export default {
 .GoodsListItem.column span {
   text-align: center;
   display: block;
-  line-height: 40px;
+  line-height: 24px;
+  color: #000;
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.GoodsListItem.column em {
+  font-style: normal;
+  color: red;
+  text-align: left;
+  float: left;
+  margin: 10px 5px;
 }
 </style>

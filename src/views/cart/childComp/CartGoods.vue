@@ -26,7 +26,7 @@
           </p>
 
           <p class="norm" v-on:click.stop="checkNorm(obj)">
-            <span>{{obj.norm}}</span>
+            <span v-if="obj.norm!={}">{{obj.norm}}</span>
             <span>
               选服务
               <i class="el-icon-arrow-down"></i>
@@ -34,9 +34,7 @@
             <br />
           </p>
 
-          <p class="money_now">
-            ￥
-            <em>{{obj.money_now}}</em>.00
+          <p class="money_now">{{obj.money_now | changePriceNow}}
             <br />
           </p>
 
@@ -219,6 +217,11 @@ export default {
      }else{
         console.log("失败")
      }
+    }
+  },
+  filters:{
+    changePriceNow(val){
+      return Number(val).toFixed(2);
     }
   }
 };

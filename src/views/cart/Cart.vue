@@ -1,6 +1,6 @@
 <template>
   <div style="background:#f2f2f2">
-    <scroll id="cartScroll" ref="cartScroll">
+    <scroll id="cartScroll" class="cartScroll" ref="cartScrollCom" @parentScroll="cartScroll">
       <nav-bar class="cartNavBar" ref="cartNavBar">
         <div slot="left" class="left" v-on:click="$router.go(-1)">
           <i class="el-icon-arrow-left"></i>
@@ -67,14 +67,35 @@
         </div>
       </div>
 
-      <div
-        v-if="!$store.state.userInfo && localShopCart.length>0"
-        style="background-color:#fff;margin-top:10px;"
-      >
-        <div  v-for="(item,i) in UnLoginProduct" :key="i">
+      <div v-if="!$store.state.userInfo && localShopCart.length>0" style="margin-top:10px;">
+        <div v-for="(item,i) in unloginData" :key="i">
+          <div class="unloginLocal">
+            <input type="radio" class="radio" />
+            <img :src="path+'/goods/'+item.img_cover" alt />
+            <div>
+              <p>{{item.name}}</p>
+              <p>
+                <span
+                  style="padding: 2px 5px;background: #f2f2f2;border-radius: 10px;"
+                >{{item.relation_keyword}}</span>
+              </p>
+              <strong style="font-size: 18px;color: red;">{{item.money_now}}</strong>
+              <p class="numberInput">
+                <span class="min" @click.stop="min($event,index)">-</span>
+                <input class="num" type="text" @click.stop value="1" disabled />
+                <span class="add" @click.stop="add($event,index)">+</span>
+                <br />
+              </p>
+              <p class="delegg">
+                <span @click.stop="cartDel($event)">删除</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </scroll>
+    <a class="toTop" @click="toTop" v-if="isShowBackTop"></a>
+
     <cart-tab-bar ref="tabBar" @checkall="check_shop_all" @confirm="toConfirmOrder"></cart-tab-bar>
   </div>
 </template>
@@ -96,11 +117,14 @@ export default {
   name: "Cart",
   data() {
     return {
+      path: "http://106.12.85.17:8090/public/image",
       num: 1,
       payMentData: [],
       fullscreenLoading: false,
       localShopCart: [], //本地存储的购物车,
-      UnLoginProduct: [] //没有登录时根据goods_id货到商品储存
+      // UnLoginProduct: [], //没有登录时根据goods_id货到商品储存
+      unloginData: [],
+      isShowBackTop: false
     };
   },
   created() {
@@ -125,6 +149,8 @@ export default {
     if (this.$store.state.userInfo && this.shopCartLength == 0) {
       this.$store.dispatch("getShopCart", this.$store.state.userInfo.id);
     }
+
+    this.getUnlogingoods();
   },
   components: {
     NavBar,
@@ -142,6 +168,9 @@ export default {
     next();
   },
   methods: {
+    cartScroll(position) {
+      this.isShowBackTop = -position.y > 1000;
+    },
     toDetails(path) {
       this.$router.push(path);
     },
@@ -285,15 +314,23 @@ export default {
       let data = window.localStorage.getItem(this.localPath);
       data = data != null ? JSON.parse(data) : [];
       this.localShopCart = data.shopCart ? data.shopCart : [];
-      console.log(this.localShopCart.length);
-
-      console.log(this.localShopCart[this.localShopCart.length - 1].goods_id);
       var ggid = this.localShopCart[this.localShopCart.length - 1].goods_id;
       getGoodsId(ggid).then(res => {
         console.log(res.data);
-        this.UnLoginProduct.push(res.data.goodsData);
-        console.log(this.UnLoginProduct);
       });
+    },
+    getUnlogingoods() {
+      let localStorageunlogin = JSON.parse(
+        window.localStorage.getItem(window.location.origin + "/jd")
+      ).shopCart;
+
+      if (localStorageunlogin) {
+        localStorageunlogin.forEach(item => {
+          getGoodsId(item.goods_id).then(res => {
+            this.unloginData.push(res.data.goodsData);
+          });
+        });
+      }
     }
   },
   computed: {
@@ -317,7 +354,6 @@ export default {
         } else {
           addr = "河北省,邢台市";
         }
-        console.log(addr);
       }
       return addr.split(",").join(" ");
     },
@@ -328,7 +364,13 @@ export default {
       return this.$refs.cart_goods;
     }
   },
-  mounted() {}
+  activated() {
+    this.$refs.cartScrollCom.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.cartScrollCom.scroll.refresh();
+  },
+  deactivated() {
+    this.saveY = this.$refs.cartScrollCom.scroll.y;
+  }
 };
 </script>
 <style lang='less' scoped>
@@ -473,11 +515,11 @@ export default {
         line-height: 0.8rem;
         color: #f2270c;
         font-size: 0.6rem;
-        em {
-          font-style: normal;
-          font-size: 18px;
-          font-weight: bold;
-        }
+        // em {
+        //   font-style: normal;
+        //   font-size: 18px;
+        //   font-weight: bold;
+        // }
       }
       p.numberInput {
         display: block;
@@ -521,6 +563,64 @@ export default {
       }
     }
   }
+  .unloginLocal {
+    // height: 200px;
+    width: 90%;
+    padding: 5% 5%;
+    float: left;
+    background: #fff;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    input.radio {
+      float: left;
+      width: 20px;
+      height: 20px;
+      margin-top: 50px;
+    }
+    img {
+      width: 30%;
+      float: left;
+      padding: 20px 30px;
+    }
+    div {
+      // flex: 1;
+      font-size: 14px;
+      p.numberInput {
+        display: block;
+        width: 60px;
+        border-radius: 2px;
+        background-color: #fff;
+        font-weight: 400;
+        float: right;
+        span.min {
+          left: 0;
+        }
+
+        input.num {
+          border: none;
+          width: 30px;
+          text-align: center;
+          color: #262626;
+          background-color: #f2f2f2;
+          font-size: 0.55rem;
+          position: relative;
+        }
+        span.add {
+          right: 0;
+        }
+      }
+      p.delegg {
+        display: block;
+        text-align: right;
+        span {
+          position: relative;
+          padding: 0 10px;
+          line-height: 15px;
+          font-size: 10px;
+        }
+      }
+    }
+  }
   .el-input-number {
     padding: 0;
   }
@@ -536,12 +636,12 @@ export default {
   }
   .shopcart_login_bar {
     line-height: 40px;
-    margin-top:20px; 
+    margin-top: 20px;
     .loginBtn {
       background: red;
       padding: 10px 20px;
       border-radius: 20px;
-      color:#fff;
+      color: #fff;
     }
   }
 }

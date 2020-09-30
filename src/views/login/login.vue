@@ -123,7 +123,6 @@ export default {
           username: this.phone,
           password: this.pwd
         };
-        console.log(aaa);
 
         register({
           username: this.phone,
@@ -132,13 +131,13 @@ export default {
           console.log(res);
         });
         Land(aaa).then(res => {
-          console.log(res);
           if(res.code!=200) return;
           // 渲染用户
           // this.$store.state.userInfo = res.data.user;
           // 渲染用户默认配送地址
           // this.$store.state.defaddr = res.data.defaddr;
           // 跳转指定页面
+          
           this.$store.commit(SET_USERINFO,res)
           // this.setLocalStorageAutoCode(res.data.user.auto_code);
           //  this.$router.push('/home')
@@ -147,22 +146,16 @@ export default {
           this.$store.dispatch('getShopCart',res.data.user.id);
           // 跳转页面
           this.$router.push(this.$store.state.loginHistory);
-
           // 自动登陆码
           autoLand({autocode:res.data.user.autocode}).then(res => {
             if(res.code!=200) return;
-            console.log(res);
-            console.log(res.data.user.autocode);
             localStorage.setItem('autocode', res.data.user.autocode);
-            console.log(localStorage.getItem('autocode'));
 
             this.$store.state.userInfo.defaddr=res.data.defaddr;
 
             for(let j in res.data.user){
                 this.$store.state.userInfo[j]=res.data.user[j];
             }
-
-            console.log(this.$store.state.userInfo);
             this.$store.state.userInfo.id=3;
             
             // this.$router.push('/profile');

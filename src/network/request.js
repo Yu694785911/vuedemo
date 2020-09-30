@@ -89,14 +89,14 @@ export function requestIp(config){
         })
         // 请求拦截
         instance.interceptors.request.use(config=>{
-            console.log(config)
+            // console.log(config)
             return config; 
            
         })
     
         // 响应拦截
         instance.interceptors.response.use(res=>{
-            console.log(res)
+            // console.log(res)
             return res.data
         },err=>{
             console.log(err);

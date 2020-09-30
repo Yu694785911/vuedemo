@@ -41,4 +41,7 @@ export default {
 };
 </script>
 <style scoped>
+.DeatilsRotation{
+  width:100%;
+}
 </style>
